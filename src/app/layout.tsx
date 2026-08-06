@@ -4,6 +4,7 @@ import "@/styles/index.css";
 import { NextAuthProvider } from "./providers";
 
 import PwaRegister from "@/components/PwaRegister";
+import CookieConsent from "@/components/CookieConsent";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -189,17 +190,11 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        {adsenseClientId && (
-          <script
-            async
-            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClientId}`}
-            crossOrigin="anonymous"
-          />
-        )}
       </head>
       <body className={inter.className}>
         <NextAuthProvider>{children}</NextAuthProvider>
         <PwaRegister />
+        <CookieConsent adsenseClientId={adsenseClientId} />
       </body>
     </html>
   );

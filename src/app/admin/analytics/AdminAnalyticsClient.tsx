@@ -42,7 +42,11 @@ export default function AdminAnalyticsClient() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/api/admin/analytics?key=${encodeURIComponent(keyToUse)}&range=${range}`);
+      const headers: Record<string, string> = {};
+      if (keyToUse) {
+        headers["x-admin-key"] = keyToUse;
+      }
+      const res = await fetch(`/api/admin/analytics?range=${range}`, { headers });
       if (!res.ok) {
         if (res.status === 401) throw new Error("Unauthorized: Invalid secret admin key or insufficient role.");
         throw new Error("Failed to load live analytics data.");

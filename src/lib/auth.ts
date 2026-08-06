@@ -3,6 +3,16 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
+const getNextAuthSecret = (): string => {
+  const secret = process.env.NEXTAUTH_SECRET;
+  if (secret) return secret;
+  if (process.env.NODE_ENV === "production") {
+    throw new Error("CRITICAL SECURITY ERROR: NEXTAUTH_SECRET environment variable is missing in production.");
+  }
+  console.warn("⚠️ [DEV ONLY] NEXTAUTH_SECRET is not set. Using dev-only fallback secret.");
+  return "dev-only-insecure-fallback-set-nextauth-secret-in-env";
+};
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -45,12 +55,7 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },
-  secret: process.env.NEXTAUTH_SECRET || (() => {
-    if (process.env.NODE_ENV === "production") {
-      console.warn("⚠️ CRITICAL SECURITY WARNING: NEXTAUTH_SECRET is missing in production environment!");
-    }
-    return "dev-only-insecure-fallback-set-nextauth-secret-in-env";
-  })(),
+  secret: getNextAuthSecret(),
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
