@@ -79,14 +79,17 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   icons: {
     icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
       { url: "/favicon.ico", sizes: "any" },
+      { url: "/android-chrome-192x192.png", sizes: "192x192", type: "image/png" },
+      { url: "/android-chrome-512x512.png", sizes: "512x512", type: "image/png" },
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
     ],
     shortcut: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
     other: [
-      { rel: "mask-icon", url: "/mask-icon.svg", color: "#1F2544" },
+      { rel: "mask-icon", url: "/mask-icon.svg", color: "#0D9488" },
     ],
   },
   openGraph: {
@@ -124,8 +127,13 @@ export default function RootLayout({
         "@type": "Organization",
         "@id": "https://sajilotools.vercel.app/#organization",
         "name": "SajiloTools",
-        "url": "https://sajilotools.vercel.app",
-        "logo": "https://sajilotools.vercel.app/branding/logo.svg",
+        "url": "https://sajilotools.vercel.app/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://sajilotools.vercel.app/android-chrome-512x512.png",
+          "width": 512,
+          "height": 512
+        },
         "description": "100+ free online tools for PDF, image, text, developer, finance, and Nepal-specific utilities.",
         "sameAs": [
           "https://github.com/sajilotools",
@@ -137,8 +145,9 @@ export default function RootLayout({
       {
         "@type": "WebSite",
         "@id": "https://sajilotools.vercel.app/#website",
-        "url": "https://sajilotools.vercel.app",
+        "url": "https://sajilotools.vercel.app/",
         "name": "SajiloTools",
+        "alternateName": ["Sajilo Tools", "SajiloTools.app", "Sajilo Tools Nepal"],
         "description": "Free collection of 100+ online tools including PDF tools, image converters, QR generators, calculators, text utilities, SEO tools, developer tools and AI-powered utilities.",
         "publisher": {
           "@id": "https://sajilotools.vercel.app/#organization",
@@ -155,7 +164,7 @@ export default function RootLayout({
       {
         "@type": "CollectionPage",
         "@id": "https://sajilotools.vercel.app/#collectionpage",
-        "url": "https://sajilotools.vercel.app",
+        "url": "https://sajilotools.vercel.app/",
         "name": "SajiloTools – All Free Online Tools",
         "description": "Browse 100+ free online tools organized by category: PDF, Image, Text, Developer, Finance, and Nepal Tools.",
         "isPartOf": {
