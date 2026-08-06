@@ -1,0 +1,36 @@
+{
+  "toolUsage": {
+    "vehicle-tax-calculator": 9,
+    "base64-encoder": 4,
+    "json-formatter": 3,
+    "password-generator": 2,
+    "gold-silver-calculator": 2,
+    "nepali-date-converter": 1,
+    "word-counter": 1,
+    "case-converter": 1,
+    "text-diff": 1,
+    "string-utilities": 1,
+    "nrs-converter": 1
+  },
+  "searchQueries": {},
+  "feedback": [
+    {
+      "id": "ggus0o5",
+      "toolSlug": "gold-silver-calculator",
+      "isHelpful": true,
+      "timestamp": 1785381383881
+    },
+    {
+      "id": "43oou8o",
+      "toolSlug": "json-formatter",
+      "isHelpful": true,
+      "timestamp": 1785338580981
+    },
+    {
+      "id": "e5hgh1m",
+      "toolSlug": "base64-encoder",
+      "isHelpful": true,
+      "timestamp": 1785336589850
+    }
+  ]
+}
