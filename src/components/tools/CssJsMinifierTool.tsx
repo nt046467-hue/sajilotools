@@ -43,7 +43,9 @@ export default function CssJsMinifierTool() {
 
   // Options
   const [removeComments, setRemoveComments] = useState<boolean>(true);
-  const [mangleVars, setMangleVars] = useState<boolean>(false);
+  const [mangleVars, setMangleVars] = useState<boolean>(true);
+  const [dropConsole, setDropConsole] = useState<boolean>(false);
+  const [actionType, setActionType] = useState<"minify" | "beautify">("minify");
 
   const [loading, setLoading] = useState<boolean>(false);
   const [copied, setCopied] = useState<boolean>(false);
@@ -59,23 +61,54 @@ export default function CssJsMinifierTool() {
       setLoading(true);
       setErrorMsg(null);
 
+      // Defer to macro-task queue so UI spinner renders immediately
+      await new Promise((r) => setTimeout(r, 20));
+
       if (mode === "js") {
         const terser = await import("terser");
-        const result = await terser.minify(inputCode, {
-          mangle: mangleVars,
-          compress: true,
-          format: {
-            comments: removeComments ? false : "all",
-          },
-        });
-
-        setMinifiedOutput(result.code || "");
+        if (actionType === "beautify") {
+          const result = await terser.minify(inputCode, {
+            compress: false,
+            mangle: false,
+            format: {
+              beautify: true,
+              comments: true,
+            },
+          });
+          setMinifiedOutput(result.code || "");
+        } else {
+          const result = await terser.minify(inputCode, {
+            ecma: 2020,
+            mangle: mangleVars,
+            compress: {
+              drop_console: dropConsole,
+              drop_debugger: true,
+              passes: 2,
+            },
+            format: {
+              comments: removeComments ? false : "some",
+              beautify: false,
+            },
+          });
+          setMinifiedOutput(result.code || "");
+        }
       } else {
         const csso = await import("csso");
-        const result = csso.minify(inputCode, {
-          comments: removeComments ? false : "first",
-        });
-        setMinifiedOutput(result.css || "");
+        if (actionType === "beautify") {
+          // Simple CSS Beautifier
+          const formatted = inputCode
+            .replace(/\s*\{\s*/g, " {\n  ")
+            .replace(/\s*;\s*/g, ";\n  ")
+            .replace(/\s*\}\s*/g, "\n}\n")
+            .replace(/\n\s*\n/g, "\n");
+          setMinifiedOutput(formatted.trim());
+        } else {
+          const result = csso.minify(inputCode, {
+            comments: removeComments ? false : "first",
+            restructure: true,
+          });
+          setMinifiedOutput(result.css || "");
+        }
       }
     } catch (err: any) {
       console.error("Minification error:", err);
@@ -85,7 +118,7 @@ export default function CssJsMinifierTool() {
     } finally {
       setLoading(false);
     }
-  }, [inputCode, mode, removeComments, mangleVars]);
+  }, [inputCode, mode, removeComments, mangleVars, dropConsole, actionType]);
 
   const handleModeChange = (newMode: Mode) => {
     setMode(newMode);
@@ -126,57 +159,99 @@ export default function CssJsMinifierTool() {
   return (
     <div className="space-y-6">
       {/* Mode Switcher & Options Bar */}
-      <div className="p-4 rounded-2xl bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        {/* Mode Toggle */}
-        <div className="flex p-1 bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] rounded-xl w-full sm:w-auto">
-          <button
-            type="button"
-            onClick={() => handleModeChange("js")}
-            className={`flex-1 sm:flex-initial px-5 py-1.5 text-xs font-bold rounded-lg transition-colors ${
-              mode === "js"
-                ? "bg-[#1F2544] text-white dark:bg-[#22C55E] dark:text-[#0C0F1E]"
-                : "text-[#71717A] hover:text-[#18181B] dark:hover:text-[#F4F4F5]"
-            }`}
-          >
-            JavaScript (.js)
-          </button>
-          <button
-            type="button"
-            onClick={() => handleModeChange("css")}
-            className={`flex-1 sm:flex-initial px-5 py-1.5 text-xs font-bold rounded-lg transition-colors ${
-              mode === "css"
-                ? "bg-[#1F2544] text-white dark:bg-[#22C55E] dark:text-[#0C0F1E]"
-                : "text-[#71717A] hover:text-[#18181B] dark:hover:text-[#F4F4F5]"
-            }`}
-          >
-            CSS (.css)
-          </button>
+      <div className="p-4 rounded-2xl bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+        <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+          {/* Mode Toggle */}
+          <div className="flex p-1 bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] rounded-xl">
+            <button
+              type="button"
+              onClick={() => handleModeChange("js")}
+              className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-colors ${
+                mode === "js"
+                  ? "bg-[#1F2544] text-white dark:bg-[#22C55E] dark:text-[#0C0F1E]"
+                  : "text-[#71717A] hover:text-[#18181B] dark:hover:text-[#F4F4F5]"
+              }`}
+            >
+              JavaScript (.js)
+            </button>
+            <button
+              type="button"
+              onClick={() => handleModeChange("css")}
+              className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-colors ${
+                mode === "css"
+                  ? "bg-[#1F2544] text-white dark:bg-[#22C55E] dark:text-[#0C0F1E]"
+                  : "text-[#71717A] hover:text-[#18181B] dark:hover:text-[#F4F4F5]"
+              }`}
+            >
+              CSS (.css)
+            </button>
+          </div>
+
+          {/* Action Type Toggle */}
+          <div className="flex p-1 bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] rounded-xl">
+            <button
+              type="button"
+              onClick={() => setActionType("minify")}
+              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-colors ${
+                actionType === "minify"
+                  ? "bg-[#22C55E] text-[#0C0F1E]"
+                  : "text-[#71717A] hover:text-[#18181B] dark:hover:text-[#F4F4F5]"
+              }`}
+            >
+              Minify
+            </button>
+            <button
+              type="button"
+              onClick={() => setActionType("beautify")}
+              className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-colors ${
+                actionType === "beautify"
+                  ? "bg-[#22C55E] text-[#0C0F1E]"
+                  : "text-[#71717A] hover:text-[#18181B] dark:hover:text-[#F4F4F5]"
+              }`}
+            >
+              Beautify / Unminify
+            </button>
+          </div>
         </div>
 
         {/* Options */}
-        <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-[#18181B] dark:text-[#F4F4F5]">
-          <label className="flex items-center gap-2 cursor-pointer select-none">
-            <input
-              type="checkbox"
-              checked={removeComments}
-              onChange={(e) => setRemoveComments(e.target.checked)}
-              className="w-4 h-4 accent-[#22C55E] cursor-pointer"
-            />
-            Remove Comments
-          </label>
-
-          {mode === "js" && (
+        {actionType === "minify" && (
+          <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-[#18181B] dark:text-[#F4F4F5]">
             <label className="flex items-center gap-2 cursor-pointer select-none">
               <input
                 type="checkbox"
-                checked={mangleVars}
-                onChange={(e) => setMangleVars(e.target.checked)}
+                checked={removeComments}
+                onChange={(e) => setRemoveComments(e.target.checked)}
                 className="w-4 h-4 accent-[#22C55E] cursor-pointer"
               />
-              Mangle Variable Names
+              Remove Comments
             </label>
-          )}
-        </div>
+
+            {mode === "js" && (
+              <>
+                <label className="flex items-center gap-2 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={mangleVars}
+                    onChange={(e) => setMangleVars(e.target.checked)}
+                    className="w-4 h-4 accent-[#22C55E] cursor-pointer"
+                  />
+                  Mangle Variables
+                </label>
+
+                <label className="flex items-center gap-2 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={dropConsole}
+                    onChange={(e) => setDropConsole(e.target.checked)}
+                    className="w-4 h-4 accent-[#22C55E] cursor-pointer"
+                  />
+                  Strip Console.log
+                </label>
+              </>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">

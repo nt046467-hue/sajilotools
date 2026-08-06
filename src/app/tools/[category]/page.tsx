@@ -50,6 +50,22 @@ export default async function CategoryPage({
         "@context": "https://schema.org",
         "@graph": [
           {
+            "@type": "CollectionPage",
+            "name": `${category.name} Tools`,
+            "description": category.desc,
+            "url": `https://sajilotools.vercel.app/tools/${category.slug}`,
+            "mainEntity": {
+              "@type": "ItemList",
+              "numberOfItems": tools.length,
+              "itemListElement": tools.map((t, idx) => ({
+                "@type": "ListItem",
+                "position": idx + 1,
+                "name": t.name,
+                "url": `https://sajilotools.vercel.app/tools/${t.categorySlug}/${t.slug}`,
+              })),
+            },
+          },
+          {
             "@type": "BreadcrumbList",
             "itemListElement": [
               {

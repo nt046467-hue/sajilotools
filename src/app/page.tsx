@@ -739,7 +739,7 @@ export default function App() {
                         <Badge label={tool.badge} />
                       </div>
                       <div className="text-[11px] text-[#A1A1AA]">
-                        {tool.badge}
+                        {tool.category}
                       </div>
                     </div>
                     <ArrowRight
@@ -803,7 +803,7 @@ export default function App() {
 
           {/* ── NEWSLETTER ── */}
           <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20">
-            <div className="relative max-w-2xl mx-auto rounded-3xl border border-border bg-card/70 shadow-sm backdrop-blur-sm px-6 py-14 sm:px-12 sm:py-16 text-center overflow-hidden">
+            <div className="relative max-w-2xl mx-auto rounded-3xl border border-border bg-card/70 shadow-sm backdrop-blur-sm px-4 py-10 sm:px-12 sm:py-16 text-center overflow-hidden">
               {/* Decorative glow */}
               <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
                 <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-80 h-80 rounded-full bg-accent/10 blur-3xl" />
@@ -850,19 +850,19 @@ export default function App() {
                       />
                     </div>
 
-                    <div className="flex gap-2.5">
+                    <div className="flex gap-2">
                       <input
                         type="email"
                         required
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="you@email.com"
-                        className="flex-1 h-11 px-4 rounded-xl border border-border bg-background text-foreground placeholder-muted-foreground/60 text-sm outline-none focus:ring-2 focus:ring-ring/40 focus:border-primary transition-all shadow-sm"
+                        className="flex-1 min-w-0 h-11 px-3 sm:px-4 rounded-xl border border-border bg-background text-foreground placeholder-muted-foreground/60 text-sm outline-none focus:ring-2 focus:ring-ring/40 focus:border-primary transition-all shadow-sm"
                       />
                       <button
                         type="submit"
                         disabled={submittingSubscribe}
-                        className="h-11 px-6 rounded-xl font-semibold text-sm bg-primary text-primary-foreground flex-shrink-0 hover:brightness-110 active:scale-[0.97] transition-all disabled:opacity-50 shadow-sm"
+                        className="h-11 px-4 sm:px-6 rounded-xl font-semibold text-sm bg-primary text-primary-foreground flex-shrink-0 hover:brightness-110 active:scale-[0.97] transition-all disabled:opacity-50 shadow-sm whitespace-nowrap"
                       >
                         {submittingSubscribe ? "Subscribing..." : "Subscribe"}
                       </button>

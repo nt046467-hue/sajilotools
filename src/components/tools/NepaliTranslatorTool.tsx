@@ -102,22 +102,22 @@ export default function NepaliTranslatorTool() {
   }, []);
 
   // Helper to split text into chunks under 350 characters at sentence boundaries
-  const chunkText = (text: string, maxLen = 350): string[] => {
+  const chunkText = (text: string, maxLen = 1000): string[] => {
     if (text.length <= maxLen) return [text];
 
-    const sentences = text.match(/[^.!?\n]+[.!?\n]+/g) || [text];
+    const paragraphs = text.split(/(\n+)/);
     const chunks: string[] = [];
     let currentChunk = "";
 
-    for (const sentence of sentences) {
-      if ((currentChunk + sentence).length > maxLen) {
-        if (currentChunk.trim()) chunks.push(currentChunk.trim());
-        currentChunk = sentence;
+    for (const para of paragraphs) {
+      if ((currentChunk + para).length > maxLen) {
+        if (currentChunk) chunks.push(currentChunk);
+        currentChunk = para;
       } else {
-        currentChunk += sentence;
+        currentChunk += para;
       }
     }
-    if (currentChunk.trim()) chunks.push(currentChunk.trim());
+    if (currentChunk) chunks.push(currentChunk);
 
     return chunks.length > 0 ? chunks : [text];
   };
@@ -136,10 +136,15 @@ export default function NepaliTranslatorTool() {
     const targetLang = mode === "en-to-np" ? "ne" : "en";
 
     try {
-      const chunks = chunkText(trimmed, 350);
+      const chunks = chunkText(trimmed, 1000);
       const translatedChunks: string[] = [];
 
       for (const chunk of chunks) {
+        if (!chunk.trim()) {
+          translatedChunks.push(chunk);
+          continue;
+        }
+
         const res = await fetch("/api/translate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -163,7 +168,7 @@ export default function NepaliTranslatorTool() {
         }
       }
 
-      const finalResult = translatedChunks.join(" ");
+      const finalResult = translatedChunks.join("");
       setTranslatedText(finalResult);
 
       // Save to History (max 5)

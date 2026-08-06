@@ -94,6 +94,7 @@ export const CATEGORIES: CategoryDef[] = [
   },
 ];
 
+
 export const TOOLS: ToolDef[] = [
   // ── Developer ──
   {

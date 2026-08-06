@@ -7,6 +7,60 @@ export const dynamic = "force-dynamic";
 const inMemoryCache = new Map<string, { value: string; expiry: number }>();
 const CACHE_TTL_SECONDS = 60 * 60 * 24 * 30; // 30 days
 
+// Helper: Try Google Translate GTX endpoint
+async function fetchGoogleTranslate(text: string, sourceLang: string, targetLang: string): Promise<string | null> {
+  try {
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sourceLang}&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
+    const res = await fetch(url, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+        Accept: "application/json",
+      },
+    });
+
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (Array.isArray(data) && Array.isArray(data[0])) {
+      const translatedParts = data[0]
+        .filter((item: any) => Array.isArray(item) && typeof item[0] === "string")
+        .map((item: any) => item[0]);
+      if (translatedParts.length > 0) {
+        return translatedParts.join("");
+      }
+    }
+    return null;
+  } catch (err) {
+    console.warn("Google Translate GTX fallback error:", err);
+    return null;
+  }
+}
+
+// Helper: Try MyMemory API
+async function fetchMyMemoryTranslate(text: string, sourceLang: string, targetLang: string): Promise<string | null> {
+  try {
+    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${sourceLang}|${targetLang}`;
+    const res = await fetch(url, {
+      headers: {
+        "User-Agent": "SajiloTools/1.0 (Nepali Translation Service)",
+        Accept: "application/json",
+      },
+    });
+
+    if (!res.ok) return null;
+    const data = await res.json();
+    if (data?.responseStatus === 429 || data?.responseStatus === 403) return null;
+
+    let resultText: string | undefined = data?.responseData?.translatedText;
+    if (resultText && resultText.includes("MYMEMORY WARNING")) {
+      resultText = resultText.replace(/MYMEMORY WARNING:.*$/, "").trim();
+    }
+    return resultText && resultText.length > 0 ? resultText : null;
+  } catch (err) {
+    console.warn("MyMemory fallback error:", err);
+    return null;
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { text, sourceLang, targetLang } = await req.json();
@@ -39,35 +93,17 @@ export async function POST(req: NextRequest) {
       console.warn("Translation cache read warning:", cacheErr);
     }
 
-    // 2. Call MyMemory API
-    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(trimmed)}&langpair=${sourceLang}|${targetLang}`;
-    const res = await fetch(url, {
-      headers: {
-        "User-Agent": "SajiloTools/1.0 (Nepali Translation Service)",
-        Accept: "application/json",
-      },
-    });
+    // 2. Multi-tier Translation Engine
+    // Tier 1: Google Translate GTX (Fast & highly accurate for English <-> Nepali)
+    let resultText = await fetchGoogleTranslate(trimmed, sourceLang, targetLang);
 
-    if (!res.ok) {
-      return NextResponse.json({ error: "Translation service network error." }, { status: 502 });
-    }
-
-    const data = await res.json();
-
-    if (data?.responseStatus === 429 || data?.responseStatus === 403) {
-      return NextResponse.json(
-        { error: "Daily free translation usage limit reached. Please try again later." },
-        { status: 429 }
-      );
-    }
-
-    let resultText: string | undefined = data?.responseData?.translatedText;
-    if (resultText && resultText.includes("MYMEMORY WARNING")) {
-      resultText = resultText.replace(/MYMEMORY WARNING:.*$/, "").trim();
+    // Tier 2: MyMemory API Fallback
+    if (!resultText) {
+      resultText = await fetchMyMemoryTranslate(trimmed, sourceLang, targetLang);
     }
 
     if (!resultText) {
-      return NextResponse.json({ error: "Could not parse translation output." }, { status: 502 });
+      return NextResponse.json({ error: "Translation service temporarily unavailable. Please try again in a moment." }, { status: 502 });
     }
 
     // 3. Save to Vercel KV / in-memory cache
@@ -93,3 +129,4 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+

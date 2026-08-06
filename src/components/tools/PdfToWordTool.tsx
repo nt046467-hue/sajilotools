@@ -38,6 +38,7 @@ export default function PdfToWordTool() {
   const [conversionMode] = useState<ConversionMode>("editable");
   const [ocrLanguage, setOcrLanguage] = useState<"eng" | "nep" | "eng+nep">("eng");
   const [isOcrUsed, setIsOcrUsed] = useState(false);
+  const [isDragOver, setIsDragOver] = useState(false);
 
   if (!mounted) {
     return (
@@ -46,6 +47,37 @@ export default function PdfToWordTool() {
       </div>
     );
   }
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      const selected = e.dataTransfer.files[0];
+      if (selected.type !== "application/pdf" && !selected.name.endsWith(".pdf")) {
+        setErrorMsg("Please select a valid PDF file.");
+        return;
+      }
+      setFile(selected);
+      setStatus("idle");
+      setErrorMsg("");
+      setWarningMsg("");
+      setDocxBlob(null);
+      setIsOcrUsed(false);
+    }
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -252,10 +284,14 @@ export default function PdfToWordTool() {
 
         if (validItems.length === 0) continue;
 
+        // Calculate average font height in PDF points
+        const fontHeights = validItems.map((item) => Math.abs(item.transform[3] || item.height || 11));
+        const avgFontHeight = fontHeights.reduce((a, b) => a + b, 0) / fontHeights.length || 11;
+
         // 3. Sort all items on page by Y coordinate descending (top to bottom)
         validItems.sort((a, b) => Math.round(b.transform[5]) - Math.round(a.transform[5]));
 
-        // 4. Cluster items into horizontal lines (Y-tolerance of ~8px)
+        // 4. Cluster items into horizontal lines (Y-tolerance of ~6px)
         const lines: { y: number; items: any[] }[] = [];
         let currentLineItems: any[] = [];
         let currentLineY: number | null = null;
@@ -263,7 +299,7 @@ export default function PdfToWordTool() {
         for (const item of validItems) {
           const itemY = Math.round(item.transform[5]);
 
-          if (currentLineY === null || Math.abs(itemY - currentLineY) > 8) {
+          if (currentLineY === null || Math.abs(itemY - currentLineY) > 6) {
             if (currentLineItems.length > 0) {
               lines.push({ y: currentLineY!, items: currentLineItems });
             }
@@ -278,223 +314,122 @@ export default function PdfToWordTool() {
           lines.push({ y: currentLineY!, items: currentLineItems });
         }
 
-        // Buffers for key-value fields and table rows
-        let kvRowsBuffer: TableRow[] = [];
-        let tableRowsBuffer: TableRow[] = [];
-
-        // Helper to flush key-value rows + photo if available
-        const flushKvRows = () => {
-          if (kvRowsBuffer.length === 0) return;
-
-          if (embeddedPhoto) {
-            const photoScale = Math.min(190 / embeddedPhoto.width, 180 / embeddedPhoto.height, 1);
-            const photoWidth = Math.max(1, Math.round(embeddedPhoto.width * photoScale));
-            const photoHeight = Math.max(1, Math.round(embeddedPhoto.height * photoScale));
-            // Outer Form + Photo layout table
-            const formTable = new Table({
-              width: { size: PAGE_CONTENT_WIDTH_DXA, type: WidthType.DXA },
-              layout: TableLayoutType.FIXED,
-              columnWidths: [FORM_COL_WIDTH_DXA, PHOTO_COL_WIDTH_DXA],
-              borders: {
-                top: { style: BorderStyle.NONE },
-                bottom: { style: BorderStyle.NONE },
-                left: { style: BorderStyle.NONE },
-                right: { style: BorderStyle.NONE },
-                insideHorizontal: { style: BorderStyle.NONE },
-                insideVertical: { style: BorderStyle.NONE },
-              },
-              rows: [
-                new TableRow({
-                  children: [
-                    new TableCell({
-                      width: { size: FORM_COL_WIDTH_DXA, type: WidthType.DXA },
-                      children: [
-                        new Table({
-                          width: { size: FORM_COL_WIDTH_DXA, type: WidthType.DXA },
-                          layout: TableLayoutType.FIXED,
-                          columnWidths: [FORM_KV_LABEL_WIDTH_DXA, FORM_KV_VALUE_WIDTH_DXA],
-                          borders: {
-                            top: { style: BorderStyle.NONE },
-                            bottom: { style: BorderStyle.NONE },
-                            left: { style: BorderStyle.NONE },
-                            right: { style: BorderStyle.NONE },
-                            insideHorizontal: { style: BorderStyle.NONE },
-                            insideVertical: { style: BorderStyle.NONE },
-                          },
-                          rows: kvRowsBuffer,
-                        }),
-                      ],
-                    }),
-                    new TableCell({
-                      width: { size: PHOTO_COL_WIDTH_DXA, type: WidthType.DXA },
-                      children: [
-                        new Paragraph({
-                          alignment: AlignmentType.RIGHT,
-                          children: [
-                            new ImageRun({
-                              data: embeddedPhoto.data,
-                              type: "png",
-                              transformation: {
-                                width: photoWidth,
-                                height: photoHeight,
-                              },
-                            }),
-                          ],
-                        }),
-                      ],
-                    }),
-                  ],
+        // Add embedded logo at top if present
+        if (embeddedLogo) {
+          const logoScale = Math.min(140 / embeddedLogo.width, 100 / embeddedLogo.height, 1);
+          const logoWidth = Math.max(1, Math.round(embeddedLogo.width * logoScale));
+          const logoHeight = Math.max(1, Math.round(embeddedLogo.height * logoScale));
+          docxChildren.push(
+            new Paragraph({
+              alignment: AlignmentType.LEFT,
+              spacing: { after: 120 },
+              children: [
+                new ImageRun({
+                  data: embeddedLogo.data,
+                  type: "png",
+                  transformation: { width: logoWidth, height: logoHeight },
                 }),
               ],
-            });
-            docxChildren.push(formTable);
-            embeddedPhoto = null; // Used photo
-          } else {
-            // Single column KV table (no photo)
-            docxChildren.push(
-              new Table({
-                width: { size: PAGE_CONTENT_WIDTH_DXA, type: WidthType.DXA },
-                layout: TableLayoutType.FIXED,
-                columnWidths: [KV_LABEL_WIDTH_DXA, KV_VALUE_WIDTH_DXA],
-                borders: {
-                  top: { style: BorderStyle.NONE },
-                  bottom: { style: BorderStyle.NONE },
-                  left: { style: BorderStyle.NONE },
-                  right: { style: BorderStyle.NONE },
-                  insideHorizontal: { style: BorderStyle.NONE },
-                  insideVertical: { style: BorderStyle.NONE },
-                },
-                rows: kvRowsBuffer,
-              })
-            );
-          }
-          kvRowsBuffer = [];
-        };
+            })
+          );
+          embeddedLogo = null;
+        }
 
-        const flushTableRows = () => {
+        // Table buffer to group consecutive multi-column table rows together
+        let tableRowsBuffer: TableRow[] = [];
+        let currentTableColCount = 0;
+
+        const flushTableBuffer = () => {
           if (tableRowsBuffer.length === 0) return;
-          const numCols = (tableRowsBuffer[0] as any)?.root?.[1]?.length || 6;
-          const dataColWidths = calculateTableColumnWidths(numCols, PAGE_CONTENT_WIDTH_DXA);
-
+          const colWidths = calculateTableColumnWidths(currentTableColCount, PAGE_CONTENT_WIDTH_DXA);
           docxChildren.push(
             new Table({
               width: { size: PAGE_CONTENT_WIDTH_DXA, type: WidthType.DXA },
               layout: TableLayoutType.FIXED,
-              columnWidths: dataColWidths,
+              columnWidths: colWidths,
               borders: {
-                top: { style: BorderStyle.SINGLE, size: 4, color: "D0D5DD" },
-                bottom: { style: BorderStyle.SINGLE, size: 4, color: "D0D5DD" },
-                left: { style: BorderStyle.SINGLE, size: 4, color: "D0D5DD" },
-                right: { style: BorderStyle.SINGLE, size: 4, color: "D0D5DD" },
-                insideHorizontal: { style: BorderStyle.SINGLE, size: 2, color: "EAECF0" },
-                insideVertical: { style: BorderStyle.SINGLE, size: 2, color: "EAECF0" },
+                top: { style: BorderStyle.SINGLE, size: 4, color: "0F766E" },
+                bottom: { style: BorderStyle.SINGLE, size: 4, color: "0F766E" },
+                left: { style: BorderStyle.SINGLE, size: 2, color: "E5E7EB" },
+                right: { style: BorderStyle.SINGLE, size: 2, color: "E5E7EB" },
+                insideHorizontal: { style: BorderStyle.SINGLE, size: 2, color: "E5E7EB" },
+                insideVertical: { style: BorderStyle.SINGLE, size: 2, color: "E5E7EB" },
               },
               rows: tableRowsBuffer,
             })
           );
           tableRowsBuffer = [];
+          currentTableColCount = 0;
         };
 
-        // 5. Analyze lines and convert into styled Word Paragraphs & Tables
+        // Process horizontal text lines into structured Word elements
         for (const line of lines) {
+          // Sort items in line by X coordinate ascending (left to right)
           line.items.sort((a, b) => Math.round(a.transform[4]) - Math.round(b.transform[4]));
 
-          // Build line text
-          let lineStr = "";
-          let lastX: number | null = null;
+          // Check if line represents a tabular structure (multiple columns with large horizontal gaps > 60px)
+          const itemsWithGaps: { text: string; x: number; fontHeight: number }[] = [];
+          let currentChunkText = "";
+          let currentChunkX = line.items[0].transform[4];
+          let currentChunkFontHeight = Math.abs(line.items[0].transform[3] || 11);
+          let lastItemXEnd = currentChunkX + (line.items[0].width || line.items[0].str.length * 6);
 
-          for (const item of line.items) {
+          for (let i = 0; i < line.items.length; i++) {
+            const item = line.items[i];
             const itemX = Math.round(item.transform[4]);
-            const textStr = item.str.trim();
-            totalExtractedLength += textStr.length;
+            const itemText = item.str;
+            const itemFontH = Math.abs(item.transform[3] || item.height || 11);
 
-            if (lastX !== null && itemX - lastX > 25) {
-              lineStr += " \t " + textStr;
-            } else if (lineStr.length > 0) {
-              lineStr += " " + textStr;
+            // Wide horizontal gap > 60px signifies distinct table columns
+            if (i > 0 && itemX - lastItemXEnd > 60) {
+              itemsWithGaps.push({ text: currentChunkText.trim(), x: currentChunkX, fontHeight: currentChunkFontHeight });
+              currentChunkText = itemText;
+              currentChunkX = itemX;
+              currentChunkFontHeight = itemFontH;
             } else {
-              lineStr = textStr;
+              currentChunkText += (currentChunkText && !currentChunkText.endsWith(" ") && !itemText.startsWith(" ") ? " " : "") + itemText;
             }
-            lastX = itemX + (item.width || textStr.length * 6);
+            lastItemXEnd = itemX + (item.width || itemText.length * 6);
+          }
+          if (currentChunkText.trim()) {
+            itemsWithGaps.push({ text: currentChunkText.trim(), x: currentChunkX, fontHeight: currentChunkFontHeight });
           }
 
-          const trimmedLine = lineStr.trim();
-          if (!trimmedLine) continue;
+          const fullLineText = itemsWithGaps.map((g) => g.text).join(" ").trim();
+          if (!fullLineText) continue;
 
-          const normalizedLine = trimmedLine.replace(/\t+/g, " ").replace(/\s{2,}/g, " ");
-          const kvMatch = normalizedLine.match(/^([A-Za-z0-9\s.\/()_-]+):\s*(.*)$/);
+          totalExtractedLength += fullLineText.length;
 
-          if (kvMatch && !normalizedLine.toLowerCase().includes("university")) {
-            const keyText = kvMatch[1].trim() + ":";
-            const valText = kvMatch[2].trim();
+          // ── A. Multi-column Table Grid Handling ──
+          if (itemsWithGaps.length >= 2) {
+            const numCols = itemsWithGaps.length;
+            if (currentTableColCount > 0 && currentTableColCount !== numCols) {
+              flushTableBuffer();
+            }
+            currentTableColCount = numCols;
 
-            kvRowsBuffer.push(
-              new TableRow({
-                children: [
-                  new TableCell({
-                    width: { size: FORM_KV_LABEL_WIDTH_DXA, type: WidthType.DXA },
-                    children: [
-                      new Paragraph({
-                        spacing: { after: 20 },
-                        children: [
-                          new TextRun({
-                            text: keyText,
-                            bold: true,
-                            color: "1F2544",
-                            size: 18,
-                          }),
-                        ],
-                      }),
-                    ],
-                  }),
-                  new TableCell({
-                    width: { size: FORM_KV_VALUE_WIDTH_DXA, type: WidthType.DXA },
-                    children: [
-                      new Paragraph({
-                        spacing: { after: 20 },
-                        children: [
-                          new TextRun({
-                            text: valText,
-                            color: "18181B",
-                            size: 18,
-                          }),
-                        ],
-                      }),
-                    ],
-                  }),
-                ],
-              })
-            );
-            continue;
-          } else {
-            flushKvRows();
-          }
-
-          // ── B. Check if line is part of a multi-column data table (e.g., S.N / Institute / Level / Board / Percentage) ──
-          const tableParts = trimmedLine.split(/\s{2,}|\t/).map((p) => p.trim()).filter(Boolean);
-
-          if (tableParts.length >= 3 || (tableParts.length >= 2 && /^\d+\./.test(tableParts[0]))) {
-            const isHeaderRow = tableParts.some((p) =>
-              ["s.n", "name", "level", "board", "passed", "percentage", "year", "institute"].includes(p.toLowerCase())
+            const isHeader = tableRowsBuffer.length === 0 && itemsWithGaps.some((g) =>
+              ["qualification", "institution", "result", "year", "s.n", "name", "nationality", "languages", "date of birth"].includes(g.text.toLowerCase())
             );
 
-            const numCols = tableParts.length;
-            const dataColWidths = calculateTableColumnWidths(numCols, PAGE_CONTENT_WIDTH_DXA);
-
-            const rowCells = tableParts.map(
-              (part, idx) =>
+            const colWidths = calculateTableColumnWidths(numCols, PAGE_CONTENT_WIDTH_DXA);
+            const rowCells = itemsWithGaps.map(
+              (gap, idx) =>
                 new TableCell({
-                  width: { size: dataColWidths[idx] || dataColWidths[0], type: WidthType.DXA },
-                  shading: isHeaderRow ? { fill: "F2F4F7" } : undefined,
+                  width: { size: colWidths[idx] || colWidths[0], type: WidthType.DXA },
+                  shading: isHeader ? { fill: "0F766E" } : undefined,
                   children: [
                     new Paragraph({
                       alignment: AlignmentType.LEFT,
+                      spacing: { before: 40, after: 40 },
                       children: [
                         new TextRun({
-                          text: part,
-                          bold: isHeaderRow,
-                          color: isHeaderRow ? "1F2544" : "18181B",
-                          size: 19,
+                          text: gap.text,
+                          font: "Calibri",
+                          bold: isHeader || gap.fontHeight > avgFontHeight * 1.1,
+                          // docx size in half-points: PDF pt * 2 = docx half-points
+                          size: Math.max(22, Math.min(48, Math.round(gap.fontHeight * 2))),
+                          color: isHeader ? "FFFFFF" : "18181B",
                         }),
                       ],
                     }),
@@ -504,94 +439,71 @@ export default function PdfToWordTool() {
 
             tableRowsBuffer.push(new TableRow({ children: rowCells }));
             continue;
-          } else if (tableRowsBuffer.length > 0) {
-            flushTableRows();
+          } else {
+            flushTableBuffer();
           }
 
-          // ── C. Main Headers & Title Formatting ──
-          let isCenter = false;
-          let isHeading = false;
-          let textColor = "18181B";
-          let textSize = 20;
-          let isBold = false;
+          // ── B. Heading / Title vs Paragraph Line Detection ──
+          const maxLineFontHeight = Math.max(...line.items.map((i: any) => Math.abs(i.transform[3] || 11)));
+          
+          // docx size is half-points: PDF pt * 2 = docx half-points (e.g. 11pt = size 22)
+          const docxHalfPoints = Math.max(22, Math.min(52, Math.round(maxLineFontHeight * 2)));
 
-          const lowerStr = trimmedLine.toLowerCase();
+          const isTitle = maxLineFontHeight > avgFontHeight * 1.5;
+          const isSectionHeader = fullLineText.length < 50 && fullLineText === fullLineText.toUpperCase() && /[A-Z]{3,}/.test(fullLineText);
+          const isSubHeader = maxLineFontHeight > avgFontHeight * 1.15;
 
-          if (lowerStr.includes("tribhuvan university")) {
-            if (embeddedLogo) {
-              const logoScale = Math.min(92 / embeddedLogo.width, 80 / embeddedLogo.height, 1);
-              const logoWidth = Math.max(1, Math.round(embeddedLogo.width * logoScale));
-              const logoHeight = Math.max(1, Math.round(embeddedLogo.height * logoScale));
-              // Keep the university emblem and heading together in an editable header layout.
-              docxChildren.push(
-                new Table({
-                  width: { size: PAGE_CONTENT_WIDTH_DXA, type: WidthType.DXA },
-                  layout: TableLayoutType.FIXED,
-                  columnWidths: [1600, PAGE_CONTENT_WIDTH_DXA - 1600],
-                  borders: {
-                    top: { style: BorderStyle.NONE }, bottom: { style: BorderStyle.NONE },
-                    left: { style: BorderStyle.NONE }, right: { style: BorderStyle.NONE },
-                    insideHorizontal: { style: BorderStyle.NONE }, insideVertical: { style: BorderStyle.NONE },
-                  },
-                  rows: [new TableRow({ children: [
-                    new TableCell({
-                      width: { size: 1600, type: WidthType.DXA },
-                      children: [new Paragraph({ children: [new ImageRun({ data: embeddedLogo.data, type: "png", transformation: { width: logoWidth, height: logoHeight } })] })],
-                    }),
-                    new TableCell({
-                      width: { size: PAGE_CONTENT_WIDTH_DXA - 1600, type: WidthType.DXA },
-                      children: [new Paragraph({
-                        alignment: AlignmentType.CENTER,
-                        spacing: { after: 60 },
-                        children: [new TextRun({ text: trimmedLine, bold: true, color: "C00000", size: 28 })],
-                      })],
-                    }),
-                  ] })],
-                })
-              );
-              embeddedLogo = null;
-              continue;
-            }
-            isCenter = true;
-            isHeading = true;
-            textColor = "C00000"; // Red
-            textSize = 28;
-            isBold = true;
-          } else if (lowerStr.includes("institute of engineering")) {
-            isCenter = true;
-            isHeading = true;
-            textColor = "0070C0"; // Blue
-            textSize = 24;
-            isBold = true;
-          } else if (lowerStr.includes("entrance examination") || lowerStr.includes("registration details")) {
-            isCenter = lowerStr.includes("entrance");
-            isHeading = true;
-            textColor = "0070C0";
-            textSize = 22;
-            isBold = true;
-          } else if (/^(form|voucher|name|gender|date|email|phone|country|district|citizenship)/i.test(trimmedLine)) {
-            isBold = true;
+          const isCenter = isTitle || (fullLineText.includes("|") && fullLineText.length < 80);
+          
+          let textColor = "18181B"; // default black
+          if (isTitle) {
+            textColor = "1F2544"; // Navy
+          } else if (isSectionHeader) {
+            textColor = "0F766E"; // Emerald / Green for section headers
           }
 
           docxChildren.push(
             new Paragraph({
               alignment: isCenter ? AlignmentType.CENTER : AlignmentType.LEFT,
-              spacing: { after: isHeading ? 100 : 40 },
+              spacing: {
+                before: isSectionHeader ? 160 : isTitle ? 120 : 40,
+                after: isTitle ? 80 : isSectionHeader ? 80 : 40,
+              },
               children: [
                 new TextRun({
-                  text: trimmedLine,
-                  bold: isBold,
+                  text: fullLineText,
+                  font: "Calibri",
+                  bold: isTitle || isSectionHeader || isSubHeader,
+                  size: isSectionHeader ? Math.max(24, docxHalfPoints) : docxHalfPoints,
                   color: textColor,
-                  size: textSize,
                 }),
               ],
             })
           );
         }
 
-        // Flush any remaining key-value or table rows
-        flushKvRows();
-        flushTableRows();
+        flushTableBuffer();
+
+        // Add embedded photo if present on page
+        if (embeddedPhoto) {
+          const photoScale = Math.min(180 / embeddedPhoto.width, 180 / embeddedPhoto.height, 1);
+          const photoWidth = Math.max(1, Math.round(embeddedPhoto.width * photoScale));
+          const photoHeight = Math.max(1, Math.round(embeddedPhoto.height * photoScale));
+          docxChildren.push(
+            new Paragraph({
+              alignment: AlignmentType.RIGHT,
+              spacing: { after: 120 },
+              children: [
+                new ImageRun({
+                  data: embeddedPhoto.data,
+                  type: "png",
+                  transformation: { width: photoWidth, height: photoHeight },
+                }),
+              ],
+            })
+          );
+          embeddedPhoto = null;
+        }
       }
 
       // Check if PDF had no extractable text (Scanned image PDF) -> Fallback to client-side OCR
@@ -718,7 +630,16 @@ export default function PdfToWordTool() {
       const doc = new Document({
         sections: [
           {
-            properties: {},
+            properties: {
+              page: {
+                margin: {
+                  top: 1080,
+                  right: 1080,
+                  bottom: 1080,
+                  left: 1080,
+                },
+              },
+            },
             children: docxChildren,
           },
         ],
@@ -836,7 +757,17 @@ export default function PdfToWordTool() {
         </div>
 
         {/* Dropzone */}
-        <div className="border-2 border-dashed border-[#E4E0D8] dark:border-[#2A2F4A] rounded-2xl p-8 text-center space-y-4 hover:border-red-400 transition-colors">
+        <label
+          htmlFor="pdf-upload"
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDrop}
+          className={`group relative cursor-pointer border-2 border-dashed rounded-2xl p-8 text-center flex flex-col items-center justify-center space-y-3 transition-all duration-200 block ${
+            isDragOver
+              ? "border-[#F5A623] bg-[#F5A623]/10 dark:bg-[#F5A623]/15 scale-[1.01]"
+              : "border-[#E4E0D8] dark:border-[#2A2F4A] bg-[#FAFAF8] dark:bg-[#1A1F35] hover:border-red-400 dark:hover:border-red-500 hover:bg-[#F0EDE8] dark:hover:bg-[#1E2338]"
+          }`}
+        >
           <input
             type="file"
             accept=".pdf,application/pdf"
@@ -844,21 +775,18 @@ export default function PdfToWordTool() {
             id="pdf-upload"
             className="hidden"
           />
-          <label
-            htmlFor="pdf-upload"
-            className="cursor-pointer inline-flex flex-col items-center gap-2"
-          >
-            <div className="p-4 rounded-full bg-[#FAFAF8] dark:bg-[#1E2338] text-[#71717A] dark:text-[#A1A1AA]">
-              <FileCode size={28} />
-            </div>
-            <span className="text-sm font-semibold text-[#18181B] dark:text-[#F4F4F5]">
-              {file ? file.name : "Click to select a PDF file"}
-            </span>
-            <span className="text-xs text-[#71717A] dark:text-[#A1A1AA]">
+          <div className="p-4 rounded-full bg-white dark:bg-[#141829] text-[#71717A] dark:text-[#A1A1AA] group-hover:scale-110 transition-transform shadow-sm">
+            <FileCode size={28} className="text-red-500" />
+          </div>
+          <div className="space-y-1">
+            <p className="text-sm font-semibold text-[#18181B] dark:text-[#F4F4F5]">
+              {file ? file.name : "Click or drag & drop to select a PDF file"}
+            </p>
+            <p className="text-xs text-[#71717A] dark:text-[#A1A1AA]">
               {file ? `${(file.size / 1024 / 1024).toFixed(2)} MB` : "Supports PDF files up to 50MB"}
-            </span>
-          </label>
-        </div>
+            </p>
+          </div>
+        </label>
 
         {/* OCR Language Selector (for scanned PDFs) */}
         {file && status !== "done" && (
