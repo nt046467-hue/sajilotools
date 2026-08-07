@@ -63,12 +63,18 @@ export const TOOL_COMPONENTS: Record<string, any> = {
   "vehicle-tax-calculator": dynamic(() => import("@/components/tools/VehicleTaxCalculatorTool"), { ssr: false }),
   "ward-municipality-lookup": dynamic(() => import("@/components/tools/WardMunicipalityLookupTool"), { ssr: false }),
 
-  // Everyday Category Tools
   "unit-converter": dynamic(() => import("@/components/tools/UnitConverterTool")),
   "percentage-calculator": dynamic(() => import("@/components/tools/PercentageCalculatorTool")),
   "gpa-percentage-converter": dynamic(() => import("@/components/tools/GpaPercentageConverterTool")),
   "bmi-calculator": dynamic(() => import("@/components/tools/BmiCalculatorTool")),
   "discount-calculator": dynamic(() => import("@/components/tools/DiscountCalculatorTool")),
+
+  // New High-RPM Global Tools
+  "hmac-generator": dynamic(() => import("@/components/tools/HmacGeneratorTool"), { ssr: false }),
+  "random-token-generator": dynamic(() => import("@/components/tools/RandomTokenGeneratorTool"), { ssr: false }),
+  "file-checksum-verifier": dynamic(() => import("@/components/tools/FileChecksumVerifierTool"), { ssr: false }),
+  "bmr-calculator": dynamic(() => import("@/components/tools/BmrTdeeCalculatorTool"), { ssr: false }),
+  "calorie-calculator": dynamic(() => import("@/components/tools/CalorieCalculatorTool"), { ssr: false }),
 };
 
 export default function ToolPageClient({

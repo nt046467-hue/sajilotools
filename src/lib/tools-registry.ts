@@ -16,6 +16,8 @@ export type ToolDef = {
   featured?: boolean;
   trending?: boolean;
   isLatest?: boolean;
+  seoTitle?: string;
+  seoDescription?: string;
 };
 
 export type CategoryDef = {
@@ -109,6 +111,8 @@ export const TOOLS: ToolDef[] = [
     darkColor: "#9AA3D6",
     isClientSide: true,
     featured: true,
+    seoTitle: "JSON Formatter & Validator \u2013 Free Online Tool | SajiloTools",
+    seoDescription: "Format, validate, and beautify JSON instantly. Free, fast, works entirely in your browser \u2014 no sign-up needed.",
   },
   {
     slug: "base64-encoder",
@@ -147,6 +151,8 @@ export const TOOLS: ToolDef[] = [
     darkColor: "#9AA3D6",
     isClientSide: true,
     trending: true,
+    seoTitle: "Hash Generator \u2013 MD5, SHA-1, SHA-256, SHA-512 Online | SajiloTools",
+    seoDescription: "Generate MD5, SHA-1, SHA-256, and SHA-512 hashes from text instantly, free and private in your browser.",
   },
   {
     slug: "regex-tester",
@@ -185,6 +191,8 @@ export const TOOLS: ToolDef[] = [
     darkColor: "#9AA3D6",
     isClientSide: true,
     trending: true,
+    seoTitle: "Strong Password Generator \u2013 Free & Secure | SajiloTools",
+    seoDescription: "Generate strong, random, secure passwords instantly. Customize length and character types. Free, private, runs in your browser.",
   },
   {
     slug: "lorem-ipsum",
@@ -260,6 +268,8 @@ export const TOOLS: ToolDef[] = [
     color: "#1F2544",
     darkColor: "#9AA3D6",
     isClientSide: true,
+    seoTitle: "UUID Generator \u2013 Free Online, Bulk & v4 | SajiloTools",
+    seoDescription: "Generate v4 UUIDs instantly, in bulk if needed. Free, fast, and private \u2014 works entirely in your browser.",
   },
   {
     slug: "jwt-decoder",
@@ -296,6 +306,45 @@ export const TOOLS: ToolDef[] = [
     color: "#1F2544",
     darkColor: "#9AA3D6",
     isClientSide: true,
+  },
+  {
+    slug: "hmac-generator",
+    name: "HMAC Generator",
+    desc: "Generate cryptographic HMAC signatures using SHA-256, SHA-512, MD5, or SHA-1 with custom secret keys",
+    category: "Developer",
+    categorySlug: "developer",
+    icon: "ShieldCheck",
+    badge: "New",
+    color: "#1F2544",
+    darkColor: "#9AA3D6",
+    isClientSide: true,
+    trending: true,
+  },
+  {
+    slug: "random-token-generator",
+    name: "Random Token Generator",
+    desc: "Generate cryptographically secure API keys, secret tokens, hex strings, and bulk random keys",
+    category: "Developer",
+    categorySlug: "developer",
+    icon: "KeySquare",
+    badge: "New",
+    color: "#1F2544",
+    darkColor: "#9AA3D6",
+    isClientSide: true,
+    trending: true,
+  },
+  {
+    slug: "file-checksum-verifier",
+    name: "File Checksum Verifier",
+    desc: "Verify file integrity locally by calculating SHA-256, SHA-512, SHA-1, and MD5 hashes without uploading files",
+    category: "Developer",
+    categorySlug: "developer",
+    icon: "FileCheck",
+    badge: "New",
+    color: "#1F2544",
+    darkColor: "#9AA3D6",
+    isClientSide: true,
+    featured: true,
   },
 
   // ── Text ──
@@ -691,6 +740,8 @@ export const TOOLS: ToolDef[] = [
     color: "#DC2626",
     darkColor: "#F87171",
     isClientSide: true,
+    seoTitle: "English to Nepali Translator (Free) – Translate Instantly | SajiloTools",
+    seoDescription: "Translate text between English and Nepali Devanagari instantly, free, and private — no sign-up, works right in your browser.",
   },
   {
     slug: "nepali-date-converter",
@@ -842,6 +893,32 @@ export const TOOLS: ToolDef[] = [
     color: "#0D9488",
     darkColor: "#2DD4BF",
     isClientSide: true,
+  },
+  {
+    slug: "bmr-calculator",
+    name: "BMR & TDEE Calculator",
+    desc: "Calculate Basal Metabolic Rate and Total Daily Energy Expenditure with Mifflin-St Jeor & Katch-McArdle formulas",
+    category: "Everyday",
+    categorySlug: "everyday",
+    icon: "Flame",
+    badge: "New",
+    color: "#0D9488",
+    darkColor: "#2DD4BF",
+    isClientSide: true,
+    featured: true,
+  },
+  {
+    slug: "calorie-calculator",
+    name: "Calorie & Macro Calculator",
+    desc: "Calculate daily calorie targets for weight loss, maintenance, or muscle gain with macro ratios (Protein, Carbs, Fats)",
+    category: "Everyday",
+    categorySlug: "everyday",
+    icon: "HeartPulse",
+    badge: "New",
+    color: "#0D9488",
+    darkColor: "#2DD4BF",
+    isClientSide: true,
+    trending: true,
   },
 ];
 

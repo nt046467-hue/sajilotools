@@ -1616,6 +1616,170 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Enter the price and percentage values.",
       "View the final price, money saved, and total breakdown."
     ]
+  },
+  "hmac-generator": {
+    slug: "hmac-generator",
+    aboutParagraphs: [
+      "HMAC Generator (Hash-based Message Authentication Code) is a powerful, client-side cryptographic tool designed for backend engineers, API developers, and security personnel. It computes keyed hash message authentication signatures using standard hashing algorithms including SHA-256, SHA-512, SHA-1, and MD5 combined with a secret key.",
+      "HMAC signatures are fundamental to modern web security architecture, API payload signing (such as AWS SigV4, GitHub webhooks, Stripe webhooks, and OAuth 2.0), and data integrity verification. All HMAC calculations execute 100% in your local browser memory using Web Crypto APIs, keeping your secret keys and sensitive payloads private.",
+      "The tool supports output signature formatting in both Hexadecimal (Hex) and Base64 strings, allowing instant comparison against API gateway signatures and webhook verification headers."
+    ],
+    faqs: [
+      {
+        question: "What is an HMAC and how does it differ from a standard cryptographic hash?",
+        answer: "A standard hash (like SHA-256) only verifies data integrity. An HMAC incorporates a secret key alongside the message, verifying both data integrity AND authenticating the identity of the sender who holds the secret key."
+      },
+      {
+        question: "Which HMAC algorithms are recommended for production APIs?",
+        answer: "HMAC-SHA-256 and HMAC-SHA-512 are the current industry standards for API authentication and webhook signatures. HMAC-SHA-1 and HMAC-MD5 are maintained for legacy system compatibility."
+      },
+      {
+        question: "Is my secret key transmitted over the network when using this tool?",
+        answer: "No. The entire HMAC computation takes place locally inside your web browser session using client-side JavaScript and the Web Crypto API. No data is sent to external servers."
+      },
+      {
+        question: "How do I verify webhook signatures from Stripe or GitHub using HMAC?",
+        answer: "Enter your webhook secret as the Secret Key, paste the raw request payload into the message field, select HMAC-SHA-256, and compare the resulting hex output against the signature header."
+      }
+    ],
+    howToSteps: [
+      "Enter or generate a secret key in the Secret Key input field.",
+      "Select your preferred output encoding (Hexadecimal or Base64).",
+      "Paste your request payload or plain text message.",
+      "Copy the computed HMAC-SHA-256 or HMAC-SHA-512 signature with one click."
+    ]
+  },
+
+  "random-token-generator": {
+    slug: "random-token-generator",
+    aboutParagraphs: [
+      "Random Token Generator creates cryptographically secure API keys, secret tokens, session identifiers, hex keys, and high-entropy random strings. Powered by the browser's crypto.getRandomValues engine, it guarantees true cryptographic randomness essential for system security.",
+      "Whether you are bootstrapping a new backend service, generating database secret keys, producing bearer tokens, or issuing bulk user registration pins, this tool provides customizable character sets, variable token lengths up to 256 characters, and bulk generation up to 100 tokens at once.",
+      "Tokens can be copied individually, copied in bulk, or exported directly as clean .TXT files for immediate integration into .env files or secure key vaults."
+    ],
+    faqs: [
+      {
+        question: "Are these tokens cryptographically secure?",
+        answer: "Yes. All tokens are generated using Web Crypto API's window.crypto.getRandomValues(), which uses system-level hardware entropy rather than predictable pseudo-random math functions."
+      },
+      {
+        question: "Can I generate API secrets for production deployment?",
+        answer: "Yes. Selecting Hex or Base64 with a length of 32 or 64 characters produces high-entropy secrets suitable for JWT signing keys, database passwords, and API secret keys."
+      },
+      {
+        question: "What is the maximum number of tokens I can generate at once?",
+        answer: "You can generate up to 100 tokens per batch with a single click, with lengths ranging from 8 to 256 characters."
+      },
+      {
+        question: "Is any record of my generated tokens saved or stored?",
+        answer: "No. Token generation occurs exclusively in your browser memory. Once you refresh or close the tab, the generated tokens are completely wiped."
+      }
+    ],
+    howToSteps: [
+      "Select your desired token format (Hex, Base64, Alphanumeric, Numeric PIN, or Custom).",
+      "Adjust token length (e.g. 32 or 64 characters) and bulk quantity.",
+      "Click 'Regenerate Tokens' to issue fresh cryptographic keys.",
+      "Use 'Copy All' or 'Export .TXT' to export your generated tokens."
+    ]
+  },
+
+  "file-checksum-verifier": {
+    slug: "file-checksum-verifier",
+    aboutParagraphs: [
+      "File Checksum Verifier is a zero-footprint browser utility for testing file integrity and verifying digital signatures of software installers, ISO images, compressed archives, and firmware files. It calculates SHA-256, SHA-512, SHA-1, and MD5 checksums directly from local files.",
+      "Before installing software or running downloaded executables, comparing a file's hash against the developer's official published checksum ensures the file has not been corrupted during download or compromised by malicious tampering.",
+      "Because SajiloTools uses the Web Crypto API, files are read locally in browser memory without ever being uploaded across the network, enabling instant verification of multi-gigabyte files."
+    ],
+    faqs: [
+      {
+        question: "Why should I verify file checksums after downloading software?",
+        answer: "Verifying checksums confirms that the file you downloaded is 100% identical to the author's original file, protecting you against corrupted downloads and malware insertion."
+      },
+      {
+        question: "Are my private files uploaded to SajiloTools servers?",
+        answer: "No. File hashing is performed entirely on your computer using client-side JavaScript. Your files never leave your device."
+      },
+      {
+        question: "How does the Expected Checksum Matcher work?",
+        answer: "Paste the official hash string provided on the software download page into the Expected Checksum field. Our tool automatically checks all computed hashes and highlights a verified match in green."
+      },
+      {
+        question: "Which checksum hash is considered the most secure?",
+        answer: "SHA-256 and SHA-512 are currently the most secure and resistant to collision attacks. MD5 and SHA-1 are included for verifying legacy downloads."
+      }
+    ],
+    howToSteps: [
+      "Drag and drop any file or click 'Choose a local file'.",
+      "Optionally paste the vendor's official hash into 'Verify Against Expected Checksum'.",
+      "View calculated SHA-256, SHA-512, SHA-1, and MD5 hashes.",
+      "Check the green match badge to confirm authentic file integrity."
+    ]
+  },
+
+  "bmr-calculator": {
+    slug: "bmr-calculator",
+    aboutParagraphs: [
+      "BMR & TDEE Calculator determines your Basal Metabolic Rate (BMR) and Total Daily Energy Expenditure (TDEE), giving you the scientific baseline needed to achieve body composition goals including fat loss, body recomposition, and muscle growth.",
+      "Basal Metabolic Rate measures the exact number of calories your body burns at complete rest to keep your heart, brain, lungs, and kidneys functioning. By combining your BMR with your daily physical activity level, TDEE reveals your true daily calorie maintenance requirement.",
+      "Supports both Imperial (lbs, ft/in) and Metric (kg, cm) measurement standards, as well as the gold-standard Mifflin-St Jeor and Revised Harris-Benedict formulas used by dietitians worldwide."
+    ],
+    faqs: [
+      {
+        question: "What is the difference between BMR and TDEE?",
+        answer: "BMR is the energy burned at total rest (sleeping/lying down). TDEE includes BMR plus all physical activity (walking, working, working out). TDEE represents your daily maintenance calories."
+      },
+      {
+        question: "How many calories should I eat to lose weight?",
+        answer: "To lose approximately 1 lb (0.45 kg) of body fat per week, consume 500 calories below your TDEE daily. For mild weight loss, target 250 calories below your TDEE."
+      },
+      {
+        question: "Which BMR equation is most accurate?",
+        answer: "The Mifflin-St Jeor equation is widely recognized by clinical dietitians as the most accurate formula for estimated energy requirements in non-obese and obese adults."
+      },
+      {
+        question: "Should I eat below my BMR for faster weight loss?",
+        answer: "No. Eating below your BMR for extended periods can cause metabolic adaptation, muscle loss, severe fatigue, and nutrient deficiencies. Always target calories between your BMR and TDEE."
+      }
+    ],
+    howToSteps: [
+      "Select Imperial (lbs, ft/in) or Metric (kg, cm) units.",
+      "Enter your age, gender, weight, and height.",
+      "Select your daily physical activity level from Sedentary to Extra Active.",
+      "Review your BMR, TDEE maintenance calories, and targeted fat loss/muscle gain calorie goals."
+    ]
+  },
+
+  "calorie-calculator": {
+    slug: "calorie-calculator",
+    aboutParagraphs: [
+      "Calorie & Macro Calculator calculates customized daily macronutrient targets—Protein, Carbohydrates, and Fats—in exact grams based on your total daily calorie intake and fitness goals.",
+      "Nutrition science demonstrates that while total calorie intake controls body weight changes, macronutrient composition determines whether weight gain or loss comes from body fat or lean muscle mass. Hitting adequate protein targets preserves lean tissue during fat loss phases and drives muscle protein synthesis during bulking phases.",
+      "Provides presets for High Protein / Athletic diets, Balanced ratios, and Low Carb / Ketogenic splits, as well as meal-by-meal macro breakdowns for 3, 4, or 5 meals per day."
+    ],
+    faqs: [
+      {
+        question: "How many grams of protein do I need per day?",
+        answer: "For active individuals and weightlifters, evidence-based guidelines recommend 0.8 to 1.0 grams of protein per pound of body weight (1.6 to 2.2g per kg)."
+      },
+      {
+        question: "How are calories converted into grams of protein, carbs, and fats?",
+        answer: "Protein and Carbohydrates contain 4 calories per gram. Fats contain 9 calories per gram. Our calculator multiplies total calories by your target ratio percentages and divides by these energy density constants."
+      },
+      {
+        question: "What macro ratio is best for muscle gain?",
+        answer: "A High Protein preset (35% Protein, 40% Carbohydrates, 25% Fats) coupled with a slight calorie surplus (+300 to +500 kcal above TDEE) provides optimal amino acids and glycogen for workouts."
+      },
+      {
+        question: "Can I customize my macronutrient percentages?",
+        answer: "Yes, select 'Custom Percentage Split' to adjust sliders for Protein, Carbs, and Fats to match your specific dietary preferences."
+      }
+    ],
+    howToSteps: [
+      "Enter your target daily calorie intake.",
+      "Choose a diet preset (High Protein, Balanced, Low Carb) or enter custom percentages.",
+      "Review your target daily grams for Protein, Carbohydrates, and Fats.",
+      "Select your daily meal frequency to view per-meal macro guidelines."
+    ]
   }
 };
 

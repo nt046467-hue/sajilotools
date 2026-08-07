@@ -92,8 +92,11 @@ export async function generateMetadata({
   const tool = getToolBySlug(params.slug);
   if (!tool) return {};
 
-  const title = `${tool.name} – Free Online Tool | SajiloTools`;
-  const description = `${tool.desc} Free, fast, private — works instantly in your browser, no sign-up needed. Built for Nepal.`;
+  // Prefer custom SEO title/description from registry; fall back to generated defaults
+  const fallbackDescription = `${tool.desc} Free, fast, private — works instantly in your browser, no sign-up needed.${tool.categorySlug === "nepal" ? " Built for Nepal." : ""}`;
+
+  const title = tool.seoTitle ?? `${tool.name} – Free Online Tool | SajiloTools`;
+  const description = tool.seoDescription ?? fallbackDescription;
   const url = `https://sajilotools.vercel.app/tools/${tool.categorySlug}/${tool.slug}`;
 
   return {
