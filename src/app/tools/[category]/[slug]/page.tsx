@@ -93,7 +93,8 @@ export async function generateMetadata({
   if (!tool) return {};
 
   // Prefer custom SEO title/description from registry; fall back to generated defaults
-  const fallbackDescription = `${tool.desc} Free, fast, private — works instantly in your browser, no sign-up needed.${tool.categorySlug === "nepal" ? " Built for Nepal." : ""}`;
+  const isNepalTool = tool.category === "Nepal Tools" || tool.categorySlug === "nepal";
+  const fallbackDescription = `${tool.desc} Free, fast, private — works instantly in your browser, no sign-up needed.${isNepalTool ? " Built for Nepal." : ""}`;
 
   const title = tool.seoTitle ?? `${tool.name} – Free Online Tool | SajiloTools`;
   const description = tool.seoDescription ?? fallbackDescription;
@@ -103,7 +104,14 @@ export async function generateMetadata({
     title,
     description,
     alternates: { canonical: url },
-    keywords: [tool.name, tool.category, "Nepal online tool", "free utility", "SajiloTools", tool.slug],
+    keywords: [
+      tool.name,
+      tool.category,
+      ...(isNepalTool ? ["Nepal online tool"] : ["online tool"]),
+      "free utility",
+      "SajiloTools",
+      tool.slug,
+    ],
     openGraph: {
       title,
       description,
@@ -122,6 +130,7 @@ export async function generateMetadata({
   };
 }
 
+import { redirect } from "next/navigation";
 import NotFoundView from "@/components/NotFoundView";
 
 export default function ToolPage({
@@ -139,6 +148,11 @@ export default function ToolPage({
         message={`We couldn't find a tool matching "${params?.slug}". It might have been moved or renamed.`}
       />
     );
+  }
+
+  // Redirect mismatched category URLs (e.g. /tools/text/tax-calculator) to their canonical route (/tools/finance/tax-calculator)
+  if (params.category !== tool.categorySlug) {
+    redirect(`/tools/${tool.categorySlug}/${tool.slug}`);
   }
 
   const Icon = getIcon(tool.icon);

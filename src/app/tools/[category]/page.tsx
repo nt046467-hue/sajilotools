@@ -10,8 +10,9 @@ export async function generateMetadata({
   const cat = getCategoryBySlug(params.category);
   if (!cat) return {};
 
+  const isNepalCat = cat.slug === "nepal" || cat.name === "Nepal Tools";
   const title = `${cat.name} Tools | SajiloTools — Free Online Tools`;
-  const description = `${cat.desc} Free, fast, no sign-up required. Built for Nepal.`;
+  const description = `${cat.desc} Free, fast, no sign-up required.${isNepalCat ? " Built for Nepal." : ""}`;
   const url = `https://sajilotools.vercel.app/tools/${cat.slug}`;
 
   return {

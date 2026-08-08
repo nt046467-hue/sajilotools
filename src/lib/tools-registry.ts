@@ -111,8 +111,8 @@ export const TOOLS: ToolDef[] = [
     darkColor: "#9AA3D6",
     isClientSide: true,
     featured: true,
-    seoTitle: "JSON Formatter & Validator \u2013 Free Online Tool | SajiloTools",
-    seoDescription: "Format, validate, and beautify JSON instantly. Free, fast, works entirely in your browser \u2014 no sign-up needed.",
+    seoTitle: "JSON Formatter & Validator – Prettify & Validate JSON Online | SajiloTools",
+    seoDescription: "Format, validate, and beautify JSON code instantly in your browser. Clean indenting, live syntax error detection, and 100% private client-side processing.",
   },
   {
     slug: "base64-encoder",
@@ -126,6 +126,8 @@ export const TOOLS: ToolDef[] = [
     darkColor: "#9AA3D6",
     isClientSide: true,
     trending: true,
+    seoTitle: "Base64 Encoder & Decoder – Free Online String Converter | SajiloTools",
+    seoDescription: "Encode plain text to Base64 or decode Base64 strings back to text instantly. Safe, fast, and 100% free with browser-based privacy.",
   },
   {
     slug: "url-encoder",
@@ -151,8 +153,8 @@ export const TOOLS: ToolDef[] = [
     darkColor: "#9AA3D6",
     isClientSide: true,
     trending: true,
-    seoTitle: "Hash Generator \u2013 MD5, SHA-1, SHA-256, SHA-512 Online | SajiloTools",
-    seoDescription: "Generate MD5, SHA-1, SHA-256, and SHA-512 hashes from text instantly, free and private in your browser.",
+    seoTitle: "Hash Generator – MD5, SHA-1, SHA-256 & SHA-512 Online | SajiloTools",
+    seoDescription: "Generate MD5, SHA-1, SHA-256, and SHA-512 cryptographic hashes from any text. Fast, free, client-side generation with zero server storage.",
   },
   {
     slug: "regex-tester",
@@ -165,6 +167,8 @@ export const TOOLS: ToolDef[] = [
     color: "#1F2544",
     darkColor: "#9AA3D6",
     isClientSide: true,
+    seoTitle: "Regex Tester & Debugger – Real-Time Regular Expression Checker | SajiloTools",
+    seoDescription: "Test and debug JavaScript regular expressions in real time with live match highlighting, capture group breakdown, and pattern syntax validation.",
   },
   {
     slug: "color-picker",
@@ -282,6 +286,8 @@ export const TOOLS: ToolDef[] = [
     color: "#1F2544",
     darkColor: "#9AA3D6",
     isClientSide: true,
+    seoTitle: "JWT Decoder & Parser – Decode JSON Web Tokens Online | SajiloTools",
+    seoDescription: "Decode JSON Web Tokens (JWT) instantly to inspect header, payload, and signature claims. 100% client-side decoding keeps token secrets private.",
   },
   {
     slug: "unix-timestamp-converter",
