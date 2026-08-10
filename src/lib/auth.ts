@@ -3,9 +3,21 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 
+/**
+ * Lazily resolves NEXTAUTH_SECRET.
+ * During `next build` NODE_ENV is "production" but secrets aren't available,
+ * so we return a build-time placeholder. At actual runtime the real secret is required.
+ */
 const getNextAuthSecret = (): string => {
   const secret = process.env.NEXTAUTH_SECRET;
   if (secret) return secret;
+
+  // NEXT_PHASE is set by Next.js during build ("phase-production-build")
+  const isBuildPhase = process.env.NEXT_PHASE === "phase-production-build";
+  if (isBuildPhase) {
+    return "build-time-placeholder-not-used-at-runtime";
+  }
+
   if (process.env.NODE_ENV === "production") {
     throw new Error("CRITICAL SECURITY ERROR: NEXTAUTH_SECRET environment variable is missing in production.");
   }

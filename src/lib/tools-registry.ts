@@ -682,7 +682,7 @@ export const TOOLS: ToolDef[] = [
     badge: "Live",
     color: "#22C55E",
     darkColor: "#22C55E",
-    isClientSide: true,
+    isClientSide: false,
   },
   {
     slug: "sip-calculator",
@@ -745,7 +745,7 @@ export const TOOLS: ToolDef[] = [
     badge: "Popular",
     color: "#DC2626",
     darkColor: "#F87171",
-    isClientSide: true,
+    isClientSide: false,
     seoTitle: "English to Nepali Translator (Free) – Translate Instantly | SajiloTools",
     seoDescription: "Translate text between English and Nepali Devanagari instantly, free, and private — no sign-up, works right in your browser.",
   },

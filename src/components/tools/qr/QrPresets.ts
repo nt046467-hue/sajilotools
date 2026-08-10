@@ -46,7 +46,7 @@ export const PRESET_TEMPLATES: PresetTemplate[] = [
       errorCorrectionLevel: "M",
     },
     defaultData: {
-      url: "https://getvelomarket.vercel.app/menu",
+      url: "https://sajilotools.vercel.app/menu",
     },
   },
   {

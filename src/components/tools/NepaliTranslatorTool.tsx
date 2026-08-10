@@ -533,11 +533,11 @@ export default function NepaliTranslatorTool() {
         </div>
       )}
 
-      {/* Quality Notice */}
+      {/* Quality Notice & Privacy */}
       <div className="p-3.5 rounded-xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] text-xs text-[#71717A] flex items-start gap-2">
         <Info size={16} className="text-[#DC2626] shrink-0 mt-0.5" />
         <span>
-          <strong>Note:</strong> Machine translation accuracy can vary for complex idioms or formal Nepali literature. Server-side caching accelerates repeated requests while staying within MyMemory daily limits.
+          <strong>Note:</strong> Machine translation uses a secure server proxy cache for fast performance. Translation inputs are processed in-memory and are never stored in a database.
         </span>
       </div>
     </div>

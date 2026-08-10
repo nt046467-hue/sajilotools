@@ -11,7 +11,7 @@ interface QrBatchToolProps {
 
 export default function QrBatchTool({ styleOptions }: QrBatchToolProps) {
   const [inputText, setInputText] = useState(
-    "Table 1, https://getvelomarket.vercel.app/order?table=1\nTable 2, https://getvelomarket.vercel.app/order?table=2\nTable 3, https://getvelomarket.vercel.app/order?table=3"
+    "Table 1, https://sajilotools.vercel.app/order?table=1\nTable 2, https://sajilotools.vercel.app/order?table=2\nTable 3, https://sajilotools.vercel.app/order?table=3"
   );
   const [exportFormat, setExportFormat] = useState<"png" | "svg">("png");
   const [isGenerating, setIsGenerating] = useState(false);
