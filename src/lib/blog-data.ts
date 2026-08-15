@@ -132,7 +132,7 @@ export const BLOG_POSTS: BlogPost[] = [
     readingTime: "6 min read",
     category: "Nepal",
     toolSlugs: [
-      { slug: "land-unit-converter", categorySlug: "nepal", label: "Land Unit Converter" },
+      { slug: "land-converter", categorySlug: "nepal", label: "Land Unit Converter" },
     ],
     content: `
 <h2>Two Systems, One Country</h2>

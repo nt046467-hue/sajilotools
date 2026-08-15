@@ -29,7 +29,9 @@ export async function GET(
       })
       .catch(() => {});
 
-    return NextResponse.redirect(link.longUrl, 302);
+    const res = NextResponse.redirect(link.longUrl, 302);
+    res.headers.set("X-Robots-Tag", "noindex, nofollow");
+    return res;
   } catch (err) {
     console.error("Error in /s/[slug] redirect:", err);
     return NextResponse.redirect(new URL("/tools/developer/link-shortener?error=server-error", req.url));

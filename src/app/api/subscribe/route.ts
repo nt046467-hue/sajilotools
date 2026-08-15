@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendMail } from "@/lib/mailer";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { SITE_URL } from "@/lib/site-config";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -66,7 +67,7 @@ export async function POST(req: NextRequest) {
         "You'll be the first to know when we launch new tools. No spam, ever.",
         "",
         "— The SajiloTools Team",
-        process.env.NEXTAUTH_URL || "https://sajilotools.vercel.app",
+        SITE_URL,
       ].join("\n"),
     }).catch((err) => {
       console.error("Subscriber welcome email failed:", err);

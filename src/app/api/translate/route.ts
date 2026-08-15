@@ -6,6 +6,7 @@ export const dynamic = "force-dynamic";
 // In-memory fallback cache for local dev / unconfigured KV envs
 const inMemoryCache = new Map<string, { value: string; expiry: number }>();
 const CACHE_TTL_SECONDS = 60 * 60 * 24 * 30; // 30 days
+const MAX_MEMORY_CACHE_ENTRIES = 5000;
 
 // Helper: Try Google Translate GTX endpoint
 async function fetchGoogleTranslate(text: string, sourceLang: string, targetLang: string): Promise<string | null> {
@@ -65,8 +66,12 @@ export async function POST(req: NextRequest) {
   try {
     const { text, sourceLang, targetLang } = await req.json();
 
-    if (!text || !sourceLang || !targetLang) {
+    if (!text || !sourceLang || !targetLang || typeof text !== "string") {
       return NextResponse.json({ error: "Missing required parameters (text, sourceLang, targetLang)." }, { status: 400 });
+    }
+
+    if (text.length > 5000) {
+      return NextResponse.json({ error: "Text exceeds maximum supported length of 5,000 characters." }, { status: 400 });
     }
 
     const trimmed = text.trim();
@@ -111,6 +116,10 @@ export async function POST(req: NextRequest) {
       if (process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN) {
         await kv.set(cacheKey, resultText, { ex: CACHE_TTL_SECONDS });
       } else {
+        if (inMemoryCache.size >= MAX_MEMORY_CACHE_ENTRIES) {
+          const oldestKey = inMemoryCache.keys().next().value;
+          if (oldestKey) inMemoryCache.delete(oldestKey);
+        }
         inMemoryCache.set(cacheKey, {
           value: resultText,
           expiry: Date.now() + CACHE_TTL_SECONDS * 1000,

@@ -11,7 +11,7 @@ export async function generateStaticParams() {
   return BLOG_POSTS.map((post) => ({ slug: post.slug }));
 }
 
-import { SITE_CONFIG, getCanonicalUrl } from "@/lib/site-config";
+import { SITE_CONFIG, SITE_URL, getCanonicalUrl } from "@/lib/site-config";
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
@@ -46,5 +46,77 @@ export default async function BlogPostPage({ params }: Props) {
   const post = getBlogPost(slug);
   if (!post) notFound();
 
-  return <BlogPostClient post={post} />;
+  const articleUrl = getCanonicalUrl(`/blog/${post.slug}`);
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": SITE_URL,
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Guides",
+            "item": getCanonicalUrl("/blog"),
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": post.title,
+            "item": articleUrl,
+          },
+        ],
+      },
+      {
+        "@type": "Article",
+        "@id": `${articleUrl}#article`,
+        "isPartOf": {
+          "@type": "WebSite",
+          "@id": `${SITE_URL}/#website`,
+          "name": SITE_CONFIG.name,
+          "url": `${SITE_URL}/`,
+        },
+        "headline": post.title,
+        "description": post.description,
+        "url": articleUrl,
+        "datePublished": post.date,
+        "dateModified": post.date,
+        "inLanguage": "en",
+        "author": {
+          "@type": "Organization",
+          "name": SITE_CONFIG.name,
+          "url": SITE_URL,
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": SITE_CONFIG.name,
+          "url": SITE_URL,
+          "logo": {
+            "@type": "ImageObject",
+            "url": `${SITE_URL}/android-chrome-512x512.png`,
+            "width": 512,
+            "height": 512,
+          },
+        },
+        "image": `${SITE_URL}/images/og-default.png`,
+        "mainEntityOfPage": articleUrl,
+      },
+    ],
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <BlogPostClient post={post} />
+    </>
+  );
 }

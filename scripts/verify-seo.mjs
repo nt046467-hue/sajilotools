@@ -172,6 +172,53 @@ if (existsSync(toolContentPath)) {
   }
 }
 
+// ─── 8. Blog & Article Schema & Link Integrity Checks ───────────────────────
+console.log("\n🔍 Blog & Guides Schema & Link Checks:");
+
+const blogDataPath = join(ROOT, "src", "lib", "blog-data.ts");
+if (existsSync(blogDataPath) && existsSync(registryPath)) {
+  const blogDataContent = readFileSync(blogDataPath, "utf8");
+  const registryContent = readFileSync(registryPath, "utf8");
+  const blogToolMatches = [...blogDataContent.matchAll(/slug:\s*["']([a-z0-9-]+)["']/g)].map(m => m[1]);
+  const invalidBlogSlugs = blogToolMatches.filter(slug => !registryContent.includes(`slug: "${slug}"`) && !blogDataContent.includes(`slug: "${slug}",\n    title:`));
+  assert(
+    invalidBlogSlugs.length === 0,
+    `blog-data.ts: All linked tool slugs exist in tools-registry.ts (found ${invalidBlogSlugs.length} invalid: ${invalidBlogSlugs.join(", ")})`
+  );
+}
+
+const blogSlugPagePath = join(ROOT, "src", "app", "blog", "[slug]", "page.tsx");
+if (existsSync(blogSlugPagePath)) {
+  const blogSlugContent = readFileSync(blogSlugPagePath, "utf8");
+  assert(
+    blogSlugContent.includes('"@type": "Article"') && blogSlugContent.includes('"@type": "BreadcrumbList"'),
+    "blog/[slug]/page.tsx: Includes Article & BreadcrumbList JSON-LD structured data"
+  );
+}
+
+// ─── 9. Robots & API Protection Checks ──────────────────────────────────────
+console.log("\n🔍 Security & Crawl Boundary Checks:");
+
+if (existsSync(robotsPath)) {
+  const robotsContent = readFileSync(robotsPath, "utf8");
+  assert(
+    robotsContent.includes('"/s/"') && robotsContent.includes('"/api/"'),
+    "robots.ts: Disallows /s/ and /api/ from crawler indexation"
+  );
+}
+
+const contactApiPath = join(ROOT, "src", "app", "api", "contact", "route.ts");
+if (existsSync(contactApiPath)) {
+  const contactContent = readFileSync(contactApiPath, "utf8");
+  assert(contactContent.includes("SITE_URL"), "api/contact/route.ts: Uses centralized SITE_URL");
+}
+
+const subscribeApiPath = join(ROOT, "src", "app", "api", "subscribe", "route.ts");
+if (existsSync(subscribeApiPath)) {
+  const subscribeContent = readFileSync(subscribeApiPath, "utf8");
+  assert(subscribeContent.includes("SITE_URL"), "api/subscribe/route.ts: Uses centralized SITE_URL");
+}
+
 // ─── Summary ────────────────────────────────────────────────────────────────
 console.log("\n" + "═".repeat(60));
 console.log(`  SEO Verification: ${passed} passed, ${failed} failed`);

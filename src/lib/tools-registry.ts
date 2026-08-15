@@ -926,6 +926,20 @@ export const TOOLS: ToolDef[] = [
     isClientSide: true,
     trending: true,
   },
+  {
+    slug: "age-calculator",
+    name: "Age Calculator & Birthday Countdown",
+    desc: "Calculate exact age in years, months, days, total days alive, and next birthday countdown",
+    category: "Everyday",
+    categorySlug: "everyday",
+    icon: "Cake",
+    badge: "Free",
+    color: "#0D9488",
+    darkColor: "#2DD4BF",
+    isClientSide: true,
+    seoTitle: "Age Calculator Online – Calculate Exact Age & Birthday Countdown",
+    seoDescription: "Calculate your exact age in years, months, weeks, days, and hours with an instant next birthday countdown. 100% free and private browser tool.",
+  },
 ];
 
 export function getToolsByCategory(categorySlug: string): ToolDef[] {

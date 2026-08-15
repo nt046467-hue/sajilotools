@@ -213,7 +213,7 @@ export default function HomePage() {
                 Explore Nepal, Finance, Text, PDF, Image, Developer and Everyday calculators
               </p>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
               {CATEGORIES.map((cat) => {
                 const Icon = cat.Icon;
                 const realCount = REGISTERED_TOOLS.filter(

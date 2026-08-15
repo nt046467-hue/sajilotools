@@ -75,6 +75,7 @@ export const TOOL_COMPONENTS: Record<string, any> = {
   "file-checksum-verifier": dynamic(() => import("@/components/tools/FileChecksumVerifierTool"), { ssr: false }),
   "bmr-calculator": dynamic(() => import("@/components/tools/BmrTdeeCalculatorTool"), { ssr: false }),
   "calorie-calculator": dynamic(() => import("@/components/tools/CalorieCalculatorTool"), { ssr: false }),
+  "age-calculator": dynamic(() => import("@/components/tools/AgeCalculatorTool"), { ssr: false }),
 };
 
 export default function ToolPageClient({
