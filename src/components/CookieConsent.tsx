@@ -66,6 +66,13 @@ export default function CookieConsent({ adsenseClientId }: CookieConsentProps) {
     localStorage.setItem(CONSENT_STORAGE_KEY, choice);
     setConsent(choice);
     setShowBanner(false);
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(
+        new CustomEvent("sajilo_cookie_consent_changed", {
+          detail: { consent: choice },
+        })
+      );
+    }
   };
 
   if (!mounted || !showBanner) return null;

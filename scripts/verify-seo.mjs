@@ -146,30 +146,50 @@ if (existsSync(registryPath)) {
 // ─── 7. Translator privacy note accuracy ────────────────────────────────────
 console.log("\n🔍 Translator Privacy Checks:");
 
+const privacyPolicyPath = join(ROOT, "src", "app", "privacy-policy", "page.tsx");
+if (existsSync(privacyPolicyPath)) {
+  const privacyContent = readFileSync(privacyPolicyPath, "utf8");
+  assert(
+    !privacyContent.includes("never shared with third parties"),
+    "privacy-policy/page.tsx: Does not falsely claim translation text is 'never shared with third parties'"
+  );
+  assert(
+    privacyContent.includes("Google Translate") && privacyContent.includes("MyMemory"),
+    "privacy-policy/page.tsx: Accurately discloses Google Translate and MyMemory providers"
+  );
+}
+
 const translatorPath = join(ROOT, "src", "components", "tools", "NepaliTranslatorTool.tsx");
 if (existsSync(translatorPath)) {
   const translatorContent = readFileSync(translatorPath, "utf8");
   assert(
-    !translatorContent.includes("never stored") || translatorContent.includes("never permanently stored"),
-    "NepaliTranslatorTool.tsx: Does not falsely claim text is 'never stored' (uses 'never permanently stored')"
+    !translatorContent.includes("never shared") && !translatorContent.includes("never stored"),
+    "NepaliTranslatorTool.tsx: Does not contain inaccurate 'never stored/shared' claims"
   );
 }
 
 const toolContentPath = join(ROOT, "src", "lib", "tool-content.ts");
 if (existsSync(toolContentPath)) {
   const toolContent = readFileSync(toolContentPath, "utf8");
-  // Find the nepali-translator FAQ section
   const translatorSection = toolContent.slice(
     toolContent.indexOf('"nepali-translator"'),
     toolContent.indexOf('"nepali-date-converter"')
   );
   if (translatorSection) {
     assert(
-      !translatorSection.includes("is not stored") &&
-        !translatorSection.includes("never stored anywhere"),
-      "tool-content.ts nepali-translator: No false 'never stored' privacy claim"
+      !translatorSection.includes("never shared") && !translatorSection.includes("never stored"),
+      "tool-content.ts nepali-translator: Accurately reflects translation privacy boundaries"
     );
   }
+}
+
+const siteConfigPath = join(ROOT, "src", "lib", "site-config.ts");
+if (existsSync(siteConfigPath)) {
+  const siteConfigContent = readFileSync(siteConfigPath, "utf8");
+  assert(
+    !siteConfigContent.includes("NEXTAUTH_URL"),
+    "site-config.ts: Does not include NEXTAUTH_URL in canonical SEO domain fallback"
+  );
 }
 
 // ─── 8. Blog & Article Schema & Link Integrity Checks ───────────────────────

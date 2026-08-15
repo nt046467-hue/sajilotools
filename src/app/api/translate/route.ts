@@ -30,8 +30,8 @@ async function fetchGoogleTranslate(text: string, sourceLang: string, targetLang
       }
     }
     return null;
-  } catch (err) {
-    console.warn("Google Translate GTX fallback error:", err);
+  } catch (err: any) {
+    console.warn("Google Translate GTX fallback error:", err?.name || "RequestFailed");
     return null;
   }
 }
@@ -56,8 +56,8 @@ async function fetchMyMemoryTranslate(text: string, sourceLang: string, targetLa
       resultText = resultText.replace(/MYMEMORY WARNING:.*$/, "").trim();
     }
     return resultText && resultText.length > 0 ? resultText : null;
-  } catch (err) {
-    console.warn("MyMemory fallback error:", err);
+  } catch (err: any) {
+    console.warn("MyMemory fallback error:", err?.name || "RequestFailed");
     return null;
   }
 }
@@ -94,8 +94,8 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({ translatedText: memoryEntry.value, cached: true });
         }
       }
-    } catch (cacheErr) {
-      console.warn("Translation cache read warning:", cacheErr);
+    } catch (cacheErr: any) {
+      console.warn("Translation cache read warning:", cacheErr?.name || "CacheReadFailed");
     }
 
     // 2. Multi-tier Translation Engine
@@ -125,8 +125,8 @@ export async function POST(req: NextRequest) {
           expiry: Date.now() + CACHE_TTL_SECONDS * 1000,
         });
       }
-    } catch (cacheSetErr) {
-      console.warn("Translation cache write warning:", cacheSetErr);
+    } catch (cacheSetErr: any) {
+      console.warn("Translation cache write warning:", cacheSetErr?.name || "CacheWriteFailed");
     }
 
     return NextResponse.json({ translatedText: resultText, cached: false });

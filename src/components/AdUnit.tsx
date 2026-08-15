@@ -49,6 +49,7 @@ export default function AdUnit({
 }: AdUnitProps) {
   const insRef = useRef<HTMLModElement>(null);
   const pushed = useRef(false);
+  const [consent, setConsent] = useState<"accepted" | "rejected" | "unset">("unset");
   const [adStatus, setAdStatus] = useState<"initial" | "filled" | "unfilled" | "error">("initial");
 
   // Check master AdSense environment variables
@@ -58,8 +59,35 @@ export default function AdUnit({
 
   const isAdActive = enabled && adsenseEnabledEnv && Boolean(clientId);
 
+  // Sync initial consent state from localStorage and listen to dynamic consent changes
   useEffect(() => {
-    if (!isAdActive || !insRef.current) return;
+    if (typeof window === "undefined") return;
+
+    const stored = localStorage.getItem("sajilotools_cookie_consent") as "accepted" | "rejected" | null;
+    if (stored === "accepted" || stored === "rejected") {
+      setConsent(stored);
+    }
+
+    const handleConsentChange = (e: Event) => {
+      const customEvt = e as CustomEvent<{ consent: "accepted" | "rejected" }>;
+      const newConsent = customEvt.detail?.consent;
+      if (newConsent === "accepted") {
+        setConsent("accepted");
+      } else if (newConsent === "rejected") {
+        setConsent("rejected");
+        setAdStatus("unfilled");
+      }
+    };
+
+    window.addEventListener("sajilo_cookie_consent_changed", handleConsentChange);
+    return () => {
+      window.removeEventListener("sajilo_cookie_consent_changed", handleConsentChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    // Strictly do not request ads unless enabled, active, and consent === 'accepted'
+    if (!isAdActive || consent !== "accepted" || !insRef.current) return;
 
     const insElement = insRef.current;
 
@@ -87,20 +115,14 @@ export default function AdUnit({
       attributeFilter: ["data-ad-status", "data-adsbygoogle-status", "style", "class"],
     });
 
-    // Only push ad request if user has accepted cookie consent
+    // Push ad request to Google AdSense queue
     if (!pushed.current) {
       try {
         if (typeof window !== "undefined") {
-          const consent = localStorage.getItem("sajilotools_cookie_consent");
-          if (consent === "accepted") {
-            (window.adsbygoogle = window.adsbygoogle || []).push({});
-            pushed.current = true;
-          } else {
-            // No consent — don't push ad request, collapse the unit
-            setAdStatus("unfilled");
-          }
+          (window.adsbygoogle = window.adsbygoogle || []).push({});
+          pushed.current = true;
         }
-      } catch (err) {
+      } catch {
         // If AdSense script isn't loaded yet or adblock is active, silently handle without breaking UI
         setAdStatus("unfilled");
       }
@@ -109,10 +131,15 @@ export default function AdUnit({
     return () => {
       observer.disconnect();
     };
-  }, [isAdActive, slot]);
+  }, [isAdActive, consent, slot]);
 
-  // If ads are disabled, unfilled, errored, or still waiting for initial response — collapse completely
-  if (!isAdActive || adStatus !== "filled") {
+  // If ads are disabled platform-wide, consent is rejected, or Google marked unfilled/error: collapse completely
+  if (!isAdActive || consent === "rejected" || adStatus === "unfilled" || adStatus === "error") {
+    return null;
+  }
+
+  // If consent is unset, do not render or request ads
+  if (consent !== "accepted") {
     return null;
   }
 
@@ -121,9 +148,10 @@ export default function AdUnit({
       data-ad-placement={placement}
       data-ad-status={adStatus}
       className={`adsense-wrapper w-full overflow-hidden transition-all duration-300 ${
-        adStatus === "filled" ? "my-6 py-2" : "m-0 p-0"
+        adStatus === "filled" ? "my-6 py-2" : "m-0 p-0 h-0 max-h-0"
       } ${className}`}
       style={{
+        height: adStatus === "filled" ? undefined : 0,
         minHeight: adStatus === "filled" && minHeight ? (typeof minHeight === "number" ? `${minHeight}px` : minHeight) : undefined,
       }}
       aria-hidden={adStatus !== "filled"}
