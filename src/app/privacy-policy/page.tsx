@@ -62,7 +62,7 @@ export default function PrivacyPolicyPage() {
               </p>
               <ul className="list-disc list-inside space-y-1 pl-2 text-xs">
                 <li><strong>NRs Currency Converter:</strong> Retrieves official daily foreign exchange reference rates published by Nepal Rastra Bank (NRB).</li>
-                <li><strong>English ↔ Nepali Translator:</strong> Transmits translation query text via our server-side translation proxy. Translated results may be temporarily cached in server memory or cache for performance. Raw query inputs are never permanently stored, logged, or shared with third parties.</li>
+                <li><strong>English ↔ Nepali Translator:</strong> Transmits translation query text via our server-side API to third-party translation providers, specifically Google Translate and MyMemory, for processing. Translation results are cached in our server-side cache (Vercel KV) for up to 30 days to improve response times. The cache key includes a normalized form of the input text. Raw query inputs are not separately logged, sold, or retained beyond the cache. These third-party providers are subject to their own privacy policies.</li>
                 <li><strong>Link Shortener:</strong> Stores original target destination URLs and custom slug aliases in an encrypted database to enable short URL redirection.</li>
                 <li><strong>Gold & Silver Calculator:</strong> Fetches market price reference feeds published by FENEGOSIDA.</li>
               </ul>

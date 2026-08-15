@@ -26,7 +26,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const toolPages: MetadataRoute.Sitemap = TOOLS.map((tool) => ({
     url: `${SITE_URL}/tools/${tool.categorySlug}/${tool.slug}`,
-    lastModified: PLATFORM_LASTMOD,
     changeFrequency: "weekly",
     priority: tool.featured ? 0.9 : 0.8,
   }));

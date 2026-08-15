@@ -87,12 +87,18 @@ export default function AdUnit({
       attributeFilter: ["data-ad-status", "data-adsbygoogle-status", "style", "class"],
     });
 
-    // Push ad request to Google AdSense queue
+    // Only push ad request if user has accepted cookie consent
     if (!pushed.current) {
       try {
         if (typeof window !== "undefined") {
-          (window.adsbygoogle = window.adsbygoogle || []).push({});
-          pushed.current = true;
+          const consent = localStorage.getItem("sajilotools_cookie_consent");
+          if (consent === "accepted") {
+            (window.adsbygoogle = window.adsbygoogle || []).push({});
+            pushed.current = true;
+          } else {
+            // No consent — don't push ad request, collapse the unit
+            setAdStatus("unfilled");
+          }
         }
       } catch (err) {
         // If AdSense script isn't loaded yet or adblock is active, silently handle without breaking UI
@@ -105,8 +111,8 @@ export default function AdUnit({
     };
   }, [isAdActive, slot]);
 
-  // If ads are disabled or unfilled, collapse completely (0 height, 0 margin, no DOM rendering)
-  if (!isAdActive || adStatus === "unfilled" || adStatus === "error") {
+  // If ads are disabled, unfilled, errored, or still waiting for initial response — collapse completely
+  if (!isAdActive || adStatus !== "filled") {
     return null;
   }
 

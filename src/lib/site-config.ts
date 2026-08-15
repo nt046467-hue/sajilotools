@@ -5,7 +5,6 @@ import { TOOLS } from "./tools-registry";
 
 const rawSiteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ||
-  process.env.NEXTAUTH_URL ||
   "https://sajilotools.vercel.app";
 
 // Ensure no trailing slash for consistent URL composition

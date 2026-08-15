@@ -210,12 +210,12 @@ export default function ToolPage({
         ],
       },
       {
-        "@type": "SoftwareApplication",
+        "@type": "WebApplication",
         "name": tool.name,
         "description": tool.desc,
         "url": getCanonicalUrl(`/tools/${tool.categorySlug}/${tool.slug}`),
         "applicationCategory": "UtilitiesApplication",
-        "operatingSystem": "Any (Web-based)",
+        "browserRequirements": "Requires a modern web browser",
         "offers": {
           "@type": "Offer",
           "price": "0",
@@ -448,7 +448,7 @@ export default function ToolPage({
                 {toolContent.privacyNote ||
                   (tool.isClientSide
                     ? `${tool.name} processes all operations 100% locally in your web browser memory. Your files, text snippets, and generated outputs are never stored, logged, or uploaded to any remote server.`
-                    : `${tool.name} securely fetches live reference data via lightweight API queries. Your request input is never retained or shared with third parties.`)}
+                    : `${tool.name} securely fetches live reference data via lightweight API queries. See our Privacy Policy for details on how your data is handled.`)}
               </p>
             </div>
 

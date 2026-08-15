@@ -131,9 +131,10 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ translatedText: resultText, cached: false });
   } catch (error: any) {
-    console.error("API /api/translate error:", error);
+    // Log only the error type/code — avoid leaking user translation text in server logs
+    console.error("API /api/translate error:", error?.name || "UnknownError", error?.code || "");
     return NextResponse.json(
-      { error: error?.message || "Internal server translation error." },
+      { error: "Internal server translation error." },
       { status: 500 }
     );
   }

@@ -1893,7 +1893,7 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "To type phonetically in Devanagari (e.g. typing 'dhanyabad' to get 'धन्यवाद'), use our dedicated Nepali Unicode Typing Tool rather than translation."
     ],
     relatedToolSlugs: ["nepali-unicode", "nepali-date-converter", "nepali-number-words", "nepali-calendar"],
-    privacyNote: "Translation requests are processed via our secure server proxy. Translated results may be temporarily cached in server memory for fast performance. Translation inputs are never permanently stored, logged, or shared with third parties.",
+    privacyNote: "Translation text is sent via our server to third-party translation providers (Google Translate, MyMemory) for processing. Translation results are cached for up to 30 days for performance. Your text is not permanently logged or sold. See our Privacy Policy for full details.",
     faqs: [
       {
         question: "Is this English to Nepali translator free?",
@@ -1913,7 +1913,7 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       },
       {
         question: "Is my translated text stored or logged on your servers?",
-        answer: "No. Translation requests are routed through a secure server proxy. Translations may be temporarily cached in memory to ensure rapid response times, but your text is never permanently stored, sold, or logged."
+        answer: "Translation text is sent via our server to third-party providers (Google Translate, MyMemory) for processing. Translation results may be cached for up to 30 days to improve response times. Your text is not permanently logged, sold, or retained beyond the cache. See our Privacy Policy for details."
       }
     ]
   },
