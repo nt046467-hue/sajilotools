@@ -8,7 +8,8 @@ import {
   X,
   Command,
   ArrowRight,
-  Sparkles,
+  Boxes,
+  Wrench,
   TrendingUp,
   History,
   CornerDownLeft,
@@ -63,6 +64,8 @@ const ICON_MAP: Record<string, React.ElementType> = {
   Vault,
   Receipt,
   TrendingUp,
+  Boxes,
+  Wrench,
 };
 
 // Synonym & tag mappings for enhanced fuzzy discovery
@@ -436,7 +439,7 @@ export default function SearchBar({
           {/* Footer Shortcuts Info */}
           <div className="px-4 py-2 bg-[#FAFAF8] dark:bg-[#1E2338]/60 border-t border-[#E4E0D8] dark:border-[#2A2F48] flex items-center justify-between text-[11px] text-[#71717A] dark:text-[#A1A1AA]">
             <span className="flex items-center gap-1.5">
-              <Sparkles size={12} className="text-[#F5A623]" />
+              <Boxes size={12} className="text-[#F5A623]" />
               {REGISTERED_TOOLS.length} Instant Browser Tools Available
             </span>
             <span className="font-mono text-[10px]">Press ESC to close</span>

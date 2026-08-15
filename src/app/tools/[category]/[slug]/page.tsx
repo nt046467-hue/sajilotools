@@ -30,7 +30,11 @@ import {
   ArrowRight,
   CheckCircle2,
   ListOrdered,
-  Sparkles,
+  ListChecks,
+  Globe2,
+  Info,
+  Boxes,
+  Wrench,
   Percent,
   Cake,
   GraduationCap,
@@ -71,7 +75,8 @@ const ICON_MAP: Record<string, any> = {
   Clock,
   Wand2,
   Crop,
-  Sparkles,
+  Boxes,
+  Wrench,
   Percent,
   Cake,
   GraduationCap,
@@ -347,7 +352,7 @@ export default function ToolPage({
             {toolContent.useCases && toolContent.useCases.length > 0 && (
               <div className="pt-4 border-t border-[#E4E0D8] dark:border-[#1E2338]">
                 <h3 className="text-sm font-semibold text-[#18181B] dark:text-[#F4F4F5] mb-3 flex items-center gap-2">
-                  <CheckCircle2 size={16} className="text-[#F5A623]" /> Common Use Cases
+                  <ListChecks size={16} className="text-[#F5A623]" /> Common Use Cases
                 </h3>
                 <ul className="text-xs text-[#52525B] dark:text-[#A1A1AA] space-y-2">
                   {toolContent.useCases.map((useCase, uIdx) => (
@@ -380,7 +385,7 @@ export default function ToolPage({
             {toolContent.examples && toolContent.examples.length > 0 && (
               <div className="pt-4 border-t border-[#E4E0D8] dark:border-[#1E2338]">
                 <h3 className="text-sm font-semibold text-[#18181B] dark:text-[#F4F4F5] mb-3 flex items-center gap-2">
-                  <Sparkles size={16} className="text-purple-500" /> Real-World Examples
+                  <Globe2 size={16} className="text-purple-500" /> Real-World Examples
                 </h3>
                 <div className="space-y-3">
                   {toolContent.examples.map((ex, eIdx) => (
@@ -419,7 +424,7 @@ export default function ToolPage({
             {toolContent.limitations && toolContent.limitations.length > 0 && (
               <div className="pt-4 border-t border-[#E4E0D8] dark:border-[#1E2338]">
                 <h3 className="text-sm font-semibold text-[#18181B] dark:text-[#F4F4F5] mb-3 flex items-center gap-2">
-                  <CheckCircle2 size={16} className="text-blue-500" /> Important Notes &amp; Limitations
+                  <Info size={16} className="text-blue-500" /> Important Notes &amp; Limitations
                 </h3>
                 <ul className="text-xs text-[#52525B] dark:text-[#A1A1AA] space-y-2">
                   {toolContent.limitations.map((lim, lIdx) => (

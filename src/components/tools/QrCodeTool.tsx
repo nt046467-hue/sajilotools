@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { QrCode, Layers, Shield, Sparkles } from "lucide-react";
+import { QrCode, Layers, Shield } from "lucide-react";
 import QrPayloadForm from "./qr/QrPayloadForm";
 import QrStyleControls from "./qr/QrStyleControls";
 import QrPreviewExport from "./qr/QrPreviewExport";

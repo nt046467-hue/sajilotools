@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { ArrowLeftRight, Clock, Plus, Trash2, Globe, Sparkles, Calendar } from "lucide-react";
+import { ArrowLeftRight, Clock, Plus, Trash2, Globe, Calendar } from "lucide-react";
 
 // List of major world IANA timezones grouped by region
 const TIMEZONES = [
@@ -187,7 +187,7 @@ export default function TimeZoneConverterTool() {
       {/* Quick Shortcuts */}
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-xs font-semibold text-[#71717A] dark:text-[#A1A1AA] flex items-center gap-1">
-          <Sparkles size={14} className="text-[#F5A623]" /> Popular Nepal Routes:
+          <Globe size={14} className="text-[#F5A623]" /> Popular Nepal Routes:
         </span>
         {POPULAR_ROUTES.map((route) => (
           <button

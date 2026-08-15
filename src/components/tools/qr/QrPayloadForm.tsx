@@ -11,7 +11,6 @@ import {
   Phone,
   MapPin,
   Calendar,
-  Sparkles,
 } from "lucide-react";
 import {
   ContentType,

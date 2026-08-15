@@ -9,7 +9,7 @@ import {
   Info,
   Loader2,
   ShieldCheck,
-  Sparkles,
+  Layers,
   Wand2,
   Trash2,
   Archive,
@@ -282,7 +282,7 @@ export default function BackgroundRemoverTool() {
         <Info size={18} className="shrink-0 text-amber-500 mt-0.5" />
         <div>
           <p className="font-bold mb-0.5 flex items-center gap-1.5">
-            <Sparkles size={14} /> Batch Background Removal (Sequential Execution)
+            <Layers size={14} /> Batch Background Removal (Sequential Execution)
           </p>
           <p className="leading-relaxed">
             Processes multiple images sequentially directly in your browser. First run downloads the cached AI model (40–80 MB). All photos stay 100% private on your device.

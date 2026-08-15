@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { History, Sparkles, Trash2, ArrowUpRight, RotateCcw } from "lucide-react";
+import { History, Palette, Trash2, ArrowUpRight, RotateCcw } from "lucide-react";
 import { HistoryItem, PresetTemplate, QrStyleOptions, ContentType } from "./types";
 import { PRESET_TEMPLATES } from "./QrPresets";
 
@@ -76,7 +76,7 @@ export default function QrHistoryManager({
       {/* Preset Templates */}
       <div className="space-y-3">
         <label className="block text-xs font-bold text-[#71717A] dark:text-[#A1A1AA] uppercase tracking-wider flex items-center gap-1.5">
-          <Sparkles size={14} className="text-[#F5A623]" />
+          <Palette size={14} className="text-[#F5A623]" />
           Instant Presets & Design Templates
         </label>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

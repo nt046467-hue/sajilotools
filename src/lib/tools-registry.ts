@@ -88,7 +88,7 @@ export const CATEGORIES: CategoryDef[] = [
   {
     slug: "everyday",
     name: "Everyday",
-    icon: "Sparkles",
+    icon: "Boxes",
     color: "#0D9488",
     darkColor: "#2DD4BF",
     bgClass: "bg-[#F0FDFA] dark:bg-[#042F2E]/60",

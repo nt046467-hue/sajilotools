@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Sparkles, ShieldAlert, Copy, Check, RefreshCw, Ban, ListOrdered, KeyRound } from "lucide-react";
+import { SlidersHorizontal, ShieldAlert, Copy, Check, RefreshCw, Ban, ListOrdered, KeyRound } from "lucide-react";
 
 const AMBIGUOUS_CHARS = /[0OlI1S5]/g;
 
@@ -248,7 +248,7 @@ export default function PasswordGeneratorTool() {
           <div className="grid grid-cols-3 gap-2">
             {[
               { id: "random" as const, label: "Random", icon: RefreshCw },
-              { id: "personalized" as const, label: "Personalize", icon: Sparkles },
+              { id: "personalized" as const, label: "Personalize", icon: SlidersHorizontal },
               { id: "passphrase" as const, label: "Passphrase", icon: KeyRound },
             ].map((m) => (
               <button

@@ -11,7 +11,6 @@ import {
   Minimize2,
   Info,
   X,
-  Sparkles,
 } from "lucide-react";
 import PdfDropzone from "./shared/PdfDropzone";
 import {
@@ -265,7 +264,7 @@ export default function PdfCompressorTool() {
             {result.reduced ? (
               <CheckCircle2 size={20} className="shrink-0 text-emerald-500 mt-0.5" />
             ) : (
-              <Sparkles size={20} className="shrink-0 text-amber-500 mt-0.5" />
+              <Info size={20} className="shrink-0 text-amber-500 mt-0.5" />
             )}
             <div className="space-y-1">
               <h4 className="font-extrabold text-base">

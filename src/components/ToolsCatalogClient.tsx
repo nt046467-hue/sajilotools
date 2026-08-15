@@ -50,6 +50,8 @@ import {
   Receipt,
   Calendar,
   Keyboard,
+  Boxes,
+  Wrench,
 } from "lucide-react";
 import { TOOLS, CATEGORIES } from "@/lib/tools-registry";
 import { getToolAccentStyle } from "@/lib/theme-utils";
@@ -101,6 +103,8 @@ const ICON_MAP: Record<string, any> = {
   Receipt,
   Calendar,
   Keyboard,
+  Boxes,
+  Wrench,
 };
 
 function getIcon(name: string) {

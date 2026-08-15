@@ -7,7 +7,6 @@ import {
   Copy,
   Check,
   ArrowLeftRight,
-  Sparkles,
   AlertCircle,
   Info,
   ExternalLink,
@@ -469,7 +468,7 @@ export default function NepaliTranslatorTool() {
           "Translating..."
         ) : (
           <>
-            <Sparkles size={16} /> Translate Now (अनुवाद गर्नुहोस्)
+            <Languages size={16} /> Translate Now (अनुवाद गर्नुहोस्)
           </>
         )}
       </button>

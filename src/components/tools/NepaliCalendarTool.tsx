@@ -12,7 +12,6 @@ import {
   ShieldCheck,
   Calendar as CalendarIcon,
   Flag,
-  Sparkles,
   Moon,
   Sun,
 } from "lucide-react";
@@ -428,7 +427,7 @@ export default function NepaliCalendarTool() {
               onClick={handleJumpToToday}
               className="px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl bg-[#DC2626]/15 text-[#DC2626] font-bold text-[10px] sm:text-xs hover:bg-[#DC2626]/20 transition-all flex items-center gap-1 shrink-0"
             >
-              <Sparkles size={12} /> Today
+              <CalendarDays size={12} /> Today
             </button>
 
             <select
@@ -702,7 +701,7 @@ export default function NepaliCalendarTool() {
                   </div>
                   <div className="p-2 rounded-lg bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#2A2F48]">
                     <div className="text-[9px] sm:text-[10px] text-[#71717A] font-semibold flex items-center gap-1">
-                      ✨ Nakshatra (नक्षत्र)
+                      <Moon size={11} className="text-[#DC2626]" /> Nakshatra (नक्षत्र)
                     </div>
                     <p className="text-[11px] sm:text-xs font-bold text-[#18181B] dark:text-[#F4F4F5] mt-0.5">
                       {activeDayDetails.panchang.nakshatraNp}

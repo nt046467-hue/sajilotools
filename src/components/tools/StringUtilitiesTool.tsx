@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Copy, Check, Wand2, Download, ArrowLeftRight, Search, Replace } from "lucide-react";
+import { Copy, Check, Type, Download, ArrowLeftRight, Search, Replace } from "lucide-react";
 
 const OPERATIONS = [
   { id: "reverse", label: "Reverse", fn: (s: string) => s.split("").reverse().join("") },
@@ -234,7 +234,7 @@ export default function StringUtilitiesTool() {
 
       {!input && (
         <div className="text-center py-12 text-[#A1A1AA]">
-          <Wand2 size={40} className="mx-auto mb-3 opacity-30" />
+          <Type size={40} className="mx-auto mb-3 opacity-30" />
           <p className="text-sm">Enter text, then click an operation</p>
         </div>
       )}

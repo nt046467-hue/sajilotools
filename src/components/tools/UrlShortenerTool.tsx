@@ -5,7 +5,7 @@ import {
   Copy,
   Check,
   ExternalLink,
-  Sparkles,
+  ArrowDownToLine,
   AlertTriangle,
   BarChart3,
   Clock,
@@ -152,7 +152,7 @@ export default function UrlShortenerTool() {
             </>
           ) : (
             <>
-              <Sparkles size={16} /> Shorten URL
+              <Link2 size={16} /> Shorten URL
             </>
           )}
         </button>

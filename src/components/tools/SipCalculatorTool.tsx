@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { TrendingUp, DollarSign, Percent, Calendar, Sparkles, Layers } from "lucide-react";
+import { TrendingUp, DollarSign, Percent, Calendar, Layers } from "lucide-react";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, Legend } from "recharts";
 
 export default function SipCalculatorTool() {
@@ -146,7 +146,7 @@ export default function SipCalculatorTool() {
             <div className="pt-3 border-t border-[#E4E0D8] dark:border-[#1E2338]">
               <div className="flex items-center justify-between mb-2">
                 <label className="text-xs font-bold text-[#71717A] uppercase tracking-wider flex items-center gap-1">
-                  <Sparkles size={14} className="text-amber-500" /> Annual Step-up SIP (%)
+                  <TrendingUp size={14} className="text-amber-500" /> Annual Step-up SIP (%)
                 </label>
                 <span className="text-xs font-bold text-amber-600 dark:text-amber-400">
                   {stepUpPercent}% yearly increase

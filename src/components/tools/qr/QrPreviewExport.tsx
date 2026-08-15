@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
-import { Download, FileCode, Copy, Check, QrCode, Sparkles } from "lucide-react";
+import { Download, FileCode, Copy, Check, QrCode } from "lucide-react";
 import { QrStyleOptions } from "./types";
 
 interface QrPreviewExportProps {

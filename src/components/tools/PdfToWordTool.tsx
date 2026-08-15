@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { FileText, Download, AlertTriangle, FileCode, CheckCircle2, Loader2, Info, Sparkles } from "lucide-react";
+import { FileText, Download, AlertTriangle, FileCode, CheckCircle2, Loader2, Info, FileCheck, ScanText } from "lucide-react";
 import {
   Document,
   Packer,
@@ -736,7 +736,7 @@ export default function PdfToWordTool() {
         <Info size={18} className="shrink-0 text-amber-500 mt-0.5" />
         <div>
           <p className="font-bold mb-0.5 flex items-center gap-1.5">
-            <Sparkles size={14} className="text-amber-500" /> High-Fidelity Client-Side Conversion
+            <FileCheck size={14} className="text-amber-500" /> High-Fidelity Client-Side Conversion
           </p>
           <p className="opacity-90 leading-relaxed">
             Creates an <strong>editable Word document</strong> from the PDF text and tables, while retaining detected photos and logos. Very complex PDF artwork can shift slightly because Word reflows content differently from PDF.
@@ -793,7 +793,7 @@ export default function PdfToWordTool() {
           <div className="p-4 rounded-2xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F4A] space-y-2">
             <div className="flex items-center justify-between">
               <label className="text-xs font-semibold text-[#18181B] dark:text-[#F4F4F5] flex items-center gap-1.5">
-                <Sparkles size={14} className="text-[#F5A623]" />
+                <ScanText size={14} className="text-[#F5A623]" />
                 OCR Language (for Scanned PDFs)
               </label>
               <span className="text-[10px] text-[#71717A] dark:text-[#A1A1AA]">100% in-browser privacy</span>

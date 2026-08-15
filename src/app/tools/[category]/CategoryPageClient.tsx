@@ -51,6 +51,8 @@ import {
   Building2,
   Wand2,
   Clock,
+  Boxes,
+  Wrench,
 } from "lucide-react";
 import type { ToolDef, CategoryDef } from "@/lib/tools-registry";
 import { getToolAccentStyle } from "@/lib/theme-utils";
@@ -101,6 +103,8 @@ const ICON_MAP: Record<string, any> = {
   Building2,
   Wand2,
   Clock,
+  Boxes,
+  Wrench,
 };
 
 function getIcon(name: string) {

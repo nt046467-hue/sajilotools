@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Keyboard, Copy, Check, Download, Trash2, Info, ArrowRightLeft, Sparkles, FileText } from "lucide-react";
+import { Keyboard, Copy, Check, Download, Trash2, Info, ArrowRightLeft, FileText } from "lucide-react";
 
 // ── ROMANIZED PHONETIC TRANSLITERATION ENGINE ──────────────────────────────────
 
@@ -425,7 +425,7 @@ export default function NepaliUnicodeTool() {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <label className="block text-xs font-bold text-[#71717A] uppercase tracking-wider flex items-center gap-1.5">
-              <Sparkles size={14} className="text-emerald-500" />
+              <FileText size={14} className="text-emerald-500" />
               {mode === "uniToPreeti" ? "Preeti Font Output" : "Nepali Devanagari Unicode Output"}
             </label>
             <div className="flex items-center gap-2">

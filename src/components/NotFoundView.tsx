@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Compass, Search, Home, ArrowLeft, ArrowRight, Sparkles, Calculator, FileText, Image as ImageIcon, Braces, MapPin, Percent, ArrowLeftRight } from "lucide-react";
+import { Compass, Search, Home, ArrowLeft, ArrowRight, Calculator, FileText, Image as ImageIcon, Braces, MapPin, Percent, ArrowLeftRight } from "lucide-react";
 import { getToolAccentStyle } from "@/lib/theme-utils";
 import SearchBar from "@/components/SearchBar";
 import SiteHeader from "@/components/layout/SiteHeader";
@@ -116,7 +116,7 @@ export default function NotFoundView({
             href="/tools"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#0D9488] hover:bg-[#0D9488]/90 text-white text-sm font-bold shadow-md hover:shadow-lg transition-all"
           >
-            <Sparkles size={16} /> Explore All Tools
+            <Compass size={16} /> Explore All Tools
           </Link>
           <Link
             href="/"

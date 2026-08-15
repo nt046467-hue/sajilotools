@@ -7,7 +7,7 @@ import {
   Loader2,
   Archive,
   Sliders,
-  Sparkles,
+  ArrowLeftRight,
   ArrowRight,
   ShieldCheck,
   CheckCircle2,
@@ -383,7 +383,7 @@ export default function ImageConverterTool() {
           <div>
             <div className="flex items-center gap-2.5 mb-2">
               <div className="w-9 h-9 rounded-xl bg-[#2563EB]/10 text-[#2563EB] flex items-center justify-center">
-                <Sparkles size={20} />
+                <ArrowLeftRight size={20} />
               </div>
               <h2 className="text-xl sm:text-2xl font-extrabold text-[#18181B] dark:text-[#F4F4F5]">
                 Batch Image & SVG Converter

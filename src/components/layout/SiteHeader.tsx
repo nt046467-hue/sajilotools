@@ -24,7 +24,7 @@ import {
   MapPin,
   AlignLeft,
   Braces,
-  Sparkles,
+  Boxes,
   Image as ImageIcon,
 } from "lucide-react";
 import SearchBar from "@/components/SearchBar";
@@ -375,7 +375,7 @@ export default function SiteHeader() {
                 { name: "Finance", href: "/tools/finance", icon: Calculator, color: "text-emerald-500" },
                 { name: "Developer", href: "/tools/developer", icon: Braces, color: "text-indigo-500 dark:text-indigo-400" },
                 { name: "Nepal", href: "/tools/nepal", icon: MapPin, color: "text-rose-500" },
-                { name: "Everyday", href: "/tools/everyday", icon: Sparkles, color: "text-teal-500" },
+                { name: "Everyday", href: "/tools/everyday", icon: Boxes, color: "text-teal-500" },
               ].map((cat) => {
                 const CatIcon = cat.icon;
                 return (

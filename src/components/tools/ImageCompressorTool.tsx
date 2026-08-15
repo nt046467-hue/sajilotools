@@ -12,8 +12,8 @@ import {
   AlertTriangle,
   Sliders,
   Maximize2,
+  Minimize2,
   FileArchive,
-  Sparkles,
   ArrowRight,
   ShieldCheck,
 } from "lucide-react";
@@ -477,7 +477,7 @@ export default function ImageCompressorTool() {
                   </>
                 ) : (
                   <>
-                    <Sparkles size={16} />
+                    <Minimize2 size={16} />
                     <span>Compress {items.length} {items.length === 1 ? "Image" : "Images"}</span>
                   </>
                 )}

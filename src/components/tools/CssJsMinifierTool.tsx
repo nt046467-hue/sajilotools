@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { FileArchive, Copy, Check, Download, AlertTriangle, Sparkles, Loader2 } from "lucide-react";
+import { FileArchive, Copy, Check, Download, AlertTriangle, FileCode2, Minimize2, Loader2 } from "lucide-react";
 import { formatBytes } from "@/lib/pdf-utils";
 
 type Mode = "js" | "css";
@@ -281,7 +281,7 @@ export default function CssJsMinifierTool() {
               disabled={loading || !inputCode.trim()}
               className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#1F2544] dark:bg-[#22C55E] text-white dark:text-[#0C0F1E] font-bold text-xs hover:opacity-90 transition-all shadow-sm disabled:opacity-50"
             >
-              {loading ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
+              {loading ? <Loader2 size={16} className="animate-spin" /> : <Minimize2 size={16} />}
               {loading ? "Minifying Code..." : `Minify ${mode.toUpperCase()} Code`}
             </button>
           </div>
@@ -292,7 +292,7 @@ export default function CssJsMinifierTool() {
           <div className="p-5 bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] rounded-2xl space-y-3">
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-[#71717A] uppercase tracking-wider flex items-center gap-1.5">
-                <Sparkles size={14} className="text-[#22C55E]" /> Minified Output
+                <FileCode2 size={14} className="text-[#22C55E]" /> Minified Output
               </label>
 
               {minifiedOutput && (
