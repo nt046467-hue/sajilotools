@@ -3,11 +3,22 @@ export interface ToolFAQ {
   answer: string;
 }
 
+export interface ToolExample {
+  title: string;
+  input: string;
+  output: string;
+}
+
 export interface ToolContent {
   slug: string;
   aboutParagraphs: string[];
   faqs: ToolFAQ[];
   howToSteps?: string[];
+  useCases?: string[];
+  examples?: ToolExample[];
+  limitations?: string[];
+  privacyNote?: string;
+  relatedToolSlugs?: string[];
 }
 
 export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
@@ -18,6 +29,28 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "JSON Formatter & Validator is an essential browser utility for software engineers, API developers, and data analysts who work with JSON data structures. It automatically parses raw, unformatted, or minified JSON strings and formats them into a clean, human-readable hierarchy with syntax highlighting.",
       "Beyond basic indentation and prettifying, this tool performs real-time JSON validation to pinpoint syntax errors such as trailing commas, unescaped strings, or missing quotes. All processing happens 100% locally on your machine, ensuring API keys, payloads, and sensitive customer data never leave your browser."
     ],
+    useCases: [
+      "Formatting compressed REST API response payloads during backend integration testing",
+      "Validating complex JSON config files for Node.js, Python, or Kubernetes before deployment",
+      "Minifying JSON documents to reduce data transfer payloads in network requests"
+    ],
+    howToSteps: [
+      "Paste your raw JSON code or upload a .json file.",
+      "Click 'Format JSON' to clean, indent, and highlight syntax.",
+      "Use 'Copy' or 'Download' to export your formatted JSON."
+    ],
+    examples: [
+      {
+        title: "Minified to 2-Space Pretty Print",
+        input: '{"name":"SajiloTools","type":"Web App","status":200}',
+        output: '{\n  "name": "SajiloTools",\n  "type": "Web App",\n  "status": 200\n}'
+      }
+    ],
+    limitations: [
+      "Input size relies on client browser memory (handles up to ~20MB payloads smoothly)",
+      "Strict JSON spec requiring double quotes around property keys"
+    ],
+    relatedToolSlugs: ["jwt-decoder", "base64-encoder", "regex-tester", "css-js-minifier"],
     faqs: [
       {
         question: "Does this JSON Formatter support large payloads?",
@@ -35,11 +68,6 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
         question: "Does this tool detect syntax errors in JSON?",
         answer: "Yes, if your JSON string has invalid syntax (such as missing brackets or unescaped quotes), the built-in parser highlights the exact line and error details."
       }
-    ],
-    howToSteps: [
-      "Paste your raw JSON code or upload a .json file.",
-      "Click 'Format JSON' to clean, indent, and highlight syntax.",
-      "Use 'Copy' or 'Download' to export your formatted JSON."
     ]
   },
 
@@ -49,6 +77,28 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Base64 Encoder & Decoder provides instant, secure binary-to-text encoding for web developers, system administrators, and security specialists. Base64 encoding is widely used for embedding inline images in CSS, sending binary payloads over HTTP headers, and encoding email attachments.",
       "Our tool handles standard UTF-8 string encoding as well as binary file conversion with full round-trip accuracy. Because operations execute locally in your client session, your tokens and private files remain private."
     ],
+    useCases: [
+      "Encoding API basic authentication credentials (username:password) for HTTP headers",
+      "Converting small icon images into inline Base64 Data URIs for CSS styling",
+      "Decoding Base64-encoded strings from JWT payloads, webhook signatures, or log outputs"
+    ],
+    howToSteps: [
+      "Select 'Encode' or 'Decode' tab mode.",
+      "Paste your text string or drag and drop a raw file.",
+      "Copy the instant Base64 output with a single click."
+    ],
+    examples: [
+      {
+        title: "Plain Text to Base64 String",
+        input: "Hello SajiloTools 🇳🇵",
+        output: "SGVsbG8gU2FqaWxvVG9vbHMg8J%2BGjPCfh7Dwn4ej"
+      }
+    ],
+    limitations: [
+      "Base64 is an encoding scheme, not encryption; anyone can decode a Base64 string",
+      "Increases raw data volume by approximately 33%"
+    ],
+    relatedToolSlugs: ["image-to-base64", "url-encoder", "jwt-decoder", "hash-generator"],
     faqs: [
       {
         question: "What is Base64 encoding used for?",
@@ -75,6 +125,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "URL Encoder & Decoder (Percent-Encoder) safeguards web URLs by encoding special characters into RFC 3986 compliant percent-encoded strings. Reserved characters like spaces, ampersands, question marks, and non-ASCII symbols are converted into safe hexadecimal representation.",
       "Essential for web developers building query strings, deep links, and API request parameters, this tool ensures web browsers and web servers parse your link parameters without broken paths or unexpected errors."
     ],
+    useCases: [
+      "Encoding query parameters containing spaces, ampersands, and accents for web GET requests",
+      "Sanitizing redirects and referral links containing non-ASCII symbols or foreign language scripts",
+      "Decoding percent-encoded URL links from server access logs and analytics paths"
+    ],
+    howToSteps: [
+      "Choose 'Encode' or 'Decode' mode.",
+      "Paste your target URL string or query parameters into the text area.",
+      "Click 'Process' and copy the RFC 3986 compliant result."
+    ],
+    examples: [
+      {
+        title: "Query String Encoding Example",
+        input: "https://sajilotools.vercel.app/search?query=Nepali Date & Time",
+        output: "https%3A%2F%2Fsajilotools.vercel.app%2Fsearch%3Fquery%3DNepali%20Date%20%26%20Time"
+      }
+    ],
+    limitations: [
+      "URL encoding converts reserved characters into %HEX notation; it is not a data encryption method"
+    ],
+    relatedToolSlugs: ["base64-encoder", "link-shortener", "string-utilities", "regex-tester"],
     faqs: [
       {
         question: "Why do URLs need percent-encoding?",
@@ -101,6 +172,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Hash Generator calculates cryptographic checksums (MD5, SHA-1, SHA-256, SHA-512) for text strings and files in real-time. Hashes are one-way cryptographic algorithms used to verify file integrity, generate unique identifiers, and check data tampering.",
       "Whether you are verifying a downloaded software checksum or testing database digest values, all hashing algorithms run locally using standard cryptographic JavaScript libraries."
     ],
+    useCases: [
+      "Verifying checksum integrity of downloaded ISO images and software installers",
+      "Generating SHA-256 database digest keys and unique content fingerprints",
+      "Comparing MD5 file hashes to detect duplicate files in local backups"
+    ],
+    howToSteps: [
+      "Select 'Text Hash' or 'File Checksum' tab.",
+      "Type your input string or upload a target file.",
+      "Instantly view MD5, SHA-1, SHA-256, and SHA-512 hashes side by side."
+    ],
+    examples: [
+      {
+        title: "SHA-256 Text Hashing",
+        input: "sajilotools-2026",
+        output: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918"
+      }
+    ],
+    limitations: [
+      "Cryptographic hashes are deterministic and one-way; they cannot be decrypted back into original plaintext"
+    ],
+    relatedToolSlugs: ["file-checksum-verifier", "hmac-generator", "password-generator", "random-token-generator"],
     faqs: [
       {
         question: "Which hash algorithm should I use for security?",
@@ -127,6 +219,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Regex Tester & Debugger allows developers to write, test, and refine regular expression patterns against sample text in real time. It features match highlighting, group capturing, and regex flag controls (global, case-insensitive, multiline).",
       "Perfect for validating email formats, phone numbers, log patterns, and data extraction rules without needing to restart code compilers."
     ],
+    useCases: [
+      "Testing email, phone number, and password validation patterns for web forms",
+      "Extracting IP addresses, timestamps, or error codes from server log files",
+      "Debugging complex search-and-replace patterns for text processing scripts"
+    ],
+    howToSteps: [
+      "Enter your Regular Expression pattern (e.g. `[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}`).",
+      "Set regex flags (g: global, i: ignore case, m: multiline).",
+      "Type or paste sample text to see instant match highlights and captured groups."
+    ],
+    examples: [
+      {
+        title: "Email Matching Pattern",
+        input: "Contact support@sajilotools.com for assistance.",
+        output: "Match 1: support@sajilotools.com (Index 8-31)"
+      }
+    ],
+    limitations: [
+      "Uses JavaScript RegExp engine syntax rules (ECMAScript specification)"
+    ],
+    relatedToolSlugs: ["string-utilities", "json-formatter", "text-diff", "case-converter"],
     faqs: [
       {
         question: "Which Regex engine does this tool use?",
@@ -153,6 +266,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Color Picker & Palette Generator is a modern utility for UI designers and front-end developers to pick, convert, and harmonize color codes. Easily translate between HEX, RGB, HSL, and HSV color representations.",
       "Copy precise CSS color values, inspect contrast ratios, and build harmonious color schemes for web applications and digital graphics."
     ],
+    useCases: [
+      "Converting HEX design system tokens into CSS `rgb()` or `hsl()` function formats",
+      "Verifying WCAG text contrast ratios against background colors for web accessibility",
+      "Generating complementary and triadic color schemes for website UI components"
+    ],
+    howToSteps: [
+      "Use the interactive visual color picker or enter any HEX/RGB/HSL string.",
+      "Inspect simultaneous code conversions across all major design representations.",
+      "Click any color code card to copy CSS formatting directly."
+    ],
+    examples: [
+      {
+        title: "SajiloTools Brand Gold",
+        input: "#F5A623",
+        output: "RGB(245, 166, 35) | HSL(37°, 91%, 55%)"
+      }
+    ],
+    limitations: [
+      "Renders colors in standard sRGB color space"
+    ],
+    relatedToolSlugs: ["favicon-generator", "css-js-minifier", "image-converter"],
     faqs: [
       {
         question: "Can I convert HEX colors to RGB or HSL?",
@@ -433,13 +567,33 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
     ]
   },
 
-  // ── Text Tools ──────────────────────────────────────────────────────────
   "word-counter": {
     slug: "word-counter",
     aboutParagraphs: [
       "Word & Character Counter provides comprehensive text analysis for content writers, students, SEO specialists, and copywriters. Get instant metrics on word count, character count (with and without spaces), sentence count, paragraph count, and estimated reading time.",
       "Designed for privacy and speed, the analyzer updates live as you type or paste text. Works seamlessly with English, Nepali Devanagari, and multilingual content."
     ],
+    useCases: [
+      "Checking word limit requirements for academic essays, college applications, and blog posts",
+      "Validating character counts for Twitter posts (280 chars), meta descriptions (155 chars), and ad copy",
+      "Estimating speech duration and reading time for articles and presentation scripts"
+    ],
+    howToSteps: [
+      "Type or paste your text into the text editor.",
+      "View live statistics for word, character, sentence, and paragraph counts.",
+      "Inspect keyword frequency density and estimated reading time."
+    ],
+    examples: [
+      {
+        title: "Devanagari & English Mixed Text",
+        input: "सजिलो टूल्स is Nepal's top online utility suite.",
+        output: "7 Words | 49 Characters (with spaces) | 1 Sentence | ~2 sec read time"
+      }
+    ],
+    limitations: [
+      "Word count is calculated based on whitespace and punctuation boundaries"
+    ],
+    relatedToolSlugs: ["case-converter", "string-utilities", "lorem-ipsum", "nepali-unicode"],
     faqs: [
       {
         question: "Does this word counter support Nepali Devanagari text?",
@@ -466,6 +620,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Case Converter transforms text strings instantly into UPPERCASE, lowercase, Title Case, Sentence case, camelCase, PascalCase, snake_case, and kebab-case.",
       "Streamline code variable naming, clean up messy article headlines, and format social media posts with one-click conversion buttons."
     ],
+    useCases: [
+      "Formatting programming code variables into camelCase, snake_case, or kebab-case",
+      "Cleaning up ALL CAPS text or fixing capitalization errors in blog post headlines",
+      "Standardizing database column titles and JSON payload properties"
+    ],
+    howToSteps: [
+      "Paste your text string into the input area.",
+      "Click your target case format button (e.g. Title Case, UPPERCASE, camelCase).",
+      "Click 'Copy' to retrieve your formatted text."
+    ],
+    examples: [
+      {
+        title: "Plain Text to camelCase & Title Case",
+        input: "sajilo tools nepal",
+        output: "camelCase: sajiloToolsNepal | Title Case: Sajilo Tools Nepal"
+      }
+    ],
+    limitations: [
+      "Devanagari and non-cased scripts do not have upper/lower letter distinction"
+    ],
+    relatedToolSlugs: ["string-utilities", "word-counter", "json-formatter", "lorem-ipsum"],
     faqs: [
       {
         question: "What is the difference between camelCase and snake_case?",
@@ -492,6 +667,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Text Diff Checker compares two text documents or code snippets side-by-side and highlights added, deleted, or modified lines.",
       "Essential for developers, editors, and legal document reviews to inspect code revisions and text differences quickly."
     ],
+    useCases: [
+      "Comparing code changes and git commit diffs before merging pull requests",
+      "Checking revisions between legal agreements, contract drafts, and terms documents",
+      "Finding subtle typographical edits or missing lines in large text files"
+    ],
+    howToSteps: [
+      "Paste original text in the left pane and updated text in the right pane.",
+      "Choose 'Split View' (side-by-side) or 'Unified View' (inline).",
+      "Review color-coded line additions (green) and deletions (red)."
+    ],
+    examples: [
+      {
+        title: "Code Revision Comparison",
+        input: "Original: const fee = 10;\nUpdated: const fee = 15; // updated rate",
+        output: "- const fee = 10;\n+ const fee = 15; // updated rate"
+      }
+    ],
+    limitations: [
+      "Line-by-line diff precision relies on newline characters"
+    ],
+    relatedToolSlugs: ["string-utilities", "regex-tester", "word-counter", "markdown-preview"],
     faqs: [
       {
         question: "How does the side-by-side comparison work?",
@@ -518,6 +714,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "String Utilities provides a versatile toolkit for text manipulation: slugify strings for URLs, reverse text, trim whitespace, remove duplicate lines, count character frequencies, and escape HTML.",
       "A Swiss army knife for writers, web developers, and data scrubbers needing quick text cleaning without writing custom scripts."
     ],
+    useCases: [
+      "Converting blog post titles into clean, hyphenated URL slugs",
+      "Deduplicating long lists of email addresses, URLs, or IDs",
+      "Escaping special characters into safe HTML entities for security"
+    ],
+    howToSteps: [
+      "Paste your text into the workspace.",
+      "Choose a utility function (Slugify, Remove Duplicates, HTML Escape, Reverse, Trim).",
+      "Copy the cleaned output with one click."
+    ],
+    examples: [
+      {
+        title: "Slugify Title Example",
+        input: "Nepal Income Tax Slabs Guide 2083!",
+        output: "nepal-income-tax-slabs-guide-2083"
+      }
+    ],
+    limitations: [
+      "Processes plain text in client memory without external server dependency"
+    ],
+    relatedToolSlugs: ["case-converter", "word-counter", "regex-tester", "url-encoder"],
     faqs: [
       {
         question: "What does the Slugify tool do?",
@@ -545,6 +762,28 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "PDF Merger allows you to combine multiple PDF documents, reports, and scanned receipts into a single organized PDF file. Drag and drop files, reorder pages, and merge in seconds.",
       "Your documents are processed locally in your browser using Client-Side PDF libraries — ensuring government documents, academic files, and private bank statements remain 100% confidential."
     ],
+    useCases: [
+      "Combining separate citizenship scans, academic transcripts, and certificates into a single application PDF",
+      "Merging monthly financial reports or invoices into a consolidated annual document",
+      "Reordering and stitching together multi-part scanned contracts"
+    ],
+    howToSteps: [
+      "Drag and drop multiple PDF files or click 'Select PDF Files'.",
+      "Reorder the file cards to arrange document sequence.",
+      "Click 'Merge PDFs' and download your combined PDF document."
+    ],
+    examples: [
+      {
+        title: "Combine Transcripts & Certificate",
+        input: "File 1: Transcript.pdf + File 2: DegreeCertificate.pdf",
+        output: "Single Combined Application.pdf (All pages merged in order)"
+      }
+    ],
+    limitations: [
+      "Merging encrypted or password-protected PDFs requires entering the password first",
+      "Memory usage scales with file sizes; works smoothly for files up to several hundred MB"
+    ],
+    relatedToolSlugs: ["pdf-splitter", "pdf-organizer", "pdf-compressor", "jpg-pdf-converter"],
     faqs: [
       {
         question: "Is there a limit on how many PDFs I can merge?",
@@ -571,6 +810,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "PDF Splitter enables you to extract specific page ranges or split a multi-page PDF into separate standalone document files.",
       "Select custom page ranges (e.g., pages 1-3, 5, 8-10) and save extracted pages immediately without watermarks or quality loss."
     ],
+    useCases: [
+      "Extracting specific pages from a 50-page official government document or legal book",
+      "Splitting a multi-invoice PDF into separate files for accounting",
+      "Removing unnecessary cover pages or annexes from a report before sharing"
+    ],
+    howToSteps: [
+      "Upload your multi-page PDF file.",
+      "Specify page numbers or page ranges (e.g. 1-4, 7).",
+      "Click 'Split PDF' to download your extracted document."
+    ],
+    examples: [
+      {
+        title: "Extract Pages 2 to 5",
+        input: "FullReport.pdf (20 pages), Range: 2-5",
+        output: "Extracted_Pages_2-5.pdf (4 pages)"
+      }
+    ],
+    limitations: [
+      "Requires valid PDF file without corrupt page trees"
+    ],
+    relatedToolSlugs: ["pdf-organizer", "pdf-merger", "pdf-to-word", "jpg-pdf-converter"],
     faqs: [
       {
         question: "Can I extract specific page ranges from a PDF?",
@@ -597,6 +857,28 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "PDF to Word Converter extracts document text, headings, and paragraph formatting from PDF files into editable Microsoft Word (.docx) documents.",
       "Avoid retyping scanned notes or report documents by converting PDFs into clean, editable Word files directly in your web browser."
     ],
+    useCases: [
+      "Converting PDF contract drafts into editable Word documents for text modifications",
+      "Extracting text from research papers and academic PDFs into Word for drafting notes",
+      "Editing old PDF resumes or documents when original source files are lost"
+    ],
+    howToSteps: [
+      "Upload your PDF document.",
+      "Click 'Convert to Word'.",
+      "Download the editable `.docx` file and open in Microsoft Word or Google Docs."
+    ],
+    examples: [
+      {
+        title: "PDF Report to Editable .docx",
+        input: "AnnualReport.pdf",
+        output: "AnnualReport.docx (Editable text and paragraph structure)"
+      }
+    ],
+    limitations: [
+      "Complex multi-column layouts or heavy graphics may require minor formatting adjustments in Word",
+      "Scanned bitmap image PDFs rely on client-side OCR for text extraction"
+    ],
+    relatedToolSlugs: ["pdf-merger", "pdf-compressor", "word-counter", "markdown-preview"],
     faqs: [
       {
         question: "Will the converted Word document be fully editable?",
@@ -623,6 +905,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "PDF Organizer allows you to rotate upside-down pages, delete unwanted pages, and reorder document pages using intuitive visual thumbnail drag-and-drop.",
       "Clean up scanned government forms, remove blank pages, and fix page orientations before printing or emailing documents."
     ],
+    useCases: [
+      "Reordering scrambled pages from a bulk scanner upload",
+      "Deleting blank divider pages before emailing a report",
+      "Rotating sideways scanned certificates into proper portrait/landscape orientation"
+    ],
+    howToSteps: [
+      "Upload your PDF file.",
+      "Drag thumbnails to reorder pages; click rotate or delete icons on individual pages.",
+      "Download your clean, reorganized PDF file."
+    ],
+    examples: [
+      {
+        title: "Fix Scanned Orientation",
+        input: "ScannedDocument.pdf (Page 3 rotated 90° sideways)",
+        output: "OrganizedDocument.pdf (All pages right-side up in sequential order)"
+      }
+    ],
+    limitations: [
+      "Client-side thumbnail rendering relies on browser memory"
+    ],
+    relatedToolSlugs: ["pdf-merger", "pdf-splitter", "pdf-compressor", "jpg-pdf-converter"],
     faqs: [
       {
         question: "Can I rotate individual pages in a PDF?",
@@ -649,6 +952,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "PDF Watermark adds custom text or logo image watermarks across every page of your PDF documents to protect intellectual property and prevent unauthorized distribution.",
       "Adjust watermark opacity, rotation angle, font size, and positioning with live visual preview."
     ],
+    useCases: [
+      "Stamping 'CONFIDENTIAL' or 'DRAFT' across business proposals and legal contracts",
+      "Adding company branding logos to exported PDF invoices and presentations",
+      "Protecting copyright on distributed ebooks and study notes"
+    ],
+    howToSteps: [
+      "Upload your target PDF file.",
+      "Enter custom watermark text or upload a PNG/JPG logo image.",
+      "Adjust opacity, font size, and diagonal rotation, then download your watermarked PDF."
+    ],
+    examples: [
+      {
+        title: "Confidential Stamp",
+        input: "Proposal.pdf + Text: 'CONFIDENTIAL', Opacity: 20%, Angle: 45°",
+        output: "Proposal_Watermarked.pdf (Faint diagonal stamp across all pages)"
+      }
+    ],
+    limitations: [
+      "Applies watermarks on top of existing PDF layers"
+    ],
+    relatedToolSlugs: ["image-watermark", "pdf-merger", "pdf-organizer", "pdf-compressor"],
     faqs: [
       {
         question: "Can I add both text and image watermarks?",
@@ -675,6 +999,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "JPG to PDF Converter converts photos, scanned documents, and images (JPG, PNG, WebP) into a single clean PDF document. Alternatively, convert PDF pages into high-resolution JPG images.",
       "Perfect for submitting scanned citizenship cards, passport copies, transcripts, and official application forms in Nepal."
     ],
+    useCases: [
+      "Combining front and back citizenship photos into a single PDF for Nepalese online portals",
+      "Converting photo receipts and bill photos into a PDF for expense reimbursement",
+      "Extracting pages of a PDF book into JPG image files"
+    ],
+    howToSteps: [
+      "Choose 'JPG to PDF' or 'PDF to JPG' mode.",
+      "Upload your image files or PDF document.",
+      "Reorder pages and click 'Convert' to download."
+    ],
+    examples: [
+      {
+        title: "Citizenship Scans to Single PDF",
+        input: "Citizenship_Front.jpg + Citizenship_Back.jpg",
+        output: "Citizenship_Combined.pdf (2-page clean A4 document)"
+      }
+    ],
+    limitations: [
+      "Maintains source image resolution without lossy re-encoding unless specified"
+    ],
+    relatedToolSlugs: ["image-converter", "pdf-merger", "pdf-compressor", "image-compressor"],
     faqs: [
       {
         question: "Can I convert multiple images into one PDF?",
@@ -701,6 +1046,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "PDF Compressor reduces large PDF file sizes by recompressing embedded images and removing redundant metadata objects.",
       "Shrink PDFs to meet strict file attachment size limits (e.g. under 2MB) for government job portals, university applications, and email attachments."
     ],
+    useCases: [
+      "Compressing oversized scanned application PDFs to meet Lok Sewa or NEB 2MB file caps",
+      "Reducing multi-megabyte PDF presentations for faster email distribution",
+      "Optimizing ebook PDFs for lower mobile bandwidth consumption"
+    ],
+    howToSteps: [
+      "Upload your PDF file.",
+      "Select compression quality level (High Quality, Balanced, Extreme Compression).",
+      "Download your compressed PDF and inspect file size savings."
+    ],
+    examples: [
+      {
+        title: "Application PDF Compression",
+        input: "ScannedDocuments.pdf (8.5 MB)",
+        output: "ScannedDocuments_Compressed.pdf (1.4 MB — 83% reduction)"
+      }
+    ],
+    limitations: [
+      "Compresses embedded images; text and vector fonts remain untouched"
+    ],
+    relatedToolSlugs: ["image-compressor", "pdf-merger", "pdf-to-word", "pdf-organizer"],
     faqs: [
       {
         question: "How much can PDF file size be reduced?",
@@ -728,6 +1094,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Image Compressor optimizes and shrinks JPG, PNG, and WebP image file sizes by up to 80% without noticeable visual quality loss.",
       "Faster image loading improves website performance, reduces bandwidth consumption, and meets file size limits for online job applications."
     ],
+    useCases: [
+      "Optimizing high-res photos for web application speed and Google Core Web Vitals",
+      "Shrinking photo file size to meet government portal upload restrictions (e.g., under 200 KB)",
+      "Batch compressing product photos for e-commerce catalog stores"
+    ],
+    howToSteps: [
+      "Drag and drop one or multiple images into the uploader.",
+      "Adjust target quality percentage slider.",
+      "Download individual compressed images or a combined ZIP archive."
+    ],
+    examples: [
+      {
+        title: "JPEG Photo Optimization",
+        input: "PassportPhoto.jpg (2.4 MB, 4000x3000)",
+        output: "PassportPhoto_Optimized.jpg (185 KB — 92% size reduction)"
+      }
+    ],
+    limitations: [
+      "Compresses JPEG/WebP lossy images; PNG compression uses canvas quantization"
+    ],
+    relatedToolSlugs: ["image-resizer", "image-converter", "pdf-compressor", "background-remover"],
     faqs: [
       {
         question: "Will image compression reduce visual photo quality?",
@@ -754,6 +1141,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Image Resizer changes image pixel dimensions (width and height) or scales images by percentage while preserving aspect ratio.",
       "Resize photos for passport dimensions, Facebook page banners, Instagram posts, or web thumbnail requirements."
     ],
+    useCases: [
+      "Resizing photos to exact Nepalese passport dimensions (350x450 px)",
+      "Creating web banner sizes (1200x630 px) for social media OpenGraph previews",
+      "Scaling down 4K camera photos to HD resolution (1920x1080 px) for email attachments"
+    ],
+    howToSteps: [
+      "Upload your image file.",
+      "Enter exact pixel dimensions (Width / Height) or select a percentage scaling factor.",
+      "Click 'Resize Image' and download."
+    ],
+    examples: [
+      {
+        title: "Passport Photo Preset",
+        input: "RawSelfie.jpg (3024x4032 px)",
+        output: "PassportPhoto.jpg (350x450 px, locked aspect ratio)"
+      }
+    ],
+    limitations: [
+      "Upscaling small images significantly beyond original resolution may result in pixelation"
+    ],
+    relatedToolSlugs: ["image-cropper", "image-compressor", "image-converter", "favicon-generator"],
     faqs: [
       {
         question: "Can I lock aspect ratio while resizing?",
@@ -780,6 +1188,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Image Cropper lets you visually trim photo borders and crop images using freeform selection or fixed aspect ratio presets (1:1 square, 16:9 widescreen, 4:3, 9:16 story).",
       "Perfect for cropping profile avatars, social media covers, and focus areas of photography."
     ],
+    useCases: [
+      "Cropping square 1:1 avatars for LinkedIn, Facebook, and Twitter profiles",
+      "Focusing on specific subjects in large landscape photos",
+      "Trimming unwanted borders from scanned documents or receipts"
+    ],
+    howToSteps: [
+      "Upload your image file.",
+      "Select an aspect ratio preset (1:1, 16:9, 4:3, 9:16) or drag handles for freeform crop.",
+      "Click 'Crop Image' and download your cropped output."
+    ],
+    examples: [
+      {
+        title: "1:1 Profile Avatar Crop",
+        input: "FullBodyPhoto.png (1920x1080 px)",
+        output: "Avatar_Square.png (800x800 px cropped focus area)"
+      }
+    ],
+    limitations: [
+      "Trims surrounding pixels; does not distort or stretch image content"
+    ],
+    relatedToolSlugs: ["image-resizer", "image-rotate-flip", "image-compressor", "favicon-generator"],
     faqs: [
       {
         question: "What aspect ratio presets are available?",
@@ -806,6 +1235,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Image Converter converts images seamlessly between PNG, JPEG, WebP, GIF, and BMP formats.",
       "Convert heavy PNG graphics into lightweight WebP for web development, or turn WebP images into universal JPG files for older software compatibility."
     ],
+    useCases: [
+      "Converting PNG graphics to WebP for modern web publishing and faster page speed",
+      "Converting WebP images to JPG for legacy software or print compatibility",
+      "Converting transparent PNG logos to white-background JPEG images"
+    ],
+    howToSteps: [
+      "Upload your image file or batch upload multiple photos.",
+      "Select your target format (PNG, JPEG, WebP, BMP).",
+      "Click 'Convert' and download your converted files."
+    ],
+    examples: [
+      {
+        title: "PNG to WebP Format Conversion",
+        input: "HeroImage.png (3.2 MB)",
+        output: "HeroImage.webp (840 KB — 74% lighter with preserved quality)"
+      }
+    ],
+    limitations: [
+      "Converting transparent PNG to JPEG replaces transparent background with clean white"
+    ],
+    relatedToolSlugs: ["image-compressor", "jpg-pdf-converter", "image-to-base64", "image-resizer"],
     faqs: [
       {
         question: "What happens to PNG transparency when converting to JPG?",
@@ -832,6 +1282,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Image to Base64 Converter converts image files into Data URI strings, HTML `<img>` src attributes, and CSS background URIs.",
       "Embed icons and small logo graphics directly inside HTML or CSS files to eliminate extra HTTP requests and speed up web page loading."
     ],
+    useCases: [
+      "Embedding small logo icons directly into single-file HTML templates or email newsletters",
+      "Inlining CSS background images to eliminate HTTP request latency",
+      "Exporting image assets into JSON database payloads"
+    ],
+    howToSteps: [
+      "Upload your target image file (PNG, JPG, SVG, WebP).",
+      "Select output format tab (Data URI, HTML <img>, CSS background, or raw Base64).",
+      "Click 'Copy' to copy the formatted string."
+    ],
+    examples: [
+      {
+        title: "PNG Icon to HTML Data URI",
+        input: "icon.png (16x16 px)",
+        output: '<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQ..." alt="Icon" />'
+      }
+    ],
+    limitations: [
+      "Base64 strings are ~33% larger than binary files; best suited for small images (< 100 KB)"
+    ],
+    relatedToolSlugs: ["base64-encoder", "image-converter", "favicon-generator", "color-picker"],
     faqs: [
       {
         question: "What formats can I copy the Base64 output in?",
@@ -858,6 +1329,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "AI Background Remover uses browser-based machine learning (ONNX WebAssembly) to automatically erase background scenery from portraits, product photos, and graphics.",
       "Get transparent PNG outputs instantly. Processing happens on your GPU/CPU locally without uploading images to cloud servers."
     ],
+    useCases: [
+      "Removing background scenery from portrait photos for ID cards and resumes",
+      "Isolating product items on white/transparent backgrounds for online shops",
+      "Extracting subjects for graphic design collage creation"
+    ],
+    howToSteps: [
+      "Upload your photo.",
+      "Wait a few seconds for local WebAssembly AI detection.",
+      "Download your clean transparent PNG result."
+    ],
+    examples: [
+      {
+        title: "Portrait Background Removal",
+        input: "Person_In_Park.jpeg",
+        output: "Person_Isolated.png (Transparent background cutout)"
+      }
+    ],
+    limitations: [
+      "Runs AI model locally on your GPU/CPU via WASM; performance depends on device speed"
+    ],
+    relatedToolSlugs: ["image-compressor", "image-cropper", "image-watermark", "favicon-generator"],
     faqs: [
       {
         question: "Does background removal require server uploads?",
@@ -884,6 +1376,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Favicon Generator creates complete website icon packages (favicon.ico, 16x16 PNG, 32x32 PNG, 180x180 Apple Touch Icon, Android Chrome 192x192) from any logo image.",
       "Download a structured ZIP bundle along with ready-to-paste HTML `<head>` link tags for modern browser and PWA compatibility."
     ],
+    useCases: [
+      "Generating complete favicon icon packages for new web projects and Next.js/Vite apps",
+      "Creating Apple touch icons (180x180 px) for mobile bookmarking",
+      "Generating PWA manifest icons (192x192 & 512x512 px) for mobile web apps"
+    ],
+    howToSteps: [
+      "Upload your brand logo image (square PNG recommended).",
+      "Click 'Generate Favicon Package'.",
+      "Download the ZIP archive and copy the ready-to-paste HTML `<head>` snippet."
+    ],
+    examples: [
+      {
+        title: "Logo to Full Favicon Bundle",
+        input: "Logo_512.png",
+        output: "ZIP bundle containing favicon.ico, favicon-16x16.png, favicon-32x32.png, apple-touch-icon.png, android-chrome-192x192.png + HTML code"
+      }
+    ],
+    limitations: [
+      "Best results obtained when starting with a square, high-resolution source logo"
+    ],
+    relatedToolSlugs: ["image-resizer", "color-picker", "image-converter", "qr-generator"],
     faqs: [
       {
         question: "What icon sizes are included in the generated ZIP?",
@@ -910,6 +1423,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Image Watermark adds custom text or logo image watermarks to your photographs, graphic designs, and digital artwork.",
       "Protect your photos from copyright theft by adjusting opacity, tile patterns, font styling, and logo placement."
     ],
+    useCases: [
+      "Stamping photography portfolios with copyright text or photographer brand logo",
+      "Watermarking real estate listing photos before online publishing",
+      "Batch protecting online store product images"
+    ],
+    howToSteps: [
+      "Upload your photo or batch upload multiple photos.",
+      "Enter custom text or upload a logo watermark image.",
+      "Set opacity, position grid, or enable tile mode, then download your watermarked photos."
+    ],
+    examples: [
+      {
+        title: "Text Stamp Overlay",
+        input: "Landscape.jpg + Text: '© SajiloTools 2026', Bottom-Right",
+        output: "Landscape_Watermarked.jpg"
+      }
+    ],
+    limitations: [
+      "Generates new image file outputs without altering original source files"
+    ],
+    relatedToolSlugs: ["pdf-watermark", "image-compressor", "image-cropper", "image-rotate-flip"],
     faqs: [
       {
         question: "Can I add text and logo image watermarks?",
@@ -936,6 +1470,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Image Rotate & Flip rotates images 90°, 180°, or 270° clockwise/counter-clockwise and flips images horizontally or vertically.",
       "Fix sideways smartphone camera photos, mirror graphic elements, and correct EXIF orientation flags effortlessly."
     ],
+    useCases: [
+      "Fixing orientation of sideways or upside-down smartphone photos",
+      "Flipping photos horizontally to create mirrored mirror-shot effects",
+      "Rotating document scans prior to OCR or PDF creation"
+    ],
+    howToSteps: [
+      "Upload your image file.",
+      "Click 'Rotate 90°', 'Rotate 180°', 'Flip Horizontal', or 'Flip Vertical'.",
+      "Download your corrected image file."
+    ],
+    examples: [
+      {
+        title: "Fix Sideways Photo",
+        input: "Photo_Sideways.jpg (Orientation 90° off)",
+        output: "Photo_Upright.jpg (Correct portrait orientation)"
+      }
+    ],
+    limitations: [
+      "Lossless canvas transformation preserves original image resolution"
+    ],
+    relatedToolSlugs: ["image-cropper", "image-resizer", "pdf-organizer", "jpg-pdf-converter"],
     faqs: [
       {
         question: "Can I flip photos horizontally to create a mirror image?",
@@ -963,6 +1518,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "NRs Currency Converter calculates real-time exchange rates between Nepali Rupees (NPR) and major foreign currencies (USD, EUR, GBP, AUD, INR, QAR, AED, MYR).",
       "Powered by daily foreign exchange rates published by Nepal Rastra Bank (NRB), ideal for foreign remittances, travel planning, and international transactions."
     ],
+    useCases: [
+      "Calculating exact NPR conversion amounts for foreign remittance transfers from Qatar, UAE, Saudi Arabia, or Malaysia",
+      "Converting USD/EUR prices for international software subscriptions into Nepali Rupees",
+      "Checking official NRB buy and sell foreign exchange reference rates"
+    ],
+    howToSteps: [
+      "Select your source currency and enter amount.",
+      "Select target currency (or view full exchange matrix against NPR).",
+      "View live NRB conversion result and buy/sell rate breakdown."
+    ],
+    examples: [
+      {
+        title: "USD to NPR Conversion",
+        input: "$100 USD (at NRB rate ~134.50)",
+        output: "NPR 13,450.00 (Buy: 134.20 | Sell: 134.80)"
+      }
+    ],
+    limitations: [
+      "Exchange rates reflect official Nepal Rastra Bank (NRB) daily rates; individual money transfer counters or banks may apply slight retail margins"
+    ],
+    relatedToolSlugs: ["tax-calculator", "emi-calculator", "gold-silver-calculator", "traditional-unit-converter"],
     faqs: [
       {
         question: "Are foreign exchange rates official?",
@@ -989,6 +1565,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "EMI Calculator computes Equated Monthly Installments (EMI), total interest payable, and full loan payoff schedules for home loans, auto loans, and personal loans in Nepal.",
       "Input principal loan amount in NPR, interest rate %, and loan tenure in years or months to view instant payment breakdowns and amortization schedules."
     ],
+    useCases: [
+      "Estimating monthly loan repayments for bank housing loans and vehicle blue book finance in Nepal",
+      "Comparing total interest costs between 10-year vs 15-year loan tenures",
+      "Viewing year-by-year principal reduction vs interest payouts"
+    ],
+    howToSteps: [
+      "Enter Principal Loan Amount in NPR (e.g. 50,00,000).",
+      "Enter annual Interest Rate % quoted by bank.",
+      "Set loan tenure in Years or Months to view monthly EMI and amortization schedule."
+    ],
+    examples: [
+      {
+        title: "NPR 50 Lakh Housing Loan",
+        input: "Principal: NPR 50,00,000 | Interest: 10.5% | Tenure: 15 Years",
+        output: "Monthly EMI: NPR 55,270 | Total Interest: NPR 49,48,600"
+      }
+    ],
+    limitations: [
+      "Calculates standard reducing balance EMI; excludes optional bank processing fees or insurance premiums"
+    ],
+    relatedToolSlugs: ["tax-calculator", "sip-calculator", "fd-calculator", "interest-calculator"],
     faqs: [
       {
         question: "What is the standard EMI calculation formula?",
@@ -1015,6 +1612,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Nepal Income Tax & Salary TDS Calculator computes personal income tax liability and monthly Salary TDS according to the latest Inland Revenue Department (IRD) tax slabs.",
       "Calculate single vs married tax bracket rates, 1% Social Security Tax, Employee Provident Fund (EPF / SSF) deductions, and Citizen Investment Trust (CIT) tax exemptions."
     ],
+    useCases: [
+      "Calculating monthly Salary TDS withholding and net take-home salary for salaried employees in Nepal",
+      "Estimating tax savings from Employee Provident Fund (EPF), SSF, and Citizen Investment Trust (CIT) deductions",
+      "Calculating freelance contract TDS withholding (1.5% or 5%)"
+    ],
+    howToSteps: [
+      "Select Assessment Status (Single or Married) and Fiscal Year.",
+      "Enter Annual Gross Salary or Monthly Basic Salary.",
+      "Input optional EPF, CIT, or insurance deductions to calculate net annual tax and monthly TDS."
+    ],
+    examples: [
+      {
+        title: "Monthly Salary TDS Calculation",
+        input: "Gross Monthly Salary: NPR 80,00, Married, EPF contribution: 10%",
+        output: "Taxable Salary calculated with 1% SST & 10% slab deductions"
+      }
+    ],
+    limitations: [
+      "Reflects official Inland Revenue Department (IRD) Nepal income tax slabs"
+    ],
+    relatedToolSlugs: ["pf-calculator", "emi-calculator", "vat-calculator", "nrs-converter"],
     faqs: [
       {
         question: "What are the latest Nepal income tax slabs for salaried individuals?",
@@ -1198,6 +1816,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Nepal Land Unit Converter converts traditional Nepalese land measurement units across both Ropani-Aana-Paisa-Daam (Hilly region) and Bigha-Kattha-Dhur (Terai region) systems, into Square Feet and Square Meters.",
       "Essential for real estate buyers, landowners, surveyors, and legal documentation in Nepal."
     ],
+    useCases: [
+      "Converting Kathmandu valley land units (Ropani-Aana-Paisa-Daam) into Square Feet for architectural plot plans",
+      "Converting Terai land units (Bigha-Kattha-Dhur) into Ropani or Square Meters",
+      "Verifying official Lalpurja land deed square meter measurements"
+    ],
+    howToSteps: [
+      "Select your source region system (Ropani System or Bigha System) or Sq Ft/Sq M.",
+      "Type land values (e.g. 1 Ropani 4 Aana).",
+      "View instant side-by-side converted values across all Nepalese and metric units."
+    ],
+    examples: [
+      {
+        title: "1 Ropani to Sq Ft & Aana",
+        input: "1 Ropani 0 Aana 0 Paisa 0 Daam",
+        output: "5,476 Sq Ft | 508.74 Sq M | 16 Aana | 0.0751 Bigha"
+      }
+    ],
+    limitations: [
+      "Calculates standard official land conversion ratios (1 Ropani = 5,476 sq ft; 1 Bigha = 72,900 sq ft)"
+    ],
+    relatedToolSlugs: ["traditional-unit-converter", "unit-converter", "tax-calculator", "nepali-number-words"],
     faqs: [
       {
         question: "What is 1 Ropani in Square Feet?",
@@ -1224,6 +1863,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "English ↔ Nepali Translator provides instant translation between English text and Nepali Devanagari script.",
       "Designed for students, travelers, and professionals needing fast text translation with copy and audio pronunciation support."
     ],
+    useCases: [
+      "Translating official English letters or notice messages into Devanagari Nepali",
+      "Helping students and foreign travelers learn everyday phrases",
+      "Translating Nepali Devanagari sentences back into clear English"
+    ],
+    howToSteps: [
+      "Select translation direction (English → Nepali or Nepali → English).",
+      "Type or paste your source text.",
+      "View instant translation with copy and text-to-speech audio controls."
+    ],
+    examples: [
+      {
+        title: "English to Devanagari Translation",
+        input: "Welcome to Nepal! Have a great day.",
+        output: "नेपालमा स्वागत छ! तपाईको दिन शुभ रहोस्।"
+      }
+    ],
+    limitations: [
+      "Neural machine translation provides general natural translation; official legal documents should be double-checked by a certified translator"
+    ],
+    relatedToolSlugs: ["nepali-unicode", "nepali-date-converter", "word-counter", "string-utilities"],
     faqs: [
       {
         question: "Is this translator free?",
@@ -1250,6 +1910,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Nepali Date Converter & Age Calculator performs accurate conversion between Bikram Sambat (वि.सं.) and Gregorian AD (ई.सं.) calendars from 2000 BS to 2090 BS.",
       "Includes a built-in Age Calculator that computes your exact age in years, months, days, total days alive, and next birthday countdown in both Nepali and English date systems. Crucial for filling out Nepalese government forms, passport applications, and academic admissions."
     ],
+    useCases: [
+      "Converting birthdates from Bikram Sambat (BS) to English AD for passport, visa, and university applications",
+      "Determining exact age breakdown in years, months, and days for Nepalese citizenship and Lok Sewa application forms",
+      "Checking exact day of the week for historical BS events"
+    ],
+    howToSteps: [
+      "Select conversion mode (BS to AD or AD to BS) or switch to Age Calculator mode.",
+      "Choose Year, Month, and Day.",
+      "View converted date result along with the day of the week, or inspect your exact age breakdown."
+    ],
+    examples: [
+      {
+        title: "BS to AD Conversion",
+        input: "2050 Baishakh 1 BS",
+        output: "1993 April 14 AD (Wednesday)"
+      }
+    ],
+    limitations: [
+      "Supports Bikram Sambat calendar dates from year 2000 BS up to 2090 BS based on official Panchang"
+    ],
+    relatedToolSlugs: ["nepali-calendar", "age-calculator", "nepali-unicode", "nepali-number-words"],
     faqs: [
       {
         question: "How accurate is the Bikram Sambat date conversion?",
@@ -1267,11 +1948,6 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
         question: "Why do Nepali months have varying numbers of days (29 to 32 days)?",
         answer: "Bikram Sambat month lengths are determined by astronomical movement of the sun across zodiac signs rather than fixed month lengths."
       }
-    ],
-    howToSteps: [
-      "Select conversion mode (BS to AD or AD to BS) or switch to Age Calculator mode.",
-      "Choose Year, Month, and Day.",
-      "View converted date result along with the day of the week, or inspect your exact age breakdown."
     ]
   },
 
@@ -1281,6 +1957,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Nepali Unicode Converter allows you to type in phonetically Romanized English (e.g. 'namaste') and converts it instantly into official Devanagari Unicode text (नमस्ते).",
       "Universally compatible with Facebook, official government portals, Word documents, and mobile messaging."
     ],
+    useCases: [
+      "Typing official Devanagari text for Nepalese government forms without needing to memorize Preeti font layouts",
+      "Writing social media posts and emails in Nepali using a standard QWERTY keyboard",
+      "Generating clean Unicode text for Word documents and websites"
+    ],
+    howToSteps: [
+      "Type phonetically using English letters in the text editor (e.g. type 'mero nepal').",
+      "Watch text automatically convert live into Devanagari Unicode ('मेरो नेपाल').",
+      "Click 'Copy Unicode' to copy your text."
+    ],
+    examples: [
+      {
+        title: "Romanized Phonetic Typing",
+        input: "sajilo tools nepal ma swagat chha",
+        output: "सजिलो टूल्स नेपाल मा स्वागत छ"
+      }
+    ],
+    limitations: [
+      "Phonetic mapping relies on standard Romanized phonetic transliteration rules"
+    ],
+    relatedToolSlugs: ["nepali-translator", "nepali-number-words", "word-counter", "case-converter"],
     faqs: [
       {
         question: "How does Romanized Nepali typing work?",
@@ -1307,6 +2004,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Nepali Number to Words Converter converts numerical amounts into formal Nepali Lakh/Crore words in both English and Devanagari script.",
       "Ideal for writing bank cheques, financial contracts, tax receipts, and official agreements in Nepal."
     ],
+    useCases: [
+      "Writing out exact currency wording for bank cheque filling (e.g. Rupees Five Lakh Only / ५ लाख रुपैयाँ मात्र)",
+      "Formatting numbers for legal real estate contracts and land transactions",
+      "Converting figures for accounting receipts and IRD tax invoices"
+    ],
+    howToSteps: [
+      "Type any number or currency figure in the input field.",
+      "View instant formal wording in both English (Lakhs/Crores) and Devanagari.",
+      "Click 'Copy' to use in your cheque or document."
+    ],
+    examples: [
+      {
+        title: "Bank Cheque Formatting",
+        input: "550000",
+        output: "English: Five Lakh Fifty Thousand Rupees Only | Nepali: पाँच लाख पचास हजार रुपैयाँ मात्र"
+      }
+    ],
+    limitations: [
+      "Uses the South Asian Lakh (100,000) and Crore (10,000,000) numbering system standard in Nepal"
+    ],
+    relatedToolSlugs: ["vat-calculator", "tax-calculator", "land-converter", "nepali-unicode"],
     faqs: [
       {
         question: "Does it convert figures into Lakhs and Crores?",
@@ -1333,6 +2051,26 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Nepali Calendar (Bikram Sambat) provides an interactive monthly calendar grid featuring national public holidays, Nepalese festivals (Dashain, Tihar, Teej), Saturdays, and Gregorian AD date overlays.",
       "Stay updated on Nepalese official calendar dates, government holiday lists, and upcoming festival schedules."
     ],
+    useCases: [
+      "Checking upcoming Nepal government public holidays and festival dates (Dashain, Tihar, Shivaratri)",
+      "Viewing corresponding Gregorian AD dates for any day in the Bikram Sambat year",
+      "Planning business schedules and travel around official Nepalese non-working days"
+    ],
+    howToSteps: [
+      "Use month and year navigation buttons to select your target Bikram Sambat month.",
+      "Click any calendar day box to view event details, festival notes, and AD date equivalent."
+    ],
+    examples: [
+      {
+        title: "Dashain Holiday Lookup",
+        input: "Kartik 2083 BS",
+        output: "Highlights Dashain public holiday days with AD date references"
+      }
+    ],
+    limitations: [
+      "Reflects official Nepal government calendar dates and public holiday announcements"
+    ],
+    relatedToolSlugs: ["nepali-date-converter", "traditional-unit-converter", "nepali-unicode"],
     faqs: [
       {
         question: "Are official Nepal government public holidays marked?",

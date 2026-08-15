@@ -12,14 +12,18 @@ const NAV_LINKS = [
   { name: "Finance Tools", href: "/tools/finance" },
   { name: "Developer Tools", href: "/tools/developer" },
   { name: "Nepal Tools", href: "/tools/nepal" },
+  { name: "Everyday Tools", href: "/tools/everyday" },
 ];
 
 export default function SiteFooter() {
   return (
     <footer className="border-t border-border bg-background/80 backdrop-blur-xl transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-        {/* Footer Banner Ad Slot */}
-        <AdUnit slot={process.env.NEXT_PUBLIC_ADSENSE_FOOTER_SLOT || "auto"} minHeight="90px" className="mb-8" />
+        {/* Footer Banner Ad Slot (collapses to 0 height when unfilled) */}
+        <AdUnit
+          slot={process.env.NEXT_PUBLIC_ADSENSE_FOOTER_SLOT || "auto"}
+          placement="footer"
+        />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
           {/* Brand */}
           <div>
@@ -69,6 +73,7 @@ export default function SiteFooter() {
               {[
                 { name: "About Us", href: "/about" },
                 { name: "Contact", href: "/contact" },
+                { name: "Guides & Articles", href: "/blog" },
                 { name: "All Tools", href: "/tools" },
               ].map((l) => (
                 <li key={l.name}>

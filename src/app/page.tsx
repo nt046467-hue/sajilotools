@@ -53,41 +53,41 @@ const CATEGORIES = REGISTERED_CATEGORIES.map((cat) => ({
 
 const STATS = [
   { value: `${REGISTERED_TOOLS.length}+`, label: "Free Tools" },
-  { value: "100%", label: "Client-Side Privacy" },
+  { value: "Privacy", label: "Focused Architecture" },
   { value: "No", label: "Sign-up Required" },
-  { value: "Instant", label: "Local Speed" },
+  { value: "Instant", label: "In-Browser Speed" },
 ];
 
 const WHY_ITEMS = [
   {
     Icon: Zap,
     title: "Blazing Fast",
-    desc: "Every tool loads in under a second. No waiting, no spinners, no friction.",
+    desc: "Every tool loads instantly in your browser without bloat or unnecessary waiting.",
   },
   {
     Icon: ShieldCheck,
     title: "Privacy First",
-    desc: "Files are processed locally. Your data never touches our servers.",
+    desc: "Browser-based client processing ensures sensitive data and files stay on your device.",
   },
   {
     Icon: MapPin,
     title: "Built for Nepal",
-    desc: "NRs tools, Nepali fonts, and local resources — made for you.",
+    desc: "NRs currency, BS date conversion, vehicle tax, land units, and Devanagari typography.",
   },
   {
     Icon: BadgeCheck,
     title: "No Sign-up Ever",
-    desc: "Open any tool and start working. We will never ask you to register.",
+    desc: "Open any tool and start working immediately. No accounts or mandatory logins.",
   },
   {
     Icon: Heart,
     title: "Always Free",
-    desc: "No subscriptions, no paywalls, no ads. 100% free, forever.",
+    desc: "No subscriptions, no paywalls, no hidden usage fees. 100% free access for everyone.",
   },
   {
     Icon: Braces,
-    title: "Open Source",
-    desc: "Community-built and transparent. Contribute on GitHub anytime.",
+    title: "Transparent & Independent",
+    desc: "Built with modern web standards, lightweight code, and user privacy in mind.",
   },
 ];
 

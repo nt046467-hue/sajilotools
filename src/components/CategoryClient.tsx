@@ -73,6 +73,72 @@ function getIcon(name: string) {
 
 import NotFoundView from "@/components/NotFoundView";
 
+const CATEGORY_OVERVIEWS: Record<string, { summary: string; features: string[] }> = {
+  developer: {
+    summary:
+      "A complete collection of developer utilities for formatting, encoding, hashing, testing, and decoding data structures. Every developer tool runs 100% locally inside your web browser sandbox using modern client JavaScript and Web Crypto APIs.",
+    features: [
+      "Zero server payload transmission — private API keys and tokens stay on your machine",
+      "Real-time syntax validation, JSON formatting, and Base64 conversion",
+      "One-click copying and file export capabilities"
+    ]
+  },
+  text: {
+    summary:
+      "Essential text processing, diff checking, and editing tools for writers, students, SEO copywriters, and developers. Analyze text metrics, format cases, and clean up text strings live in your browser.",
+    features: [
+      "Live word, character, sentence, and reading time counters",
+      "Side-by-side text diff comparison with syntax highlighting",
+      "Multilingual support including English and Nepali Devanagari"
+    ]
+  },
+  pdf: {
+    summary:
+      "Comprehensive PDF document processing tools to merge, split, extract, compress, and watermark PDF files. All PDF manipulations run locally in browser memory without sending documents to cloud servers.",
+    features: [
+      "Client-side PDF page merging and range extraction",
+      "Lossless compression for meeting upload size restrictions",
+      "No watermarks or subscription fees added"
+    ]
+  },
+  image: {
+    summary:
+      "High-speed image processing utilities for web developers, designers, and photographers. Compress, resize, crop, convert, and watermark images with full privacy.",
+    features: [
+      "In-browser AI background removal using WebAssembly",
+      "Batch image compression saving up to 80% file size",
+      "Favicon bundle generator for web apps and PWAs"
+    ]
+  },
+  finance: {
+    summary:
+      "Financial calculators and salary TDS tools built for Nepal and global users. Calculate EMI loan schedules, IRD salary TDS tax slabs, EPF/SSF retirement projections, and live NRs exchange rates.",
+    features: [
+      "Updated according to Inland Revenue Department (IRD) Nepal tax slabs",
+      "Daily foreign exchange rates powered by Nepal Rastra Bank (NRB)",
+      "Interactive loan amortization tables and SIP return charts"
+    ]
+  },
+  nepal: {
+    summary:
+      "Specialized tools localized for administrative, financial, and cultural tasks in Nepal. Convert land units across Ropani and Bigha systems, Bikram Sambat (BS) date conversion, and Devanagari text helpers.",
+    features: [
+      "Panchang-accurate Bikram Sambat (BS) to Gregorian AD converter",
+      "Dual land conversion between Ropani (Hilly) and Bigha (Terai) systems",
+      "Official 753 ward and municipality directory search"
+    ]
+  },
+  everyday: {
+    summary:
+      "Everyday calculation and conversion utilities designed for fast daily use. Calculate exact age breakdowns, body mass index (BMI), academic GPA percentages, and universal measurement units.",
+    features: [
+      "Clinical WHO reference BMI health classification",
+      "NEB standard GPA to percentage academic conversion",
+      "Universal measurement converter with configurable decimal precision"
+    ]
+  }
+};
+
 export default function CategoryClient({
   category,
   tools,
@@ -92,6 +158,7 @@ export default function CategoryClient({
   }
 
   const CatIcon = getIcon(category.icon);
+  const overview = CATEGORY_OVERVIEWS[category.slug];
   
   // Cross-category links (all categories except current)
   const relatedCategories = [
@@ -123,7 +190,7 @@ export default function CategoryClient({
       </div>
 
       {/* Header */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-8">
         <div className="flex items-center gap-4 mb-3">
           <div
             className={`w-14 h-14 rounded-2xl flex items-center justify-center ${category.bgClass}`}
@@ -150,6 +217,23 @@ export default function CategoryClient({
         <p className="text-sm text-[#A1A1AA] mt-2">
           {tools.length} tool{tools.length !== 1 ? "s" : ""} available in this category
         </p>
+
+        {/* Category Overview Card */}
+        {overview && (
+          <div className="mt-6 p-6 bg-white dark:bg-[#141829] rounded-2xl border border-[#E4E0D8] dark:border-[#1E2338] space-y-3">
+            <p className="text-sm text-[#52525B] dark:text-[#A1A1AA] leading-relaxed">
+              {overview.summary}
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-2 border-t border-[#E4E0D8]/60 dark:border-[#1E2338]/60">
+              {overview.features.map((feat, fIdx) => (
+                <div key={fIdx} className="flex items-center gap-2 text-xs text-[#71717A] dark:text-[#A1A1AA]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#1F2544] dark:bg-[#F5A623] shrink-0" />
+                  <span>{feat}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Tools Grid */}
