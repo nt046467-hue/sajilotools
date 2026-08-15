@@ -536,7 +536,7 @@ export default function NepaliTranslatorTool() {
       <div className="p-3.5 rounded-xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] text-xs text-[#71717A] flex items-start gap-2">
         <Info size={16} className="text-[#DC2626] shrink-0 mt-0.5" />
         <span>
-          <strong>Note:</strong> Machine translation uses a secure server proxy cache for fast performance. Translation inputs are processed in-memory and are never stored in a database.
+          <strong>Note:</strong> Machine translation requests are sent through our secure server proxy. Translated results may be temporarily cached in memory for fast performance. Your text is never permanently stored or shared.
         </span>
       </div>
     </div>

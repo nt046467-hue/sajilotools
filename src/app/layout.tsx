@@ -36,15 +36,17 @@ const devanagari = Noto_Sans_Devanagari({
   variable: "--font-devanagari",
 });
 
+import { SITE_CONFIG, SITE_URL, getCanonicalUrl } from "@/lib/site-config";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://sajilotools.vercel.app"),
-  applicationName: "SajiloTools",
+  metadataBase: new URL(SITE_URL),
+  applicationName: SITE_CONFIG.name,
   title: {
-    default: "SajiloTools – 100+ Free Online Tools | PDF, Image, SEO & Calculator Tools",
+    default: "SajiloTools – Free Online Tools Made Simple for Nepal",
     template: "%s | SajiloTools",
   },
   description:
-    "SajiloTools is a free collection of online tools including PDF tools, image converters, QR generators, calculators, text utilities, SEO tools, developer tools and AI-powered utilities. Fast, secure and no signup required.",
+    `SajiloTools is a free collection of ${SITE_CONFIG.toolCountDisplay} fast, private online tools including Nepali date conversion, translation, PDF utilities, image converters, calculators, and developer tools. No signup required.`,
   generator: "Next.js",
   keywords: [
     "SajiloTools",
@@ -58,10 +60,12 @@ export const metadata: Metadata = {
     "SEO tools",
     "free utilities",
     "Nepal online tools",
+    "Nepali translator",
+    "Nepali date converter",
   ],
-  authors: [{ name: "SajiloTools" }],
-  creator: "SajiloTools",
-  publisher: "SajiloTools",
+  authors: [{ name: SITE_CONFIG.name, url: SITE_URL }],
+  creator: SITE_CONFIG.name,
+  publisher: SITE_CONFIG.name,
   category: "Technology",
   robots: {
     index: true,
@@ -80,10 +84,8 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   icons: {
     icon: [
+      { url: "/favicon.ico", sizes: "48x48" },
       { url: "/icon.svg", type: "image/svg+xml" },
-      { url: "/favicon.ico", sizes: "any" },
-      { url: "/android-chrome-192x192.png", sizes: "192x192", type: "image/png" },
-      { url: "/android-chrome-512x512.png", sizes: "512x512", type: "image/png" },
       { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
       { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
     ],
@@ -95,21 +97,21 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    siteName: "SajiloTools",
-    title: "SajiloTools – 100+ Free Online Tools | PDF, Image, SEO & Calculator Tools",
+    siteName: SITE_CONFIG.name,
+    title: "SajiloTools – Free Online Tools Made Simple for Nepal",
     description:
-      "SajiloTools is a free collection of online tools including PDF tools, image converters, QR generators, calculators, text utilities, SEO tools, developer tools and AI-powered utilities. Fast, secure and no signup required.",
-    url: "https://sajilotools.vercel.app",
+      `Calculate, convert, translate, compress and simplify everyday digital tasks with ${SITE_CONFIG.toolCountDisplay} fast, free online tools. Built for Nepal.`,
+    url: SITE_URL,
     images: [{ url: "/images/og-default.png", width: 1200, height: 630, alt: "SajiloTools – Free Online Tools" }],
-    locale: "en_US",
+    locale: SITE_CONFIG.locale,
   },
   twitter: {
     card: "summary_large_image",
-    title: "SajiloTools – 100+ Free Online Tools | PDF, Image, SEO & Calculator Tools",
+    title: "SajiloTools – Free Online Tools Made Simple for Nepal",
     description:
-      "SajiloTools is a free collection of online tools including PDF tools, image converters, QR generators, calculators, text utilities, SEO tools, developer tools and AI-powered utilities. Fast, secure and no signup required.",
+      `Calculate, convert, translate, compress and simplify everyday digital tasks with ${SITE_CONFIG.toolCountDisplay} fast, free online tools. Built for Nepal.`,
     images: ["/images/og-default.png"],
-    creator: "@sajilotools",
+    creator: SITE_CONFIG.twitterHandle,
   },
   verification: {
     google: process.env.NEXT_PUBLIC_GSC_VERIFICATION || "I67sUfONhkQebjAhygVXf7dg-WkTRcxxeNUAaIGFjH0",
@@ -126,50 +128,36 @@ export default function RootLayout({
     "@graph": [
       {
         "@type": "Organization",
-        "@id": "https://sajilotools.vercel.app/#organization",
-        "name": "SajiloTools",
-        "url": "https://sajilotools.vercel.app/",
+        "@id": `${SITE_URL}/#organization`,
+        "name": SITE_CONFIG.name,
+        "url": `${SITE_URL}/`,
         "logo": {
           "@type": "ImageObject",
-          "url": "https://sajilotools.vercel.app/android-chrome-512x512.png",
+          "url": `${SITE_URL}/android-chrome-512x512.png`,
           "width": 512,
           "height": 512
         },
-        "description": "100+ free online tools for PDF, image, text, developer, finance, and Nepal-specific utilities.",
-        "sameAs": [
-          "https://github.com/sajilotools",
-          "https://linkedin.com/company/sajilotools",
-          "https://twitter.com/sajilotools",
-          "https://facebook.com/sajilotools",
-        ],
+        "description": `${SITE_CONFIG.toolCountDisplay} free online tools for PDF, image, text, developer, finance, and Nepal-specific utilities.`,
       },
       {
         "@type": "WebSite",
-        "@id": "https://sajilotools.vercel.app/#website",
-        "url": "https://sajilotools.vercel.app/",
-        "name": "SajiloTools",
-        "alternateName": ["Sajilo Tools", "SajiloTools.app", "Sajilo Tools Nepal"],
-        "description": "Free collection of 100+ online tools including PDF tools, image converters, QR generators, calculators, text utilities, SEO tools, developer tools and AI-powered utilities.",
+        "@id": `${SITE_URL}/#website`,
+        "url": `${SITE_URL}/`,
+        "name": SITE_CONFIG.name,
+        "alternateName": ["Sajilo Tools", "SajiloTools Nepal"],
+        "description": `Free collection of ${SITE_CONFIG.toolCountDisplay} online tools including PDF tools, image converters, calculators, text utilities, developer tools, and Nepal utilities.`,
         "publisher": {
-          "@id": "https://sajilotools.vercel.app/#organization",
-        },
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": {
-            "@type": "EntryPoint",
-            "urlTemplate": "https://sajilotools.vercel.app/tools?search={search_term_string}",
-          },
-          "query-input": "required name=search_term_string",
+          "@id": `${SITE_URL}/#organization`,
         },
       },
       {
         "@type": "CollectionPage",
-        "@id": "https://sajilotools.vercel.app/#collectionpage",
-        "url": "https://sajilotools.vercel.app/",
+        "@id": `${SITE_URL}/#collectionpage`,
+        "url": `${SITE_URL}/`,
         "name": "SajiloTools – All Free Online Tools",
-        "description": "Browse 100+ free online tools organized by category: PDF, Image, Text, Developer, Finance, and Nepal Tools.",
+        "description": `Browse ${SITE_CONFIG.toolCountDisplay} free online tools organized by category: PDF, Image, Text, Developer, Finance, Nepal, and Everyday Tools.`,
         "isPartOf": {
-          "@id": "https://sajilotools.vercel.app/#website",
+          "@id": `${SITE_URL}/#website`,
         },
       },
     ],

@@ -1,10 +1,26 @@
 import type { Metadata } from "next";
+import { SITE_CONFIG, getCanonicalUrl } from "@/lib/site-config";
 
 export const metadata: Metadata = {
-  title: "Terms of Use | SajiloTools Platform Terms",
+  title: "Terms of Use",
   description: "Terms of Use and service agreement for accessing SajiloTools web utilities.",
   alternates: {
-    canonical: "https://sajilotools.vercel.app/terms",
+    canonical: getCanonicalUrl("/terms"),
+  },
+  openGraph: {
+    title: "Terms of Use",
+    description: "Terms of Use and service agreement for accessing SajiloTools web utilities.",
+    url: getCanonicalUrl("/terms"),
+    siteName: SITE_CONFIG.name,
+    images: [{ url: "/images/og-default.png", width: 1200, height: 630 }],
+    locale: SITE_CONFIG.locale,
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Terms of Use",
+    description: "Terms of Use and service agreement for accessing SajiloTools web utilities.",
+    images: ["/images/og-default.png"],
   },
 };
 

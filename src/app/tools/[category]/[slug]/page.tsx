@@ -89,6 +89,8 @@ function getIcon(name: string) {
   return ICON_MAP[name] ?? Braces;
 }
 
+import { SITE_CONFIG, SITE_URL, getCanonicalUrl } from "@/lib/site-config";
+
 export async function generateMetadata({
   params,
 }: {
@@ -101,34 +103,34 @@ export async function generateMetadata({
   const isNepalTool = tool.category === "Nepal Tools" || tool.categorySlug === "nepal";
   const fallbackDescription = `${tool.desc} Free, fast, private — works instantly in your browser, no sign-up needed.${isNepalTool ? " Built for Nepal." : ""}`;
 
-  const title = tool.seoTitle ?? `${tool.name} – Free Online Tool | SajiloTools`;
+  const rawTitle = tool.seoTitle || `${tool.name} – Free Online Tool`;
+  const cleanTitle = rawTitle.replace(/\s*\|\s*SajiloTools/gi, "").trim();
   const description = tool.seoDescription ?? fallbackDescription;
-  const url = `https://sajilotools.vercel.app/tools/${tool.categorySlug}/${tool.slug}`;
+  const url = getCanonicalUrl(`/tools/${tool.categorySlug}/${tool.slug}`);
 
   return {
-    title,
+    title: cleanTitle,
     description,
     alternates: { canonical: url },
     keywords: [
       tool.name,
       tool.category,
-      ...(isNepalTool ? ["Nepal online tool"] : ["online tool"]),
-      "free utility",
+      ...(isNepalTool ? ["Nepal online tool", "Nepal utility"] : ["online tool", "free utility"]),
       "SajiloTools",
       tool.slug,
     ],
     openGraph: {
-      title,
+      title: cleanTitle,
       description,
       url,
-      siteName: "SajiloTools",
+      siteName: SITE_CONFIG.name,
       images: [{ url: "/images/og-default.png", width: 1200, height: 630, alt: `${tool.name} on SajiloTools` }],
-      locale: "en_US",
+      locale: SITE_CONFIG.locale,
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: cleanTitle,
       description,
       images: ["/images/og-default.png"],
     },
@@ -185,25 +187,25 @@ export default function ToolPage({
             "@type": "ListItem",
             "position": 1,
             "name": "Home",
-            "item": "https://sajilotools.vercel.app",
+            "item": SITE_URL,
           },
           {
             "@type": "ListItem",
             "position": 2,
             "name": "Tools",
-            "item": "https://sajilotools.vercel.app/tools",
+            "item": getCanonicalUrl("/tools"),
           },
           {
             "@type": "ListItem",
             "position": 3,
             "name": category.name,
-            "item": `https://sajilotools.vercel.app/tools/${category.slug}`,
+            "item": getCanonicalUrl(`/tools/${category.slug}`),
           },
           {
             "@type": "ListItem",
             "position": 4,
             "name": tool.name,
-            "item": `https://sajilotools.vercel.app/tools/${tool.categorySlug}/${tool.slug}`,
+            "item": getCanonicalUrl(`/tools/${tool.categorySlug}/${tool.slug}`),
           },
         ],
       },
@@ -211,7 +213,7 @@ export default function ToolPage({
         "@type": "SoftwareApplication",
         "name": tool.name,
         "description": tool.desc,
-        "url": `https://sajilotools.vercel.app/tools/${tool.categorySlug}/${tool.slug}`,
+        "url": getCanonicalUrl(`/tools/${tool.categorySlug}/${tool.slug}`),
         "applicationCategory": "UtilitiesApplication",
         "operatingSystem": "Any (Web-based)",
         "offers": {
@@ -221,8 +223,8 @@ export default function ToolPage({
         },
         "publisher": {
           "@type": "Organization",
-          "name": "SajiloTools",
-          "url": "https://sajilotools.vercel.app",
+          "name": SITE_CONFIG.name,
+          "url": SITE_URL,
         },
       },
       {

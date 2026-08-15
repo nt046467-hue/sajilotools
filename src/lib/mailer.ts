@@ -38,6 +38,8 @@ export async function sendMail({ to, subject, text, html, replyTo }: SendMailOpt
   });
 }
 
+import { SITE_URL } from "./site-config";
+
 /**
  * Generate a responsive, dark/light-friendly branded HTML template for SajiloTools broadcasts
  */
@@ -52,7 +54,7 @@ export function generateBroadcastEmailHtml({
   ctaText?: string;
   ctaUrl?: string;
 }) {
-  const siteUrl = process.env.NEXTAUTH_URL || "https://sajilotools.com";
+  const siteUrl = SITE_URL;
   // Convert newlines in message to paragraph breaks and preserve bullet points
   const formattedParagraphs = message
     .split(/\n\n+/)

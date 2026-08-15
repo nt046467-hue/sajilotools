@@ -1,36 +1,38 @@
 import { MetadataRoute } from "next";
 import { TOOLS, CATEGORIES } from "@/lib/tools-registry";
 import { BLOG_POSTS } from "@/lib/blog-data";
+import { SITE_URL } from "@/lib/site-config";
+
+// Stable base date representing the latest major platform update
+const PLATFORM_LASTMOD = new Date("2026-08-15");
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = (process.env.NEXTAUTH_URL || "https://sajilotools.vercel.app").trim();
-
   const staticPages: MetadataRoute.Sitemap = [
-    { url: baseUrl, lastModified: new Date(), changeFrequency: "daily", priority: 1.0 },
-    { url: `${baseUrl}/tools`, lastModified: new Date(), changeFrequency: "daily", priority: 0.9 },
-    { url: `${baseUrl}/blog`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.7 },
-    { url: `${baseUrl}/about`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
-    { url: `${baseUrl}/contact`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.5 },
-    { url: `${baseUrl}/privacy-policy`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.3 },
-    { url: `${baseUrl}/terms`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.3 },
+    { url: SITE_URL, lastModified: PLATFORM_LASTMOD, changeFrequency: "daily", priority: 1.0 },
+    { url: `${SITE_URL}/tools`, lastModified: PLATFORM_LASTMOD, changeFrequency: "daily", priority: 0.9 },
+    { url: `${SITE_URL}/blog`, lastModified: PLATFORM_LASTMOD, changeFrequency: "weekly", priority: 0.7 },
+    { url: `${SITE_URL}/about`, lastModified: PLATFORM_LASTMOD, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${SITE_URL}/contact`, lastModified: PLATFORM_LASTMOD, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${SITE_URL}/privacy-policy`, lastModified: PLATFORM_LASTMOD, changeFrequency: "monthly", priority: 0.4 },
+    { url: `${SITE_URL}/terms`, lastModified: PLATFORM_LASTMOD, changeFrequency: "monthly", priority: 0.4 },
   ];
 
   const categoryPages: MetadataRoute.Sitemap = CATEGORIES.map((cat) => ({
-    url: `${baseUrl}/tools/${cat.slug}`,
-    lastModified: new Date(),
+    url: `${SITE_URL}/tools/${cat.slug}`,
+    lastModified: PLATFORM_LASTMOD,
     changeFrequency: "weekly",
-    priority: 0.9,
+    priority: 0.85,
   }));
 
   const toolPages: MetadataRoute.Sitemap = TOOLS.map((tool) => ({
-    url: `${baseUrl}/tools/${tool.categorySlug}/${tool.slug}`,
-    lastModified: new Date(),
+    url: `${SITE_URL}/tools/${tool.categorySlug}/${tool.slug}`,
+    lastModified: PLATFORM_LASTMOD,
     changeFrequency: "weekly",
-    priority: 0.8,
+    priority: tool.featured ? 0.9 : 0.8,
   }));
 
   const blogPages: MetadataRoute.Sitemap = BLOG_POSTS.map((post) => ({
-    url: `${baseUrl}/blog/${post.slug}`,
+    url: `${SITE_URL}/blog/${post.slug}`,
     lastModified: new Date(post.date),
     changeFrequency: "monthly" as const,
     priority: 0.7,

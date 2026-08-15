@@ -1,7 +1,7 @@
 {
-  "name": "SajiloTools – 100+ Free Online Tools",
+  "name": "SajiloTools – Free Online Tools for Nepal",
   "short_name": "SajiloTools",
-  "description": "Free collection of online tools including PDF tools, image converters, QR generators, calculators, text utilities, SEO tools, developer tools and AI-powered utilities.",
+  "description": "Free collection of fast, private online tools including PDF tools, image converters, calculators, Nepali date conversion, and developer tools.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#F7F5F0",
@@ -16,6 +16,11 @@
     {
       "src": "/favicon-32x32.png",
       "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-48x48.png",
+      "sizes": "48x48",
       "type": "image/png"
     },
     {

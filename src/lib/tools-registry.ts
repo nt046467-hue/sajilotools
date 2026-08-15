@@ -111,7 +111,7 @@ export const TOOLS: ToolDef[] = [
     darkColor: "#9AA3D6",
     isClientSide: true,
     featured: true,
-    seoTitle: "JSON Formatter & Validator – Prettify & Validate JSON Online | SajiloTools",
+    seoTitle: "JSON Formatter & Validator – Prettify & Validate JSON Online",
     seoDescription: "Format, validate, and beautify JSON code instantly in your browser. Clean indenting, live syntax error detection, and 100% private client-side processing.",
   },
   {
@@ -126,7 +126,7 @@ export const TOOLS: ToolDef[] = [
     darkColor: "#9AA3D6",
     isClientSide: true,
     trending: true,
-    seoTitle: "Base64 Encoder & Decoder – Free Online String Converter | SajiloTools",
+    seoTitle: "Base64 Encoder & Decoder – Free Online String Converter",
     seoDescription: "Encode plain text to Base64 or decode Base64 strings back to text instantly. Safe, fast, and 100% free with browser-based privacy.",
   },
   {
@@ -153,7 +153,7 @@ export const TOOLS: ToolDef[] = [
     darkColor: "#9AA3D6",
     isClientSide: true,
     trending: true,
-    seoTitle: "Hash Generator – MD5, SHA-1, SHA-256 & SHA-512 Online | SajiloTools",
+    seoTitle: "Hash Generator – MD5, SHA-1, SHA-256 & SHA-512 Online",
     seoDescription: "Generate MD5, SHA-1, SHA-256, and SHA-512 cryptographic hashes from any text. Fast, free, client-side generation with zero server storage.",
   },
   {
@@ -167,7 +167,7 @@ export const TOOLS: ToolDef[] = [
     color: "#1F2544",
     darkColor: "#9AA3D6",
     isClientSide: true,
-    seoTitle: "Regex Tester & Debugger – Real-Time Regular Expression Checker | SajiloTools",
+    seoTitle: "Regex Tester & Debugger – Real-Time Regular Expression Checker",
     seoDescription: "Test and debug JavaScript regular expressions in real time with live match highlighting, capture group breakdown, and pattern syntax validation.",
   },
   {
@@ -195,7 +195,7 @@ export const TOOLS: ToolDef[] = [
     darkColor: "#9AA3D6",
     isClientSide: true,
     trending: true,
-    seoTitle: "Strong Password Generator \u2013 Free & Secure | SajiloTools",
+    seoTitle: "Strong Password Generator \u2013 Free & Secure",
     seoDescription: "Generate strong, random, secure passwords instantly. Customize length and character types. Free, private, runs in your browser.",
   },
   {
@@ -272,7 +272,7 @@ export const TOOLS: ToolDef[] = [
     color: "#1F2544",
     darkColor: "#9AA3D6",
     isClientSide: true,
-    seoTitle: "UUID Generator \u2013 Free Online, Bulk & v4 | SajiloTools",
+    seoTitle: "UUID Generator \u2013 Free Online, Bulk & v4",
     seoDescription: "Generate v4 UUIDs instantly, in bulk if needed. Free, fast, and private \u2014 works entirely in your browser.",
   },
   {
@@ -286,7 +286,7 @@ export const TOOLS: ToolDef[] = [
     color: "#1F2544",
     darkColor: "#9AA3D6",
     isClientSide: true,
-    seoTitle: "JWT Decoder & Parser – Decode JSON Web Tokens Online | SajiloTools",
+    seoTitle: "JWT Decoder & Parser – Decode JSON Web Tokens Online",
     seoDescription: "Decode JSON Web Tokens (JWT) instantly to inspect header, payload, and signature claims. 100% client-side decoding keeps token secrets private.",
   },
   {
@@ -746,8 +746,8 @@ export const TOOLS: ToolDef[] = [
     color: "#DC2626",
     darkColor: "#F87171",
     isClientSide: false,
-    seoTitle: "English to Nepali Translator (Free) – Translate Instantly | SajiloTools",
-    seoDescription: "Translate text between English and Nepali Devanagari instantly, free, and private — no sign-up, works right in your browser.",
+    seoTitle: "English to Nepali Translator – Instant Online Translation",
+    seoDescription: "Translate text between English and Nepali Devanagari instantly with audio pronunciation. Free, fast, and secure with no sign-up required.",
   },
   {
     slug: "nepali-date-converter",

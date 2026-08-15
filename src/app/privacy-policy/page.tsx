@@ -1,11 +1,29 @@
 import type { Metadata } from "next";
+import { SITE_CONFIG, getCanonicalUrl } from "@/lib/site-config";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | SajiloTools Data Protection",
+  title: "Privacy Policy",
   description:
     "SajiloTools Privacy Policy explaining data privacy, local browser processing, cookies, external API boundaries, and Google AdSense advertising policies.",
   alternates: {
-    canonical: "https://sajilotools.vercel.app/privacy-policy",
+    canonical: getCanonicalUrl("/privacy-policy"),
+  },
+  openGraph: {
+    title: "Privacy Policy",
+    description:
+      "SajiloTools Privacy Policy explaining data privacy, local browser processing, cookies, and external API boundaries.",
+    url: getCanonicalUrl("/privacy-policy"),
+    siteName: SITE_CONFIG.name,
+    images: [{ url: "/images/og-default.png", width: 1200, height: 630 }],
+    locale: SITE_CONFIG.locale,
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Privacy Policy",
+    description:
+      "SajiloTools Privacy Policy explaining data privacy, local browser processing, cookies, and external API boundaries.",
+    images: ["/images/og-default.png"],
   },
 };
 
@@ -44,7 +62,7 @@ export default function PrivacyPolicyPage() {
               </p>
               <ul className="list-disc list-inside space-y-1 pl-2 text-xs">
                 <li><strong>NRs Currency Converter:</strong> Retrieves official daily foreign exchange reference rates published by Nepal Rastra Bank (NRB).</li>
-                <li><strong>English ↔ Nepali Translator:</strong> Transmits translation query text to secure translation services solely to return Devanagari/English text results. Query text is not permanently retained.</li>
+                <li><strong>English ↔ Nepali Translator:</strong> Transmits translation query text via our server-side translation proxy. Translated results may be temporarily cached in server memory or cache for performance. Raw query inputs are never permanently stored, logged, or shared with third parties.</li>
                 <li><strong>Link Shortener:</strong> Stores original target destination URLs and custom slug aliases in an encrypted database to enable short URL redirection.</li>
                 <li><strong>Gold & Silver Calculator:</strong> Fetches market price reference feeds published by FENEGOSIDA.</li>
               </ul>

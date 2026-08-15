@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { getCategoryBySlug, getToolsByCategory } from "@/lib/tools-registry";
 import CategoryClient from "@/components/CategoryClient";
 
+import { SITE_CONFIG, SITE_URL, getCanonicalUrl } from "@/lib/site-config";
+
 export async function generateMetadata({
   params,
 }: {
@@ -11,9 +13,9 @@ export async function generateMetadata({
   if (!cat) return {};
 
   const isNepalCat = cat.slug === "nepal" || cat.name === "Nepal Tools";
-  const title = `${cat.name} Tools | SajiloTools — Free Online Tools`;
+  const title = `${cat.name} Tools – Free Online Utilities`;
   const description = `${cat.desc} Free, fast, no sign-up required.${isNepalCat ? " Built for Nepal." : ""}`;
-  const url = `https://sajilotools.vercel.app/tools/${cat.slug}`;
+  const url = getCanonicalUrl(`/tools/${cat.slug}`);
 
   return {
     title,
@@ -23,9 +25,9 @@ export async function generateMetadata({
       title,
       description,
       url,
-      siteName: "SajiloTools",
+      siteName: SITE_CONFIG.name,
       images: [{ url: "/images/og-default.png", width: 1200, height: 630 }],
-      locale: "en_US",
+      locale: SITE_CONFIG.locale,
       type: "website",
     },
     twitter: {
@@ -54,7 +56,7 @@ export default async function CategoryPage({
             "@type": "CollectionPage",
             "name": `${category.name} Tools`,
             "description": category.desc,
-            "url": `https://sajilotools.vercel.app/tools/${category.slug}`,
+            "url": getCanonicalUrl(`/tools/${category.slug}`),
             "mainEntity": {
               "@type": "ItemList",
               "numberOfItems": tools.length,
@@ -62,7 +64,7 @@ export default async function CategoryPage({
                 "@type": "ListItem",
                 "position": idx + 1,
                 "name": t.name,
-                "url": `https://sajilotools.vercel.app/tools/${t.categorySlug}/${t.slug}`,
+                "url": getCanonicalUrl(`/tools/${t.categorySlug}/${t.slug}`),
               })),
             },
           },
@@ -73,19 +75,19 @@ export default async function CategoryPage({
                 "@type": "ListItem",
                 "position": 1,
                 "name": "Home",
-                "item": "https://sajilotools.vercel.app",
+                "item": SITE_URL,
               },
               {
                 "@type": "ListItem",
                 "position": 2,
                 "name": "Tools",
-                "item": "https://sajilotools.vercel.app/tools",
+                "item": getCanonicalUrl("/tools"),
               },
               {
                 "@type": "ListItem",
                 "position": 3,
                 "name": category.name,
-                "item": `https://sajilotools.vercel.app/tools/${category.slug}`,
+                "item": getCanonicalUrl(`/tools/${category.slug}`),
               },
             ],
           },

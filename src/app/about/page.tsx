@@ -2,28 +2,31 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Zap, ShieldCheck, Heart, Info, Code2, MapPin, Lock, Cpu } from "lucide-react";
 
+import { SITE_CONFIG, getCanonicalUrl } from "@/lib/site-config";
+import { TOOLS } from "@/lib/tools-registry";
+
 export const metadata: Metadata = {
-  title: "About Us — SajiloTools Platform & Mission",
+  title: "About Us – Platform & Mission",
   description:
-    "Discover SajiloTools — a privacy-first web utility suite providing 65+ free tools for developers, finance, PDF processing, and Nepal-specific localization.",
+    `Discover SajiloTools — a privacy-first web utility suite providing ${TOOLS.length}+ free tools for developers, finance, PDF processing, and Nepal-specific localization.`,
   alternates: {
-    canonical: "https://sajilotools.vercel.app/about",
+    canonical: getCanonicalUrl("/about"),
   },
   openGraph: {
-    title: "About Us | SajiloTools",
+    title: "About Us – Platform & Mission",
     description:
-      "Learn about SajiloTools — fast, privacy-respecting, free digital utilities built for Nepal and global users.",
-    url: "https://sajilotools.vercel.app/about",
-    siteName: "SajiloTools",
+      `Learn about SajiloTools — fast, privacy-respecting, free digital utilities built for Nepal and global users with ${TOOLS.length}+ tools.`,
+    url: getCanonicalUrl("/about"),
+    siteName: SITE_CONFIG.name,
     images: [{ url: "/images/og-default.png", width: 1200, height: 630 }],
-    locale: "en_US",
+    locale: SITE_CONFIG.locale,
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "About Us | SajiloTools",
+    title: "About Us – Platform & Mission",
     description:
-      "Learn about SajiloTools — fast, privacy-respecting, free digital utilities built for Nepal and global users.",
+      `Learn about SajiloTools — fast, privacy-respecting, free digital utilities built for Nepal and global users with ${TOOLS.length}+ tools.`,
     images: ["/images/og-default.png"],
   },
 };
@@ -130,7 +133,7 @@ export default function AboutPage() {
             href="/tools"
             className="inline-flex items-center gap-2 px-6 py-3 bg-[#1F2544] dark:bg-[#F5A623] text-white dark:text-[#0C0F1E] font-semibold rounded-xl text-sm hover:opacity-90 transition-opacity"
           >
-            Explore All 65+ Tools →
+            Explore All {TOOLS.length}+ Tools →
           </Link>
         </div>
       </div>

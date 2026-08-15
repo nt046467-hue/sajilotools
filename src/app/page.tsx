@@ -23,21 +23,25 @@ import {
 import { ICON_MAP } from "@/components/home/home-constants";
 import { ToolCardClient, NewsletterClient } from "@/components/home/HomePageClient";
 
+import { SITE_CONFIG, SITE_URL } from "@/lib/site-config";
+
 export const metadata: Metadata = {
-  title: "SajiloTools – Free Online Tools Made Simple for Nepal",
+  title: {
+    absolute: "SajiloTools – Free Online Tools Made Simple for Nepal",
+  },
   description:
-    "Calculate, convert, translate, compress and simplify everyday digital tasks with fast, free online tools. Built for Nepal — no sign-up needed.",
+    `Calculate, convert, translate, compress and simplify everyday digital tasks with ${REGISTERED_TOOLS.length}+ fast, free online tools. Built for Nepal — no sign-up needed.`,
   alternates: {
-    canonical: "https://sajilotools.vercel.app",
+    canonical: SITE_URL,
   },
   openGraph: {
     title: "SajiloTools – Free Online Tools Made Simple for Nepal",
     description:
-      "Calculate, convert, translate, compress and simplify everyday digital tasks with fast, free online tools. Built for Nepal.",
-    url: "https://sajilotools.vercel.app",
-    siteName: "SajiloTools",
+      `Calculate, convert, translate, compress and simplify everyday digital tasks with ${REGISTERED_TOOLS.length}+ fast, free online tools. Built for Nepal.`,
+    url: SITE_URL,
+    siteName: SITE_CONFIG.name,
     images: [{ url: "/images/og-default.png", width: 1200, height: 630, alt: "SajiloTools" }],
-    locale: "en_US",
+    locale: SITE_CONFIG.locale,
     type: "website",
   },
 };

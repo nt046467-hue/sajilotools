@@ -1,8 +1,5 @@
 import { MetadataRoute } from "next";
-
-const BASE_URL = (
-  process.env.NEXTAUTH_URL || "https://sajilotools.vercel.app"
-).trim();
+import { SITE_URL } from "@/lib/site-config";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -11,6 +8,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/admin", "/api/private", "/dashboard"],
     },
-    sitemap: `${BASE_URL}/sitemap.xml`,
+    sitemap: `${SITE_URL}/sitemap.xml`,
   };
 }

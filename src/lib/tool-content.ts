@@ -1860,46 +1860,60 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
   "nepali-translator": {
     slug: "nepali-translator",
     aboutParagraphs: [
-      "English ↔ Nepali Translator provides instant translation between English text and Nepali Devanagari script.",
-      "Designed for students, travelers, and professionals needing fast text translation with copy and audio pronunciation support."
+      "English ↔ Nepali Translator provides instant, accurate translation between English text and Nepali Devanagari script (नेपाली).",
+      "Whether you need to translate an English phrase into natural Nepali or convert Devanagari text back into English, our tool delivers fast, clean results with one-click copying and text-to-speech audio pronunciation support.",
+      "Designed specifically for students, travelers, government form applicants, and professionals seeking reliable bidirectional translation without logins, subscriptions, or intrusive ads."
     ],
     useCases: [
-      "Translating official English letters or notice messages into Devanagari Nepali",
-      "Helping students and foreign travelers learn everyday phrases",
-      "Translating Nepali Devanagari sentences back into clear English"
+      "Translating official letters, emails, or notices from English to Nepali Devanagari",
+      "Translating Nepali news, documents, and messages back into clear English",
+      "Learning everyday Nepali conversation phrases with audio pronunciation",
+      "Quick vocabulary checking and phrase translation for academic studies and travel in Nepal"
     ],
     howToSteps: [
-      "Select translation direction (English → Nepali or Nepali → English).",
-      "Type or paste your source text.",
-      "View instant translation with copy and text-to-speech audio controls."
+      "Select your translation direction (English → Nepali or Nepali → English).",
+      "Type or paste your text in the input box.",
+      "Click 'Translate Now' to get your instant translation.",
+      "Use 'Copy' to copy text to your clipboard or click 'Listen' for audio pronunciation."
     ],
     examples: [
       {
-        title: "English to Devanagari Translation",
-        input: "Welcome to Nepal! Have a great day.",
-        output: "नेपालमा स्वागत छ! तपाईको दिन शुभ रहोस्।"
+        title: "English to Nepali (Devanagari)",
+        input: "Good morning! Welcome to Nepal. Have a wonderful day.",
+        output: "शुभ प्रभात! नेपालमा स्वागत छ। तपाईंको दिन शुभ रहोस्।"
+      },
+      {
+        title: "Nepali to English",
+        input: "मलाई नेपाली भाषा सिक्न धेरै मन पर्छ।",
+        output: "I like learning Nepali language very much."
       }
     ],
     limitations: [
-      "Neural machine translation provides general natural translation; official legal documents should be double-checked by a certified translator"
+      "Neural machine translation provides natural everyday translations; official legal documents, court papers, and academic transcripts should always be verified by a certified human translator.",
+      "To type phonetically in Devanagari (e.g. typing 'dhanyabad' to get 'धन्यवाद'), use our dedicated Nepali Unicode Typing Tool rather than translation."
     ],
-    relatedToolSlugs: ["nepali-unicode", "nepali-date-converter", "word-counter", "string-utilities"],
+    relatedToolSlugs: ["nepali-unicode", "nepali-date-converter", "nepali-number-words", "nepali-calendar"],
+    privacyNote: "Translation requests are processed via our secure server proxy. Translated results may be temporarily cached in server memory for fast performance. Translation inputs are never permanently stored, logged, or shared with third parties.",
     faqs: [
       {
-        question: "Is this translator free?",
-        answer: "Yes, it is 100% free for translating phrases, sentences, and paragraphs."
+        question: "Is this English to Nepali translator free?",
+        answer: "Yes, the SajiloTools translator is 100% free for phrases, sentences, and paragraphs with no sign-up or subscription required."
       },
       {
-        question: "Can I translate Nepali Devanagari text back to English?",
-        answer: "Yes, toggle the direction arrow button to translate from Nepali to English."
+        question: "How do I translate Nepali Devanagari text back to English?",
+        answer: "Click the bidirectional arrow button between the language selectors to instantly switch to Nepali → English mode."
       },
       {
-        question: "Does it support text-to-speech audio pronunciation?",
-        answer: "Yes, click the speaker icon to listen to correct pronunciation of translated phrases."
+        question: "How does text-to-speech audio pronunciation work?",
+        answer: "Click the speaker icon next to the translation result to hear the text spoken aloud using your device's built-in speech synthesis engine."
       },
       {
-        question: "Is my translated text stored on remote servers?",
-        answer: "No, text is processed securely in client sessions and is not stored."
+        question: "What is the difference between this translator and Nepali Unicode typing?",
+        answer: "The Nepali Translator converts the meaning of English sentences into Nepali (e.g. 'Thank you' → 'धन्यवाद'). The Nepali Unicode tool converts phonetic spelling (typing 'mero nam' → 'मेरो नाम')."
+      },
+      {
+        question: "Is my translated text stored or logged on your servers?",
+        answer: "No. Translation requests are routed through a secure server proxy. Translations may be temporarily cached in memory to ensure rapid response times, but your text is never permanently stored, sold, or logged."
       }
     ]
   },
