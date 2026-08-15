@@ -140,6 +140,8 @@ export const TOOLS: ToolDef[] = [
     color: "#1F2544",
     darkColor: "#9AA3D6",
     isClientSide: true,
+    seoTitle: "URL Encoder & Decoder – Encode/Decode URL Strings",
+    seoDescription: "Percent-encode or decode URL components instantly, including special characters and query strings. Free, fast, and 100% private in your browser.",
   },
   {
     slug: "hash-generator",
@@ -182,6 +184,8 @@ export const TOOLS: ToolDef[] = [
     darkColor: "#A78BFA",
     isClientSide: true,
     featured: true,
+    seoTitle: "Color Picker & Converter – HEX, RGB, HSL Online",
+    seoDescription: "Pick colors visually or convert between HEX, RGB, and HSL formats instantly. Free, fast color conversion that runs entirely in your browser.",
   },
   {
     slug: "password-generator",
@@ -209,6 +213,8 @@ export const TOOLS: ToolDef[] = [
     color: "#1F2544",
     darkColor: "#9AA3D6",
     isClientSide: true,
+    seoTitle: "Lorem Ipsum Generator – Free Placeholder Text",
+    seoDescription: "Generate custom Lorem Ipsum placeholder text for designs, mockups, and layouts in seconds. Free, fast, and 100% private in your browser.",
   },
   {
     slug: "qr-generator",
@@ -222,6 +228,8 @@ export const TOOLS: ToolDef[] = [
     darkColor: "#9AA3D6",
     isClientSide: true,
     featured: true,
+    seoTitle: "QR Code Generator – Create Free QR Codes Online",
+    seoDescription: "Create QR codes for URLs, text, Wi-Fi, and more instantly, then download as an image. Free, fast, and 100% private in your browser.",
   },
   {
     slug: "timezone-converter",
@@ -234,6 +242,8 @@ export const TOOLS: ToolDef[] = [
     color: "#1F2544",
     darkColor: "#9AA3D6",
     isClientSide: true,
+    seoTitle: "Time Zone Converter – Compare World Times Online",
+    seoDescription: "Convert and compare times across multiple time zones instantly, including Nepal (UTC+5:45). Free, fast, and private in your browser.",
   },
   {
     slug: "markdown-preview",
@@ -247,6 +257,8 @@ export const TOOLS: ToolDef[] = [
     darkColor: "#9AA3D6",
     isClientSide: true,
     trending: true,
+    seoTitle: "Markdown Preview – Live Markdown to HTML Editor",
+    seoDescription: "Write Markdown and see the rendered HTML update live as you type. Free, fast, and private — all rendering happens in your browser.",
   },
   {
     slug: "link-shortener",
@@ -260,6 +272,8 @@ export const TOOLS: ToolDef[] = [
     darkColor: "#D97706",
     isClientSide: false,
     featured: true,
+    seoTitle: "Link Shortener – Free Custom Short URLs",
+    seoDescription: "Shorten long URLs into clean, shareable links with custom aliases. Free, fast, and easy to use with no sign-up required.",
   },
   {
     slug: "uuid-generator",
@@ -300,6 +314,8 @@ export const TOOLS: ToolDef[] = [
     color: "#1F2544",
     darkColor: "#9AA3D6",
     isClientSide: true,
+    seoTitle: "Unix Timestamp Converter – Epoch to Date Online",
+    seoDescription: "Convert Unix epoch timestamps to human-readable dates and back, in any timezone. Free, fast, and private in your browser.",
   },
   {
     slug: "css-js-minifier",
@@ -312,6 +328,8 @@ export const TOOLS: ToolDef[] = [
     color: "#1F2544",
     darkColor: "#9AA3D6",
     isClientSide: true,
+    seoTitle: "CSS & JS Minifier – Compress Code Online Free",
+    seoDescription: "Minify CSS or JavaScript by stripping whitespace and comments and shortening code instantly. Free, fast, and 100% private in your browser.",
   },
   {
     slug: "hmac-generator",
@@ -325,6 +343,8 @@ export const TOOLS: ToolDef[] = [
     darkColor: "#9AA3D6",
     isClientSide: true,
     trending: true,
+    seoTitle: "HMAC Generator – SHA-256, SHA-512 & MD5 Online",
+    seoDescription: "Generate cryptographic HMAC signatures with SHA-256, SHA-512, SHA-1, or MD5 using a custom secret key. Fast, free, and 100% client-side.",
   },
   {
     slug: "random-token-generator",
@@ -338,6 +358,8 @@ export const TOOLS: ToolDef[] = [
     darkColor: "#9AA3D6",
     isClientSide: true,
     trending: true,
+    seoTitle: "Random Token Generator – Secure API Keys Online",
+    seoDescription: "Generate cryptographically secure API keys, secret tokens, and hex strings instantly, including bulk generation. Free, private, and browser-based.",
   },
   {
     slug: "file-checksum-verifier",
@@ -351,6 +373,8 @@ export const TOOLS: ToolDef[] = [
     darkColor: "#9AA3D6",
     isClientSide: true,
     featured: true,
+    seoTitle: "File Checksum Verifier – SHA-256 & MD5 Online",
+    seoDescription: "Verify file integrity by calculating SHA-256, SHA-512, SHA-1, or MD5 checksums locally — files never leave your browser. Free and private.",
   },
 
   // ── Text ──
@@ -366,6 +390,8 @@ export const TOOLS: ToolDef[] = [
     darkColor: "#D97706",
     isClientSide: true,
     featured: true,
+    seoTitle: "Word Counter – Count Words, Characters & Sentences",
+    seoDescription: "Count words, characters, sentences, and paragraphs in real time as you type. Free, fast, and 100% private — nothing leaves your browser.",
   },
   {
     slug: "case-converter",
@@ -378,6 +404,8 @@ export const TOOLS: ToolDef[] = [
     color: "#D97706",
     darkColor: "#D97706",
     isClientSide: true,
+    seoTitle: "Case Converter – UPPER, lower, Title & camelCase",
+    seoDescription: "Transform text instantly to UPPERCASE, lowercase, Title Case, camelCase, and more. Free, fast, and 100% private in your browser.",
   },
   {
     slug: "text-diff",
@@ -390,6 +418,8 @@ export const TOOLS: ToolDef[] = [
     color: "#D97706",
     darkColor: "#D97706",
     isClientSide: true,
+    seoTitle: "Text Diff Checker – Compare Two Texts Online",
+    seoDescription: "Compare two blocks of text and highlight every added, removed, or changed word instantly. Free, fast, and 100% private in your browser.",
   },
   {
     slug: "string-utilities",
@@ -402,6 +432,8 @@ export const TOOLS: ToolDef[] = [
     color: "#D97706",
     darkColor: "#D97706",
     isClientSide: true,
+    seoTitle: "String Utilities – Reverse, Trim, Slugify Online",
+    seoDescription: "Reverse, trim, repeat, slugify, and manipulate strings with one free tool. Fast, private, and runs entirely in your browser.",
   },
 
   // ── PDF ──
@@ -417,6 +449,8 @@ export const TOOLS: ToolDef[] = [
     darkColor: "#EF4444",
     isClientSide: true,
     featured: true,
+    seoTitle: "PDF Merger – Combine Multiple PDFs Online Free",
+    seoDescription: "Combine multiple PDF files into one seamless document in seconds. Free, fast, and private — files are processed locally in your browser.",
   },
   {
     slug: "pdf-splitter",
@@ -429,6 +463,8 @@ export const TOOLS: ToolDef[] = [
     color: "#EF4444",
     darkColor: "#EF4444",
     isClientSide: true,
+    seoTitle: "PDF Splitter – Extract & Split PDF Pages Online",
+    seoDescription: "Extract or split pages from a PDF file into separate documents instantly. Free, fast, and 100% private in your browser.",
   },
   {
     slug: "pdf-to-word",
@@ -443,6 +479,8 @@ export const TOOLS: ToolDef[] = [
     isClientSide: true,
     trending: true,
     isLatest: true,
+    seoTitle: "PDF to Word Converter – Convert PDF to DOCX Free",
+    seoDescription: "Convert PDF text content into an editable Microsoft Word (.docx) document instantly. Free, fast, and secure — no uploads required.",
   },
   {
     slug: "pdf-organizer",
@@ -455,6 +493,8 @@ export const TOOLS: ToolDef[] = [
     color: "#EF4444",
     darkColor: "#EF4444",
     isClientSide: true,
+    seoTitle: "PDF Organizer – Rotate, Delete & Reorder Pages",
+    seoDescription: "Rotate, delete, and reorder PDF pages with drag-and-drop thumbnails. Free, fast, and 100% private in your browser.",
   },
   {
     slug: "pdf-watermark",
@@ -467,6 +507,8 @@ export const TOOLS: ToolDef[] = [
     color: "#EF4444",
     darkColor: "#EF4444",
     isClientSide: true,
+    seoTitle: "PDF Watermark – Add Text or Image Watermarks",
+    seoDescription: "Add a text or image watermark across every page of your PDF instantly. Free, fast, and 100% private in your browser.",
   },
   {
     slug: "jpg-pdf-converter",
@@ -479,6 +521,8 @@ export const TOOLS: ToolDef[] = [
     color: "#EF4444",
     darkColor: "#EF4444",
     isClientSide: true,
+    seoTitle: "JPG to PDF Converter – Convert Images to PDF Free",
+    seoDescription: "Convert JPG images into a PDF, or extract PDF pages as JPG images, instantly. Free, fast, and 100% private in your browser.",
   },
   {
     slug: "pdf-compressor",
@@ -491,6 +535,8 @@ export const TOOLS: ToolDef[] = [
     color: "#EF4444",
     darkColor: "#EF4444",
     isClientSide: true,
+    seoTitle: "PDF Compressor – Reduce PDF File Size Online",
+    seoDescription: "Shrink PDF file size by recompressing embedded images without losing readable quality. Free, fast, and private in your browser.",
   },
 
   // ── Image ──
@@ -506,6 +552,8 @@ export const TOOLS: ToolDef[] = [
     darkColor: "#A78BFA",
     isClientSide: true,
     featured: true,
+    seoTitle: "Image Compressor – Reduce Image Size Online Free",
+    seoDescription: "Reduce image file size without any visible quality loss, in seconds. Free, fast, and 100% private — processed entirely in your browser.",
   },
   {
     slug: "image-resizer",
@@ -518,6 +566,8 @@ export const TOOLS: ToolDef[] = [
     color: "#7C3AED",
     darkColor: "#A78BFA",
     isClientSide: true,
+    seoTitle: "Image Resizer – Resize Images Online Free",
+    seoDescription: "Resize images to exact dimensions or a scale percentage instantly. Free, fast, and 100% private in your browser.",
   },
   {
     slug: "image-cropper",
@@ -530,6 +580,8 @@ export const TOOLS: ToolDef[] = [
     color: "#7C3AED",
     darkColor: "#A78BFA",
     isClientSide: true,
+    seoTitle: "Image Cropper – Crop Photos Online Free",
+    seoDescription: "Crop images visually with freeform or aspect ratio presets like 1:1, 16:9, and 4:3. Free, fast, and 100% private in your browser.",
   },
   {
     slug: "image-converter",
@@ -544,6 +596,8 @@ export const TOOLS: ToolDef[] = [
     isClientSide: true,
     trending: true,
     isLatest: true,
+    seoTitle: "Image Converter – Convert PNG, JPEG, WebP & BMP",
+    seoDescription: "Convert images between PNG, JPEG, WebP, and BMP formats instantly. Free, fast, and 100% private in your browser.",
   },
   {
     slug: "image-to-base64",
@@ -556,6 +610,8 @@ export const TOOLS: ToolDef[] = [
     color: "#7C3AED",
     darkColor: "#A78BFA",
     isClientSide: true,
+    seoTitle: "Image to Base64 Converter – Free Online Tool",
+    seoDescription: "Convert images into Base64 strings, HTML tags, and CSS background URIs instantly. Free, fast, and 100% private in your browser.",
   },
   {
     slug: "background-remover",
@@ -570,6 +626,8 @@ export const TOOLS: ToolDef[] = [
     isClientSide: true,
     trending: true,
     isLatest: true,
+    seoTitle: "AI Background Remover – Free Online, No Upload",
+    seoDescription: "Remove image backgrounds instantly with on-device AI — private, free, and no upload required. Runs entirely in your browser.",
   },
   {
     slug: "favicon-generator",
@@ -582,6 +640,8 @@ export const TOOLS: ToolDef[] = [
     color: "#7C3AED",
     darkColor: "#A78BFA",
     isClientSide: true,
+    seoTitle: "Favicon Generator – Create a Full Favicon Set",
+    seoDescription: "Generate a full favicon set — ICO, PNG sizes, and Apple touch icon — from any image instantly. Free and 100% private.",
   },
   {
     slug: "image-watermark",
@@ -594,6 +654,8 @@ export const TOOLS: ToolDef[] = [
     color: "#7C3AED",
     darkColor: "#A78BFA",
     isClientSide: true,
+    seoTitle: "Image Watermark Tool – Add Text or Logo Free",
+    seoDescription: "Add a text or logo watermark to your photos, single or in bulk, in seconds. Free, fast, and 100% private in your browser.",
   },
   {
     slug: "image-rotate-flip",
@@ -606,6 +668,8 @@ export const TOOLS: ToolDef[] = [
     color: "#7C3AED",
     darkColor: "#A78BFA",
     isClientSide: true,
+    seoTitle: "Image Rotate & Flip – Free Online Photo Editor",
+    seoDescription: "Rotate images 90°, 180°, or 270°, or flip them horizontally and vertically, instantly. Free, fast, and 100% private in your browser.",
   },
 
   // ── Finance ──
@@ -621,6 +685,8 @@ export const TOOLS: ToolDef[] = [
     darkColor: "#22C55E",
     isClientSide: false,
     featured: true,
+    seoTitle: "NRs Currency Converter – Live Nepali Rupee Rates",
+    seoDescription: "Convert Nepali Rupees to any world currency using live NRB exchange rates. Free, fast, and updated in real time.",
   },
   {
     slug: "emi-calculator",
@@ -634,6 +700,8 @@ export const TOOLS: ToolDef[] = [
     darkColor: "#22C55E",
     isClientSide: true,
     trending: true,
+    seoTitle: "EMI Calculator – Loan EMI & Amortization Online",
+    seoDescription: "Calculate monthly EMI, total interest, and a full amortization schedule for NPR/INR loans. Free and instant.",
   },
   {
     slug: "tax-calculator",
@@ -647,6 +715,8 @@ export const TOOLS: ToolDef[] = [
     darkColor: "#22C55E",
     isClientSide: true,
     trending: true,
+    seoTitle: "Nepal Income Tax Calculator – Salary TDS Online",
+    seoDescription: "Calculate Nepal income tax and salary TDS using the latest tax slabs for salaried individuals. Free and instant.",
   },
   {
     slug: "interest-calculator",
@@ -659,6 +729,8 @@ export const TOOLS: ToolDef[] = [
     color: "#22C55E",
     darkColor: "#22C55E",
     isClientSide: true,
+    seoTitle: "Interest Calculator – Simple & Compound Online",
+    seoDescription: "Calculate simple and compound interest returns with flexible compounding frequency. Free, fast, and instant results.",
   },
   {
     slug: "pf-calculator",
@@ -671,6 +743,8 @@ export const TOOLS: ToolDef[] = [
     color: "#22C55E",
     darkColor: "#22C55E",
     isClientSide: true,
+    seoTitle: "Provident Fund Calculator – EPF, CIT & SSF Online",
+    seoDescription: "Calculate employee and employer retirement fund growth and tax-free corpus projection. Free and instant.",
   },
   {
     slug: "gold-silver-calculator",
@@ -683,6 +757,8 @@ export const TOOLS: ToolDef[] = [
     color: "#22C55E",
     darkColor: "#22C55E",
     isClientSide: false,
+    seoTitle: "Gold & Silver Calculator – Live Tola Rates Nepal",
+    seoDescription: "Calculate gold and silver prices in Tola, Gram, and Lal using live Nepal market rates. Free and updated in real time.",
   },
   {
     slug: "sip-calculator",
@@ -695,6 +771,8 @@ export const TOOLS: ToolDef[] = [
     color: "#22C55E",
     darkColor: "#22C55E",
     isClientSide: true,
+    seoTitle: "SIP Calculator – Mutual Fund Returns Online",
+    seoDescription: "Calculate systematic investment plan returns, compound growth, and wealth accumulation instantly. Free and easy to use.",
   },
   {
     slug: "fd-calculator",
@@ -707,6 +785,8 @@ export const TOOLS: ToolDef[] = [
     color: "#22C55E",
     darkColor: "#22C55E",
     isClientSide: true,
+    seoTitle: "Fixed Deposit Calculator – FD Returns Online",
+    seoDescription: "Calculate returns on bank Fixed Deposits with compounding and 5% TDS tax factored in. Free and instant.",
   },
   {
     slug: "vat-calculator",
@@ -719,6 +799,8 @@ export const TOOLS: ToolDef[] = [
     color: "#22C55E",
     darkColor: "#22C55E",
     isClientSide: true,
+    seoTitle: "VAT Calculator – Add or Remove 13% Nepal VAT",
+    seoDescription: "Add or remove Nepal's 13% Value Added Tax from any price instantly. Free, fast, and accurate.",
   },
 
   // ── Nepal ──
@@ -734,6 +816,8 @@ export const TOOLS: ToolDef[] = [
     darkColor: "#F87171",
     isClientSide: true,
     trending: true,
+    seoTitle: "Land Unit Converter – Ropani, Anna, Bigha Online",
+    seoDescription: "Convert between Ropani, Anna, Bigha, Kattha, and other Nepali land units instantly. Free and 100% private.",
   },
   {
     slug: "nepali-translator",
@@ -761,6 +845,8 @@ export const TOOLS: ToolDef[] = [
     darkColor: "#F87171",
     isClientSide: true,
     trending: true,
+    seoTitle: "Nepali Date Converter – BS to AD & Age Calculator",
+    seoDescription: "Convert Bikram Sambat (वि.सं.) dates to Gregorian AD and calculate exact age with a birthday countdown. Free and instant.",
   },
   {
     slug: "nepali-unicode",
@@ -773,6 +859,8 @@ export const TOOLS: ToolDef[] = [
     color: "#DC2626",
     darkColor: "#F87171",
     isClientSide: true,
+    seoTitle: "Nepali Unicode Typing Tool – Romanized to Devanagari",
+    seoDescription: "Type in Romanized English and convert it instantly into Devanagari Unicode text. Free, fast, and 100% private.",
   },
   {
     slug: "nepali-number-words",
@@ -785,6 +873,8 @@ export const TOOLS: ToolDef[] = [
     color: "#DC2626",
     darkColor: "#F87171",
     isClientSide: true,
+    seoTitle: "Nepali Number to Words – Lakh & Crore Converter",
+    seoDescription: "Convert numbers into Nepali Lakh/Crore words for bank cheques and legal documents instantly. Free and accurate.",
   },
   {
     slug: "nepali-calendar",
@@ -797,6 +887,8 @@ export const TOOLS: ToolDef[] = [
     color: "#DC2626",
     darkColor: "#F87171",
     isClientSide: true,
+    seoTitle: "Nepali Calendar (BS) – Bikram Sambat Online",
+    seoDescription: "Browse a Bikram Sambat monthly calendar grid with festivals, national holidays, and Saturdays marked. Free and always updated.",
   },
   {
     slug: "traditional-unit-converter",
@@ -809,6 +901,8 @@ export const TOOLS: ToolDef[] = [
     color: "#DC2626",
     darkColor: "#F87171",
     isClientSide: true,
+    seoTitle: "Traditional Unit Converter – Dharni, Tola, Muri",
+    seoDescription: "Convert Dharni, Tola, Pau, Seer, Muri, Pathi, Mana, and other traditional Nepali units to Liters/Kg. Free and instant.",
   },
   {
     slug: "vehicle-tax-calculator",
@@ -821,6 +915,8 @@ export const TOOLS: ToolDef[] = [
     color: "#DC2626",
     darkColor: "#F87171",
     isClientSide: true,
+    seoTitle: "Vehicle Tax Calculator – Nepal Blue Book Tax",
+    seoDescription: "Estimate annual road tax for motorcycles, cars, EVs, and commercial vehicles across all 7 provinces of Nepal. Free and instant.",
   },
   {
     slug: "ward-municipality-lookup",
@@ -833,6 +929,8 @@ export const TOOLS: ToolDef[] = [
     color: "#DC2626",
     darkColor: "#F87171",
     isClientSide: true,
+    seoTitle: "Ward & Municipality Lookup – Nepal Local Govt",
+    seoDescription: "Find administrative details, ward counts, and official address formats across all 753 local government units in Nepal. Free.",
   },
 
   // ── Everyday ──
@@ -849,6 +947,8 @@ export const TOOLS: ToolDef[] = [
     isClientSide: true,
     featured: true,
     isLatest: true,
+    seoTitle: "Unit Converter – Length, Weight, Temperature & More",
+    seoDescription: "Convert length, weight, temperature, volume, area, speed, time, and data storage units instantly. Free and 100% private.",
   },
   {
     slug: "percentage-calculator",
@@ -862,6 +962,8 @@ export const TOOLS: ToolDef[] = [
     darkColor: "#2DD4BF",
     isClientSide: true,
     trending: true,
+    seoTitle: "Percentage Calculator – Calculate % Change Online",
+    seoDescription: "Calculate the percentage of a number, percentage change, and percentage difference instantly. Free, fast, and accurate.",
   },
   {
     slug: "gpa-percentage-converter",
@@ -875,6 +977,8 @@ export const TOOLS: ToolDef[] = [
     darkColor: "#2DD4BF",
     isClientSide: true,
     isLatest: true,
+    seoTitle: "GPA to Percentage Converter – Nepal NEB Standard",
+    seoDescription: "Convert GPA to percentage and percentage to GPA using Nepal NEB and university grading standards. Free and instant.",
   },
   {
     slug: "bmi-calculator",
@@ -887,6 +991,8 @@ export const TOOLS: ToolDef[] = [
     color: "#0D9488",
     darkColor: "#2DD4BF",
     isClientSide: true,
+    seoTitle: "BMI Calculator – Body Mass Index Online Free",
+    seoDescription: "Calculate your Body Mass Index using metric or imperial units with standard WHO categories. Free, fast, and private.",
   },
   {
     slug: "discount-calculator",
@@ -899,6 +1005,8 @@ export const TOOLS: ToolDef[] = [
     color: "#0D9488",
     darkColor: "#2DD4BF",
     isClientSide: true,
+    seoTitle: "Discount Calculator – Sale Price & Markup Online",
+    seoDescription: "Calculate sale price after a discount, original price before a discount, or profit markup percentage instantly. Free and easy.",
   },
   {
     slug: "bmr-calculator",
@@ -912,6 +1020,8 @@ export const TOOLS: ToolDef[] = [
     darkColor: "#2DD4BF",
     isClientSide: true,
     featured: true,
+    seoTitle: "BMR & TDEE Calculator – Daily Calorie Needs",
+    seoDescription: "Calculate your Basal Metabolic Rate and Total Daily Energy Expenditure using the Mifflin-St Jeor and Katch-McArdle formulas. Free.",
   },
   {
     slug: "calorie-calculator",
@@ -925,6 +1035,8 @@ export const TOOLS: ToolDef[] = [
     darkColor: "#2DD4BF",
     isClientSide: true,
     trending: true,
+    seoTitle: "Calorie Calculator – Daily Calorie & Macro Targets",
+    seoDescription: "Calculate daily calorie targets for weight loss, maintenance, or muscle gain, with protein, carb, and fat macro ratios. Free.",
   },
   {
     slug: "age-calculator",
