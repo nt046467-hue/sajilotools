@@ -224,70 +224,9 @@ export function romanToNepaliPhonetic(text: string): string {
   }).join("");
 }
 
-// ── PREETI TO UNICODE MAP ──────────────────────────────────────────────────
+import { preetiToUnicode, unicodeToPreeti } from "@/lib/converters/preeti-converter";
 
-const PREETI_MAP: Record<string, string> = {
-  "~": "ञ्", "`": "ञ", "!": "ज्ञ", "@": "द्द", "#": "घ्", "$": "द्ध", "%": "छ्",
-  "^": "ट्ठ", "&": "न्न्", "*": "क्र", "(": "द्द", ")": "ह्न", "-": "ः", "_": "ट्ठ",
-  "=": "्र", "+": "ं", "q": "त्र", "w": "ध", "e": "भ", "r": "च", "t": "त", "y": "थ",
-  "u": "ग", "i": "ष", "o": "द", "p": "ह", "[": "८", "]": "९", "\\": "्", "Q": "त्त",
-  "W": "ध", "E": "भ", "R": "च्", "T": "त्", "Y": "ठ", "U": "ऊ", "I": "क्ष", "O": "इ",
-  "P": "ए", "{": "ट", "}": "ठ", "|": "्र", "a": "म", "s": "क", "d": "म", "f": "ा",
-  "g": "न", "h": "ज", "j": "व", "k": "प", "l": "ि", ";": "स", "'": "ु", "A": "ा",
-  "S": "क", "D": "अ", "F": "ँ", "G": "ग", "H": "झ", "J": "व", "K": "फ", "L": "ी",
-  ":": "स्", '"': "ू", "z": "श", "x": "ह", "c": "अ", "v": "ख", "b": "न", "n": "द",
-  "m": "प", ",": "उ", ".": "।", "/": "र", "Z": "ञ", "X": "ह", "C": "ऋ", "V": "ॐ",
-  "B": "भ", "N": "ण", "M": "म्", "<": "न्", ">": "श्र", "?": "रु",
-  "0": "०", "1": "१", "2": "२", "3": "३", "4": "४", "5": "५", "6": "६", "7": "७", "8": "८", "9": "९",
-};
-
-export function preetiToUnicode(text: string): string {
-  if (!text) return "";
-
-  let res = text;
-  let out = "";
-
-  // Preeti e-kar 'l' comes before consonant, e.g., 'lg' -> 'नि'. Swap 'l' + char
-  for (let i = 0; i < res.length; i++) {
-    const ch = res[i];
-    if (ch === "l" && i + 1 < res.length) {
-      const nextCh = PREETI_MAP[res[i + 1]] || res[i + 1];
-      out += nextCh + "ि";
-      i++;
-    } else {
-      out += PREETI_MAP[ch] !== undefined ? PREETI_MAP[ch] : ch;
-    }
-  }
-
-  return out;
-}
-
-// Reverse mapping for Unicode to Preeti
-const UNICODE_TO_PREETI_MAP: Record<string, string> = Object.entries(PREETI_MAP).reduce(
-  (acc, [preeti, uni]) => {
-    if (!acc[uni]) acc[uni] = preeti;
-    return acc;
-  },
-  {} as Record<string, string>
-);
-
-export function unicodeToPreeti(text: string): string {
-  if (!text) return "";
-  let out = "";
-  for (let i = 0; i < text.length; i++) {
-    const ch = text[i];
-    // Check if character is e-kar 'ि' which moves before consonant in Preeti
-    if (ch === "ि" && out.length > 0) {
-      const lastUni = text[i - 1];
-      const lastPreeti = UNICODE_TO_PREETI_MAP[lastUni] || lastUni;
-      // remove last added character and prepend 'l'
-      out = out.slice(0, -lastPreeti.length) + "l" + lastPreeti;
-    } else {
-      out += UNICODE_TO_PREETI_MAP[ch] !== undefined ? UNICODE_TO_PREETI_MAP[ch] : ch;
-    }
-  }
-  return out;
-}
+export { preetiToUnicode, unicodeToPreeti };
 
 // ── COMPONENT IMPLEMENTATION ───────────────────────────────────────────────
 
@@ -329,13 +268,38 @@ export default function NepaliUnicodeTool() {
     URL.revokeObjectURL(url);
   };
 
-  const quickPhrases = [
+  const romanPhrases = [
     { label: "k gardai xeu", text: "k gardai xeu karuna sanchai xeu humm" },
     { label: "namaste nepal", text: "namaste mero nepal ramro chha" },
     { label: "kasto chha", text: "kasto chha sanchai ho" },
     { label: "dhanyabad", text: "dherai dherai dhanyabad tapailai" },
     { label: "sajilo tools", text: "sajilotools nepal ko ramro platform ho" },
   ];
+
+  const preetiPhrases = [
+    { label: "नेपाल", text: "g]kfn" },
+    { label: "प्रीति", text: "k|Llt" },
+    { label: "नमस्ते", text: "gd:t]" },
+    { label: "काठमाडौं", text: "sf7df8f}+" },
+    { label: "शुभकामना", text: "z'esfdgf" },
+    { label: "विद्यार्थी", text: "ljBfyL{" },
+  ];
+
+  const unicodePhrases = [
+    { label: "नेपाल", text: "नेपाल" },
+    { label: "प्रीति", text: "प्रीति" },
+    { label: "नमस्ते", text: "नमस्ते" },
+    { label: "काठमाडौं", text: "काठमाडौं" },
+    { label: "शुभकामना", text: "शुभकामना" },
+    { label: "विद्यार्थी", text: "विद्यार्थी" },
+  ];
+
+  const currentPhrases =
+    mode === "roman"
+      ? romanPhrases
+      : mode === "preetiToUni"
+        ? preetiPhrases
+        : unicodePhrases;
 
   const virtualKeys = ["अ", "आ", "इ", "ई", "उ", "ऊ", "ऋ", "ए", "ऐ", "ओ", "औ", "क", "ख", "ग", "घ", "ङ", "च", "छ", "ज", "झ", "ञ", "ट", "ठ", "ड", "ढ", "ण", "त", "थ", "द", "ध", "न", "प", "फ", "ब", "भ", "म", "य", "र", "ल", "व", "श", "ष", "स", "ह", "क्ष", "त्र", "ज्ञ", "ा", "ि", "ी", "ु", "ू", "े", "ै", "ो", "ौ", "ं", "ँ", "ः", "्", "।"];
 
@@ -348,11 +312,10 @@ export default function NepaliUnicodeTool() {
             setMode("roman");
             setInputText("k gardai xeu karuna sanchai xeu humm");
           }}
-          className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
-            mode === "roman"
-              ? "bg-[#1F2544] dark:bg-[#F5A623] text-white dark:text-[#0C0F1E] shadow-sm"
-              : "text-[#71717A] hover:bg-[#FAFAF8] dark:hover:bg-[#1E2338]"
-          }`}
+          className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${mode === "roman"
+            ? "bg-[#1F2544] dark:bg-[#F5A623] text-white dark:text-[#0C0F1E] shadow-sm"
+            : "text-[#71717A] hover:bg-[#FAFAF8] dark:hover:bg-[#1E2338]"
+            }`}
         >
           <Keyboard size={15} /> Romanized Phonetic (रोमन युनिकोड)
         </button>
@@ -362,13 +325,12 @@ export default function NepaliUnicodeTool() {
             setMode("preetiToUni");
             setInputText("sD: g]kfn k|Llt");
           }}
-          className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
-            mode === "preetiToUni"
-              ? "bg-[#1F2544] dark:bg-[#F5A623] text-white dark:text-[#0C0F1E] shadow-sm"
-              : "text-[#71717A] hover:bg-[#FAFAF8] dark:hover:bg-[#1E2338]"
-          }`}
+          className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${mode === "preetiToUni"
+            ? "bg-[#1F2544] dark:bg-[#F5A623] text-white dark:text-[#0C0F1E] shadow-sm"
+            : "text-[#71717A] hover:bg-[#FAFAF8] dark:hover:bg-[#1E2338]"
+            }`}
         >
-          <ArrowRightLeft size={15} /> Preeti ➔ Unicode (प्रिती देखि युनिकोड)
+          Preeti ➔ Unicode (प्रिती देखि युनिकोड)
         </button>
 
         <button
@@ -376,11 +338,10 @@ export default function NepaliUnicodeTool() {
             setMode("uniToPreeti");
             setInputText("नेपाल प्रीति युनिकोड");
           }}
-          className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
-            mode === "uniToPreeti"
-              ? "bg-[#1F2544] dark:bg-[#F5A623] text-white dark:text-[#0C0F1E] shadow-sm"
-              : "text-[#71717A] hover:bg-[#FAFAF8] dark:hover:bg-[#1E2338]"
-          }`}
+          className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${mode === "uniToPreeti"
+            ? "bg-[#1F2544] dark:bg-[#F5A623] text-white dark:text-[#0C0F1E] shadow-sm"
+            : "text-[#71717A] hover:bg-[#FAFAF8] dark:hover:bg-[#1E2338]"
+            }`}
         >
           <FileText size={15} /> Unicode ➔ Preeti (युनिकोड देखि प्रिती)
         </button>
@@ -396,15 +357,15 @@ export default function NepaliUnicodeTool() {
               {mode === "roman"
                 ? "Romanized English Input"
                 : mode === "preetiToUni"
-                ? "Preeti Font Text Input"
-                : "Devanagari Unicode Input"}
+                  ? "Preeti Font Text Input"
+                  : "Devanagari Unicode Input"}
             </label>
             <span className="text-[10px] text-[#A1A1AA]">
               {mode === "roman"
                 ? "e.g. k gardai xeu karuna sanchai"
                 : mode === "preetiToUni"
-                ? "e.g. sD: g]kfn k|Llt"
-                : "e.g. नेपाल"}
+                  ? "e.g. sD: g]kfn k|Llt"
+                  : "e.g. नेपाल"}
             </span>
           </div>
           <textarea
@@ -414,8 +375,8 @@ export default function NepaliUnicodeTool() {
               mode === "roman"
                 ? "Type in Romanized Nepali (e.g., k gardai xeu karuna sanchai xeu humm)..."
                 : mode === "preetiToUni"
-                ? "Paste traditional Preeti font text here..."
-                : "Type Devanagari Unicode text here..."
+                  ? "Paste traditional Preeti font text here..."
+                  : "Type Devanagari Unicode text here..."
             }
             className="w-full h-64 p-4 rounded-2xl border border-[#E4E0D8] dark:border-[#1E2338] bg-white dark:bg-[#141829] text-[#18181B] dark:text-[#F4F4F5] placeholder:text-[#A1A1AA] focus:outline-none focus:ring-2 focus:ring-[#F5A623]/40 resize-none font-sans text-sm leading-relaxed shadow-xs"
           />
@@ -462,27 +423,25 @@ export default function NepaliUnicodeTool() {
           <span>Characters: <strong className="text-[#18181B] dark:text-[#F4F4F5]">{charCount}</strong></span>
         </div>
 
-        {mode === "roman" && (
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-xs font-bold text-[#71717A]">Try Phrases:</span>
-            {quickPhrases.map((q) => (
-              <button
-                key={q.label}
-                onClick={() => setInputText(q.text)}
-                className="px-2.5 py-1 rounded-lg border border-[#E4E0D8] dark:border-[#1E2338] bg-[#FAFAF8] dark:bg-[#1E2338] text-xs font-semibold text-[#18181B] dark:text-[#F4F4F5] hover:border-[#F5A623] transition-colors"
-              >
-                {q.label}
-              </button>
-            ))}
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-xs font-bold text-[#71717A]">Try Phrases:</span>
+          {currentPhrases.map((q) => (
             <button
-              onClick={() => setInputText("")}
-              className="p-1.5 rounded-lg text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
-              title="Clear Input"
+              key={q.label}
+              onClick={() => setInputText(q.text)}
+              className="px-2.5 py-1 rounded-lg border border-[#E4E0D8] dark:border-[#1E2338] bg-[#FAFAF8] dark:bg-[#1E2338] text-xs font-semibold text-[#18181B] dark:text-[#F4F4F5] hover:border-[#F5A623] transition-colors"
             >
-              <Trash2 size={14} />
+              {q.label}
             </button>
-          </div>
-        )}
+          ))}
+          <button
+            onClick={() => setInputText("")}
+            className="p-1.5 rounded-lg text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
+            title="Clear Input"
+          >
+            <Trash2 size={14} />
+          </button>
+        </div>
       </div>
 
       {/* Virtual Quick Keyboard helper */}

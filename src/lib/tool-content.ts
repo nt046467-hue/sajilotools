@@ -313,6 +313,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Password Generator creates cryptographically secure, random passwords to protect online accounts against brute-force attacks and credential stuffing.",
       "Customize password length, include uppercase/lowercase letters, digits, and special symbols, or generate easy-to-remember passphrase combinations."
     ],
+    useCases: [
+      "Creating strong unique passwords for new online accounts and email signups",
+      "Generating temporary passwords for shared team logins or client handoffs",
+      "Building passphrase-style credentials that are easier to type on mobile devices"
+    ],
+    howToSteps: [
+      "Set your desired password length using the slider.",
+      "Toggle uppercase, lowercase, numbers, and symbols as needed.",
+      "Click 'Generate' and copy the password to your clipboard."
+    ],
+    examples: [
+      {
+        title: "16-Character Strong Password",
+        input: "Length: 16, Symbols: On, Numbers: On",
+        output: "kX9#mQ2!pL7@wR4z"
+      }
+    ],
+    limitations: [
+      "Generated passwords are not stored, so save them immediately in a password manager",
+      "Very short lengths (under 8 characters) reduce entropy and security"
+    ],
     faqs: [
       {
         question: "How secure are the generated passwords?",
@@ -338,6 +359,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
     aboutParagraphs: [
       "Lorem Ipsum Generator produces customizable placeholder text for web designers, graphic artists, and layout typography testing.",
       "Generate paragraphs, sentences, words, or HTML-wrapped list items with traditional Latin or fun localized dummy text options."
+    ],
+    useCases: [
+      "Filling wireframes and mockups with realistic-looking placeholder copy",
+      "Testing typography, line spacing, and container overflow behavior",
+      "Populating CMS templates during development before real content is ready"
+    ],
+    howToSteps: [
+      "Choose whether to generate words, sentences, or paragraphs.",
+      "Set the exact quantity you need.",
+      "Click 'Generate' and copy the placeholder text, plain or HTML-wrapped."
+    ],
+    examples: [
+      {
+        title: "3-Sentence Placeholder",
+        input: "Sentences: 3",
+        output: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore. Ut enim ad minim veniam, quis nostrud exercitation."
+      }
+    ],
+    limitations: [
+      "Generated text is not semantically meaningful and should never be used as final content",
+      "HTML output mode wraps text in basic tags only (p, li) without custom classes"
     ],
     faqs: [
       {
@@ -365,6 +407,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "QR Code Generator creates customizable Quick Response (QR) codes for website URLs, WiFi credentials, plain text, email addresses, and phone numbers.",
       "Customize foreground and background colors, dot styles, and download high-resolution PNG or vector SVG files ready for print and digital media."
     ],
+    useCases: [
+      "Adding a scannable link to printed flyers, business cards, or restaurant menus",
+      "Sharing WiFi credentials with guests without reading out the password",
+      "Encoding contact details or event links for quick mobile scanning"
+    ],
+    howToSteps: [
+      "Choose a QR type: URL, text, WiFi, or contact.",
+      "Enter your content and customize colors if needed.",
+      "Download the QR code as PNG or SVG for print or digital use."
+    ],
+    examples: [
+      {
+        title: "URL QR Code",
+        input: "https://sajilotools.com",
+        output: "Scannable QR code linking directly to the SajiloTools homepage"
+      }
+    ],
+    limitations: [
+      "Very long text or URLs increase QR code density, which can affect scan reliability at small print sizes",
+      "Custom colors with low contrast may reduce scan accuracy on some phone cameras"
+    ],
     faqs: [
       {
         question: "Do generated QR codes ever expire?",
@@ -390,6 +453,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
     aboutParagraphs: [
       "Time Zone Converter helps international teams, remote workers, and travelers compare local time across multiple world timezones simultaneously.",
       "Features explicit support for Nepal Standard Time (NST / UTC+5:45) alongside UTC, EST, PST, GMT, IST, and major global business centers."
+    ],
+    useCases: [
+      "Scheduling meetings across remote teams spread over multiple time zones",
+      "Coordinating international calls with clients or family members abroad",
+      "Planning travel itineraries around Nepal Standard Time (UTC+5:45)"
+    ],
+    howToSteps: [
+      "Select your source time zone and enter a time.",
+      "Add one or more target cities or time zones to compare.",
+      "View all converted times side by side instantly."
+    ],
+    examples: [
+      {
+        title: "Kathmandu to New York",
+        input: "10:00 AM NST (Kathmandu)",
+        output: "11:15 PM EST, previous day (New York)"
+      }
+    ],
+    limitations: [
+      "Daylight Saving Time is calculated automatically but should be double-checked for regions with unusual DST rules",
+      "Historical time zone rule changes before 1970 are not supported"
     ],
     faqs: [
       {
@@ -417,6 +501,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Markdown Previewer is a live, split-screen editor that compiles GitHub Flavored Markdown (GFM) into clean HTML in real time.",
       "Write documentation, README files, blog posts, and notes with instant rendering for headings, lists, code blocks, tables, and task checkboxes."
     ],
+    useCases: [
+      "Drafting and previewing GitHub README files before committing",
+      "Writing blog posts or documentation with live formatting feedback",
+      "Testing Markdown tables, checklists, and code blocks before publishing"
+    ],
+    howToSteps: [
+      "Type or paste Markdown into the left editor pane.",
+      "View the live-rendered HTML output in the right preview pane.",
+      "Copy the compiled HTML or download your Markdown file."
+    ],
+    examples: [
+      {
+        title: "Markdown to HTML",
+        input: "# Hello\\n**bold text**",
+        output: "<h1>Hello</h1>\\n<p><strong>bold text</strong></p>"
+      }
+    ],
+    limitations: [
+      "Custom HTML embedded inside Markdown is rendered but not sanitized for production use",
+      "Very long documents may take a moment to re-render on each keystroke"
+    ],
     faqs: [
       {
         question: "Does it support GitHub Flavored Markdown (GFM)?",
@@ -443,6 +548,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Link Shortener transforms long, cumbersome URLs into short, memorable links with custom slug aliases.",
       "Track click statistics, generate matching QR codes, and simplify link sharing for social media posts, SMS, and messaging apps."
     ],
+    useCases: [
+      "Shortening long affiliate or campaign URLs for cleaner social media posts and bios",
+      "Creating branded short links for SMS marketing, email newsletters, and printed QR codes",
+      "Tracking click performance across multiple sharing channels from one place"
+    ],
+    howToSteps: [
+      "Paste your long URL into the input field.",
+      "Optionally set a custom alias for branding.",
+      "Click 'Shorten' and copy your new short link to share."
+    ],
+    examples: [
+      {
+        title: "Long URL to Short Link",
+        input: "https://sajilotools.com/tools/developer/link-shortener?ref=campaign2026",
+        output: "sajilotools.com/s/promo26"
+      }
+    ],
+    limitations: [
+      "Shortened links depend on the SajiloTools domain remaining active",
+      "Custom aliases are assigned on a first-come, first-served basis"
+    ],
     faqs: [
       {
         question: "Can I customize the short link alias?",
@@ -468,6 +594,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
     aboutParagraphs: [
       "UUID / GUID Generator generates RFC 4122 compliant version 4 Universally Unique Identifiers. Generate single or bulk UUIDs with customized uppercase/lowercase formatting and hyphen options.",
       "Ideal for database primary keys, distributed system trace IDs, API session tokens, and mock test data creation."
+    ],
+    useCases: [
+      "Generating unique primary keys for new database records",
+      "Creating trace IDs for distributed systems and microservice logging",
+      "Producing mock test data with realistic unique identifiers"
+    ],
+    howToSteps: [
+      "Select the number of UUIDs you want to generate (up to 500).",
+      "Choose formatting options like uppercase or hyphen removal.",
+      "Copy or download the generated list as text or CSV."
+    ],
+    examples: [
+      {
+        title: "Single UUID v4",
+        input: "Generate: 1",
+        output: "3f9a1b2c-8d4e-4a6f-9c1d-2e5f7a8b9c0d"
+      }
+    ],
+    limitations: [
+      "Version 4 UUIDs are randomly generated, not sequential, so they can't be sorted by creation time",
+      "Bulk generation is capped at 500 per click to keep the browser responsive"
     ],
     faqs: [
       {
@@ -521,6 +668,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Unix Timestamp Converter parses Unix epoch timestamps (seconds or milliseconds since Jan 01 1970 UTC) into human-readable date and time formats across local, UTC, and Nepal (NST) timezones.",
       "Convert human dates back into Unix epoch integer values for database queries, API testing, and log debugging."
     ],
+    useCases: [
+      "Debugging API responses and server logs that use epoch timestamps",
+      "Converting database timestamp fields into readable dates during QA testing",
+      "Generating epoch values for scheduling scripts and cron jobs"
+    ],
+    howToSteps: [
+      "Paste a Unix timestamp, or select a date from the calendar.",
+      "The tool auto-detects seconds vs milliseconds format.",
+      "View the converted result in UTC, local time, and Nepal Standard Time."
+    ],
+    examples: [
+      {
+        title: "Epoch to Readable Date",
+        input: "1735689600",
+        output: "Wed, 01 Jan 2026 00:00:00 UTC"
+      }
+    ],
+    limitations: [
+      "Extremely large or negative timestamps outside the standard epoch range may not render correctly",
+      "Millisecond precision beyond the second is rounded in the human-readable output"
+    ],
     faqs: [
       {
         question: "What is a Unix Timestamp?",
@@ -546,6 +714,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
     aboutParagraphs: [
       "CSS & JavaScript Minifier reduces web file sizes by stripping unnecessary whitespace, line breaks, indentation, and comments from production code assets.",
       "Minified code loads faster over web networks, reducing page load times and bandwidth consumption without modifying code execution behavior."
+    ],
+    useCases: [
+      "Compressing CSS and JavaScript files before deploying to production",
+      "Reducing page load time and bandwidth usage for performance-sensitive sites",
+      "Preparing minified assets for CDN delivery on low-bandwidth connections"
+    ],
+    howToSteps: [
+      "Paste your CSS or JavaScript code, or upload a file.",
+      "Click 'Minify' to strip whitespace, comments, and line breaks.",
+      "Copy or download the compressed output file."
+    ],
+    examples: [
+      {
+        title: "CSS Minification",
+        input: "body {\\n  margin: 0;\\n  padding: 0;\\n}",
+        output: "body{margin:0;padding:0}"
+      }
+    ],
+    limitations: [
+      "Does not perform advanced tree-shaking or dead code elimination",
+      "Very large files (over 5MB) may take a few seconds to process"
     ],
     faqs: [
       {
@@ -1659,6 +1848,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Interest Calculator computes both Simple Interest (SI) and Compound Interest (CI) returns for loans, fixed deposits, and savings investments.",
       "Calculate total interest earned, final maturity amount, and compare annual, semi-annual, quarterly, or monthly compounding frequencies."
     ],
+    useCases: [
+      "Comparing simple vs compound returns before choosing a savings or FD account",
+      "Estimating loan interest cost before committing to a lender",
+      "Projecting investment growth over multiple years with different compounding frequencies"
+    ],
+    howToSteps: [
+      "Enter the principal amount, interest rate, and time period.",
+      "Choose Simple or Compound Interest, and select a compounding frequency.",
+      "View the total interest earned and final maturity amount instantly."
+    ],
+    examples: [
+      {
+        title: "Compound Interest Example",
+        input: "Principal: NPR 100,000, Rate: 8%, Time: 5 years, Compounding: Annual",
+        output: "Maturity Amount: NPR 146,933"
+      }
+    ],
+    limitations: [
+      "Assumes a fixed interest rate for the entire tenure",
+      "Does not account for tax deductions on interest earned"
+    ],
     faqs: [
       {
         question: "What is the difference between Simple and Compound Interest?",
@@ -1684,6 +1894,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
     aboutParagraphs: [
       "Provident Fund (EPF / CIT / SSF) Calculator estimates retirement savings growth, employer contribution matches, and tax-free corpus projections in Nepal.",
       "Input monthly basic salary to project Employee Provident Fund (10% + 10%), Citizen Investment Trust (CIT), and Social Security Fund (SSF 11% + 20%) accumulations."
+    ],
+    useCases: [
+      "Projecting retirement savings growth under EPF, CIT, or SSF schemes",
+      "Comparing employer contribution matching across different fund types",
+      "Estimating tax-exempt CIT contribution limits for annual tax planning"
+    ],
+    howToSteps: [
+      "Enter your monthly basic salary.",
+      "Select your fund type — EPF, CIT, or SSF.",
+      "View projected employee and employer contributions and long-term growth."
+    ],
+    examples: [
+      {
+        title: "EPF Monthly Contribution",
+        input: "Basic Salary: NPR 50,000",
+        output: "Employee: NPR 5,000, Employer: NPR 5,000 (Total: NPR 10,000/month)"
+      }
+    ],
+    limitations: [
+      "Interest rate projections use published annual rates, which can change year to year",
+      "Does not account for early withdrawal or loan-against-PF scenarios"
     ],
     faqs: [
       {
@@ -1711,6 +1942,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Nepal Gold & Silver Calculator computes accurate market prices for Fine Gold (छापावाल सुन), Tejabi Gold (तेजाबी सुन), and Silver (चाँदी) based on live FENEGOSIDA daily rates.",
       "Calculate jewelry costs across traditional Nepalese weight units including Tola (तोला), Gram (ग्राम), Aana (आना), and Lal (लाल) with optional making charges (ज्याला/जर्ती)."
     ],
+    useCases: [
+      "Estimating jewelry cost before visiting a jeweler in Nepal",
+      "Tracking daily gold and silver rate changes for investment decisions",
+      "Calculating total invoice cost including making charges (Jyala/Jarti)"
+    ],
+    howToSteps: [
+      "Select gold type (Fine or Tejabi) or silver.",
+      "Choose your unit — Tola, Gram, Aana, or Lal.",
+      "Enter quantity and optional making charges to see the total cost."
+    ],
+    examples: [
+      {
+        title: "1 Tola Fine Gold",
+        input: "Quantity: 1 Tola, Rate: NPR 175,000/Tola",
+        output: "Total: NPR 175,000 (before making charges)"
+      }
+    ],
+    limitations: [
+      "Rates are sourced from FENEGOSIDA and may lag slightly behind real-time market movement",
+      "Actual jeweler prices can vary based on purity certification and local premiums"
+    ],
     faqs: [
       {
         question: "How many Aana and Lal are in one Tola?",
@@ -1736,6 +1988,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
     aboutParagraphs: [
       "SIP / Mutual Fund Calculator estimates wealth accumulation, total invested amount, and estimated capital gains from Systematic Investment Plans (SIP) in Nepalese and global mutual funds.",
       "Compare monthly SIP contributions against lump-sum investments over 1 to 30 years with interactive compound growth visualizers."
+    ],
+    useCases: [
+      "Projecting long-term wealth growth from monthly mutual fund investments",
+      "Comparing SIP investing against a one-time lump-sum investment",
+      "Planning retirement or education savings goals with compound growth estimates"
+    ],
+    howToSteps: [
+      "Enter your monthly SIP amount, expected annual return, and investment duration.",
+      "Optionally switch to Lump-Sum mode to compare a one-time investment.",
+      "View total invested amount, estimated returns, and final maturity value."
+    ],
+    examples: [
+      {
+        title: "10-Year Monthly SIP",
+        input: "Monthly SIP: NPR 5,000, Expected Return: 12%, Duration: 10 years",
+        output: "Total Invested: NPR 600,000, Estimated Value: NPR 1,161,695"
+      }
+    ],
+    limitations: [
+      "Assumes a constant annual return rate; actual mutual fund returns fluctuate",
+      "Capital gains tax estimates are approximate and should be confirmed with a tax advisor"
     ],
     faqs: [
       {
@@ -1763,6 +2036,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Fixed Deposit (FD) Calculator computes interest income, final maturity amount, and applicable 5% TDS tax on bank fixed deposits across Nepalese commercial and development banks.",
       "Compare annual, quarterly, and monthly interest payout options to evaluate fixed income savings plans."
     ],
+    useCases: [
+      "Comparing FD interest offers across different Nepalese banks before investing",
+      "Estimating post-tax maturity value on a fixed deposit",
+      "Planning short-term vs long-term FD tenure based on payout frequency"
+    ],
+    howToSteps: [
+      "Enter the deposit amount, interest rate, and tenure.",
+      "Select the interest payout frequency (annual, quarterly, or monthly).",
+      "View gross interest, 5% TDS deduction, and net maturity amount."
+    ],
+    examples: [
+      {
+        title: "1-Year Fixed Deposit",
+        input: "Deposit: NPR 500,000, Rate: 10%, Tenure: 1 year",
+        output: "Net Maturity (after 5% TDS): NPR 547,500"
+      }
+    ],
+    limitations: [
+      "Assumes a fixed interest rate for the full tenure with no early withdrawal penalty applied",
+      "Actual bank rates and TDS rules may change; always confirm with your bank"
+    ],
     faqs: [
       {
         question: "What is the tax rate on Fixed Deposit interest in Nepal?",
@@ -1788,6 +2082,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
     aboutParagraphs: [
       "13% Nepal VAT Calculator computes Value Added Tax additions or removals from invoice prices instantly.",
       "Calculate net price excluding VAT, 13% VAT amount, and gross invoice total for business accounting, billing, and IRD tax filing."
+    ],
+    useCases: [
+      "Calculating VAT-inclusive prices for retail invoices and receipts",
+      "Determining net cost before VAT when comparing supplier quotes",
+      "Preparing accurate tax breakdowns for small business bookkeeping"
+    ],
+    howToSteps: [
+      "Enter the price amount.",
+      "Choose whether to add or remove 13% VAT.",
+      "View the net price, VAT amount, and gross total instantly."
+    ],
+    examples: [
+      {
+        title: "Adding VAT to a Price",
+        input: "Net Price: NPR 1,000",
+        output: "VAT: NPR 130, Gross Total: NPR 1,130"
+      }
+    ],
+    limitations: [
+      "Calculates the standard 13% Nepal VAT rate only; does not cover excise or customs duties",
+      "Does not file or submit returns to the Inland Revenue Department (IRD)"
     ],
     faqs: [
       {
@@ -2111,6 +2426,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Traditional Nepali Unit Converter converts historical Nepalese weight units (Dharni, Pau, Seer, Tola) and grain volume units (Muri, Pathi, Mana, Mutthi) into standard Kilograms and Liters.",
       "Valuable for agricultural trade, local market shopping, cultural research, and traditional Nepalese cooking."
     ],
+    useCases: [
+      "Converting traditional grain measurements when buying from local Nepali markets",
+      "Researching historical land and trade records that use Dharni, Pathi, or Muri units",
+      "Following authentic Nepali recipes that call for Mana or Mutthi measurements"
+    ],
+    howToSteps: [
+      "Select the traditional unit you want to convert from.",
+      "Enter the quantity.",
+      "Choose your target unit (Kilograms or Liters) to view the converted result."
+    ],
+    examples: [
+      {
+        title: "Dharni to Kilograms",
+        input: "2 Dharni",
+        output: "4.6656 Kilograms"
+      }
+    ],
+    limitations: [
+      "Traditional unit values can vary slightly by region within Nepal",
+      "Conversions use standardized modern equivalents, not historical regional variants"
+    ],
     faqs: [
       {
         question: "How many Kilograms is 1 Dharni?",
@@ -2162,6 +2498,27 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
     aboutParagraphs: [
       "Ward & Municipality Lookup is a administrative directory covering all 753 local government units (Metropolitan, Sub-Metropolitan, Municipality, Rural Municipality) across Nepal's 77 districts.",
       "Search any local body to view total ward counts, administrative category, district, province, and official address formatting."
+    ],
+    useCases: [
+      "Filling out citizenship, passport, or government forms that require official address format",
+      "Researching ward counts for a specific municipality before local elections",
+      "Verifying which province and district a rural municipality belongs to"
+    ],
+    howToSteps: [
+      "Type a municipality or gaunpalika name into the search box.",
+      "Select the matching result from the list.",
+      "View its ward count, district, province, and official address format."
+    ],
+    examples: [
+      {
+        title: "Finding a Municipality",
+        input: "Search: 'Pokhara'",
+        output: "Pokhara Metropolitan City, Kaski District, Gandaki Province, 33 Wards"
+      }
+    ],
+    limitations: [
+      "Based on the 753 local units from the most recent federal restructuring; boundary changes may not be reflected immediately",
+      "Ward-level sub-boundaries are not mapped, only ward counts"
     ],
     faqs: [
       {
@@ -2221,6 +2578,11 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Percentage Calculator is a multi-mode mathematical utility that handles standard percentage calculations, percentage difference, and percentage increase or decrease.",
       "Designed for students, business owners, and shoppers, it shows step-by-step formula explanations for every result."
     ],
+    useCases: [
+      "Calculating exam score percentages or grade breakdowns",
+      "Working out tip amounts or bill splits while shopping or dining",
+      "Comparing year-over-year growth or decline in business metrics"
+    ],
     faqs: [
       {
         question: "What calculation modes are supported?",
@@ -2243,6 +2605,17 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Choose the calculation mode tab you need.",
       "Fill in the required input numbers.",
       "View the instant calculated percentage result and formula breakdown."
+    ],
+    examples: [
+      {
+        title: "Percentage Increase",
+        input: "From 200 to 250",
+        output: "25% increase"
+      }
+    ],
+    limitations: [
+      "Rounds results to two decimal places by default",
+      "Does not automatically compound percentage changes over multiple periods"
     ]
   },
 
@@ -2314,6 +2687,11 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "BMI Calculator computes Body Mass Index (BMI) using metric (cm, kg) or imperial (feet, inches, lbs) measurements.",
       "Results are presented with neutral, clinical World Health Organization (WHO) reference categories for adults."
     ],
+    useCases: [
+      "Tracking general weight status changes as part of a personal fitness routine",
+      "Getting a quick BMI reference before a doctor's appointment",
+      "Comparing metric and imperial measurements when switching health apps"
+    ],
     faqs: [
       {
         question: "What are the WHO BMI categories?",
@@ -2336,6 +2714,17 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Select Metric or Imperial measurement unit toggle.",
       "Enter your Height and Weight.",
       "View your calculated BMI score and clinical WHO reference category."
+    ],
+    examples: [
+      {
+        title: "Metric BMI Calculation",
+        input: "Height: 170cm, Weight: 68kg",
+        output: "BMI: 23.5 (Normal weight)"
+      }
+    ],
+    limitations: [
+      "BMI does not account for muscle mass, bone density, or fat distribution",
+      "Not a substitute for professional medical assessment"
     ]
   },
 
@@ -2344,6 +2733,11 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
     aboutParagraphs: [
       "Discount & Markup Calculator calculates final sale price after discount, original price prior to discount, or profit markup percentages.",
       "Ideal for online shoppers, retail shopkeepers, and merchants managing promotional discounts and sales margins."
+    ],
+    useCases: [
+      "Checking real savings during festival sales or online shopping discounts",
+      "Working backward to find the original price when only the discounted price is listed",
+      "Calculating markup and profit margin for small retail businesses"
     ],
     faqs: [
       {
@@ -2367,6 +2761,17 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Select your calculation mode (Discounted Price, Original Price, or Markup %).",
       "Enter the price and percentage values.",
       "View the final price, money saved, and total breakdown."
+    ],
+    examples: [
+      {
+        title: "20% Off Discount",
+        input: "Original Price: NPR 2,000, Discount: 20%",
+        output: "Final Price: NPR 1,600 (Saved: NPR 400)"
+      }
+    ],
+    limitations: [
+      "Stacked discounts are applied sequentially, not combined as a single flat percentage",
+      "Does not include additional taxes or shipping charges in the final price"
     ]
   },
   "hmac-generator": {

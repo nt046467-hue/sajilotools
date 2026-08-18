@@ -119,9 +119,22 @@ const textEn = "sajilo tools nepal";
 assert(toTitleCase(textEn) === "Sajilo Tools Nepal", `Title Case of '${textEn}' expected 'Sajilo Tools Nepal', got '${toTitleCase(textEn)}'`);
 assert(toKebabCase("Sajilo Tools Nepal") === "sajilo-tools-nepal", `Kebab case expected 'sajilo-tools-nepal', got '${toKebabCase("Sajilo Tools Nepal")}'`);
 
-// Devanagari Unicode Preservation check
-const textNp = "नमस्ते सजीलो टुल्स नेपाल";
-assert(textNp.toUpperCase() === textNp, "Devanagari text should remain untouched when applying toUpperCase()");
+// ── 5. PREETI ↔ UNICODE CONVERTER ACCURACY TEST ──
+console.log("\n--- 5. Preeti ↔ Unicode Converter Accuracy ---");
+import { preetiToUnicode, unicodeToPreeti } from "../src/lib/converters/preeti-converter";
+
+// Test key benchmark words
+assert(unicodeToPreeti("नेपाल") === "g]kfn", "Unicode 'नेपाल' -> Preeti 'g]kfn'");
+assert(unicodeToPreeti("प्रीति") === "k|Llt", "Unicode 'प्रीति' -> Preeti 'k|Llt'");
+assert(unicodeToPreeti("नेपाल प्रीति") === "g]kfn k|Llt", "Unicode 'नेपाल प्रीति' -> Preeti 'g]kfn k|Llt'");
+assert(preetiToUnicode("sD: g]kfn k|Llt") === "कम्स् नेपाल प्रीति", "Preeti 'sD: g]kfn k|Llt' -> Unicode 'कम्स् नेपाल प्रीति'");
+assert(preetiToUnicode("g]kfn k|Llt") === "नेपाल प्रीति", "Preeti 'g]kfn k|Llt' -> Unicode 'नेपाल प्रीति'");
+
+// Bidirectional round-trip benchmark sentence
+const sampleSentence = "नेपालमा धेरै सुन्दर ठाउँहरू छन्।";
+const samplePreeti = unicodeToPreeti(sampleSentence);
+const sampleBack = preetiToUnicode(samplePreeti);
+assert(sampleBack === sampleSentence, `Sentence round-trip: '${sampleSentence}' == '${sampleBack}'`);
 
 console.log("\n==================================================");
 console.log("ALL TESTS EXECUTED SUCCESSFULLY!");

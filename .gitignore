@@ -18,3 +18,7 @@ out
 # OS files
 .DS_Store
 Thumbs.db
+
+# Build info and logs
+*.tsbuildinfo
+*.log
