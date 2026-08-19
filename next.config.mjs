@@ -128,6 +128,26 @@ const nextConfig = {
 
   async redirects() {
     return [
+      // ── Domain Migration: Permanent 308 redirects to https://nabint.com.np ──
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.nabint.com.np" }],
+        destination: "https://nabint.com.np/:path*",
+        permanent: true,
+      },
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "sajilotools.nabint.com.np" }],
+        destination: "https://nabint.com.np/:path*",
+        permanent: true,
+      },
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "sajilotools.vercel.app" }],
+        destination: "https://nabint.com.np/:path*",
+        permanent: true,
+      },
+
       // ── 301 Permanent Redirects for legacy /tools/text/[slug] URLs ──
       // Developer Tools
       { source: "/tools/text/json-formatter", destination: "/tools/developer/json-formatter", permanent: true },

@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { PDFDocument } from "pdf-lib";
 import CalculatorCrossLink from "./shared/CalculatorCrossLink";
+import { SITE_URL } from "@/lib/site-config";
 
 export type FiscalYear = "2083/84" | "2082/83";
 
@@ -273,7 +274,7 @@ Net Take-Home Pay:
   - Annual Net Income: Rs. ${taxCalculation.annualNet.toLocaleString("en-IN")}
   - Monthly Net Income: Rs. ${taxCalculation.monthlyNet.toLocaleString("en-IN")}
 
-Calculated via SajiloTools (https://sajilotools.vercel.app)`;
+Calculated via SajiloTools (${SITE_URL})`;
 
     navigator.clipboard.writeText(text);
     setCopied(true);
@@ -422,7 +423,7 @@ Calculated via SajiloTools (https://sajilotools.vercel.app)`;
 
     ctx.fillStyle = "#A1A1AA";
     ctx.font = "14px sans-serif";
-    ctx.fillText("Generated via SajiloTools Nepal Tax Calculator — https://sajilotools.vercel.app/tools/finance/tax-calculator", 60, 1540);
+    ctx.fillText(`Generated via SajiloTools Nepal Tax Calculator — ${SITE_URL}/tools/finance/tax-calculator`, 60, 1540);
 
     const pngDataUrl = canvas.toDataURL("image/png");
     const base64Data = pngDataUrl.replace(/^data:image\/png;base64,/, "");

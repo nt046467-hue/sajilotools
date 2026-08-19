@@ -138,8 +138,8 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
     examples: [
       {
         title: "Query String Encoding Example",
-        input: "https://sajilotools.vercel.app/search?query=Nepali Date & Time",
-        output: "https%3A%2F%2Fsajilotools.vercel.app%2Fsearch%3Fquery%3DNepali%20Date%20%26%20Time"
+        input: "https://nabint.com.np/search?query=Nepali Date & Time",
+        output: "https%3A%2F%2Fnabint.com.np%2Fsearch%3Fquery%3DNepali%20Date%20%26%20Time"
       }
     ],
     limitations: [
@@ -2175,21 +2175,23 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
   "nepali-translator": {
     slug: "nepali-translator",
     aboutParagraphs: [
-      "English ↔ Nepali Translator provides instant, accurate translation between English text and Nepali Devanagari script (नेपाली).",
-      "Whether you need to translate an English phrase into natural Nepali or convert Devanagari text back into English, our tool delivers fast, clean results with one-click copying and text-to-speech audio pronunciation support.",
-      "Designed specifically for students, travelers, government form applicants, and professionals seeking reliable bidirectional translation without logins, subscriptions, or intrusive ads."
+      "English ↔ Nepali Translator provides instant, accurate neural translation between English text and Nepali Devanagari script (नेपाली). Designed to be the fastest, most reliable English to Nepali converter online.",
+      "Whether you need to translate an English phrase into natural Nepali, convert Devanagari text back into English, or practice pronunciation, our tool delivers fast, clean results with one-click copying, downloadable text files, and text-to-speech audio pronunciation support.",
+      "Built specifically for students, travelers, government form applicants, freelance writers, and professionals seeking reliable bidirectional translation without logins, paywalls, or intrusive ads.",
+      "Our system supports complex sentence structures, respecting Nepali grammatical order (Subject-Object-Verb) and contextual honorific levels (तपाईं, तिमी, हजुर) for natural, conversational translations."
     ],
     useCases: [
       "Translating official letters, emails, or notices from English to Nepali Devanagari",
-      "Translating Nepali news, documents, and messages back into clear English",
-      "Learning everyday Nepali conversation phrases with audio pronunciation",
-      "Quick vocabulary checking and phrase translation for academic studies and travel in Nepal"
+      "Translating Nepali news, documents, legal notices, and messages back into clear English",
+      "Learning everyday Nepali conversation phrases with native audio pronunciation",
+      "Writing academic essays, project reports, and bilingual presentations",
+      "Quick vocabulary checking and phrase translation for travel and trekking in Nepal"
     ],
     howToSteps: [
-      "Select your translation direction (English → Nepali or Nepali → English).",
-      "Type or paste your text in the input box.",
-      "Click 'Translate Now' to get your instant translation.",
-      "Use 'Copy' to copy text to your clipboard or click 'Listen' for audio pronunciation."
+      "Select your translation direction: English → Nepali (अंग्रेजीबाट नेपाली) or Nepali → English (नेपालीबाट अंग्रेजी).",
+      "Type or paste your text in the input box, or click any of the quick phrase suggestions.",
+      "Click 'Translate Now (अनुवाद गर्नुहोस्)' to get your instant translation.",
+      "Use 'Copy' to copy text to clipboard, 'Save .txt' to download your translation, or click 'Listen' for audio pronunciation."
     ],
     examples: [
       {
@@ -2201,34 +2203,43 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
         title: "Nepali to English",
         input: "मलाई नेपाली भाषा सिक्न धेरै मन पर्छ।",
         output: "I like learning Nepali language very much."
+      },
+      {
+        title: "Travel & Directions",
+        input: "Where is the nearest bus station and what is the ticket price?",
+        output: "सबैभन्दा नजिकको बस स्टेशन कहाँ छ र टिकटको मूल्य कति हो?"
       }
     ],
     limitations: [
-      "Neural machine translation provides natural everyday translations; official legal documents, court papers, and academic transcripts should always be verified by a certified human translator.",
-      "To type phonetically in Devanagari (e.g. typing 'dhanyabad' to get 'धन्यवाद'), use our dedicated Nepali Unicode Typing Tool rather than translation."
+      "Neural machine translation provides natural everyday translations; official legal court affidavits and sworn government documents should be reviewed by a certified human translator.",
+      "To type phonetically in Devanagari (e.g. typing 'mero naam' to get 'मेरो नाम'), use our dedicated Nepali Unicode Typing Tool rather than translation."
     ],
-    relatedToolSlugs: ["nepali-unicode", "nepali-date-converter", "nepali-number-words", "nepali-calendar"],
-    privacyNote: "Translation text is sent via our server to third-party translation providers (Google Translate, MyMemory) for processing. Translation results are cached for up to 30 days for performance. Your text is not permanently logged or sold. See our Privacy Policy for full details.",
+    relatedToolSlugs: ["nepali-unicode", "nepali-date-converter", "nepali-number-words", "preeti-to-unicode", "nepali-calendar"],
+    privacyNote: "Translation text is sent via our secure server to translation providers for processing. Results are cached briefly for high performance. Your text is never permanently stored, logged, or sold. See our Privacy Policy for full details.",
     faqs: [
       {
-        question: "Is this English to Nepali translator free?",
-        answer: "Yes, the SajiloTools translator is 100% free for phrases, sentences, and paragraphs with no sign-up or subscription required."
+        question: "Is this English to Nepali translator 100% free?",
+        answer: "Yes, the SajiloTools English to Nepali translator is 100% free with no usage limits, no signup requirements, and no hidden subscriptions."
+      },
+      {
+        question: "How accurate is this English to Nepali translation?",
+        answer: "Our translation engine uses modern neural translation models that understand contextual Nepali grammar, Subject-Object-Verb (SOV) structure, and everyday colloquial nuances."
       },
       {
         question: "How do I translate Nepali Devanagari text back to English?",
-        answer: "Click the bidirectional arrow button between the language selectors to instantly switch to Nepali → English mode."
+        answer: "Simply click the bidirectional swap arrow button between the language headers to switch to Nepali → English mode instantly."
       },
       {
         question: "How does text-to-speech audio pronunciation work?",
-        answer: "Click the speaker icon next to the translation result to hear the text spoken aloud using your device's built-in speech synthesis engine."
+        answer: "Click the 'Listen' speaker icon next to the translation result to hear the text spoken aloud using speech synthesis."
       },
       {
-        question: "What is the difference between this translator and Nepali Unicode typing?",
-        answer: "The Nepali Translator converts the meaning of English sentences into Nepali (e.g. 'Thank you' → 'धन्यवाद'). The Nepali Unicode tool converts phonetic spelling (typing 'mero nam' → 'मेरो नाम')."
+        question: "What is the difference between English to Nepali translation and Nepali Unicode typing?",
+        answer: "Translation converts the actual meaning between languages (e.g. 'Thank you' becomes 'धन्यवाद'). Nepali Unicode typing transliterates English keyboard sounds into Devanagari letters (e.g. typing 'dhanyabad' creates 'धन्यवाद')."
       },
       {
-        question: "Is my translated text stored or logged on your servers?",
-        answer: "Translation text is sent via our server to third-party providers (Google Translate, MyMemory) for processing. Translation results may be cached for up to 30 days to improve response times. Your text is not permanently logged, sold, or retained beyond the cache. See our Privacy Policy for details."
+        question: "Can I download my translated text as a file?",
+        answer: "Yes! Click the 'Save .txt' button above the translation box to download a clean text file directly to your device."
       }
     ]
   },

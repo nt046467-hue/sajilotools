@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   Languages,
+  Loader2,
   Copy,
   Check,
   ArrowLeftRight,
@@ -17,6 +18,8 @@ import {
   Trash2,
   Clock,
   ArrowRight,
+  Download,
+  BookOpen,
 } from "lucide-react";
 
 type HistoryEntry = {
@@ -229,6 +232,17 @@ export default function NepaliTranslatorTool() {
     setTimeout(() => setCopied(false), 1500);
   }
 
+  function downloadTranslation() {
+    if (!translatedText) return;
+    const blob = new Blob([translatedText], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `sajilotools-translation-${mode}.txt`;
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
   // ── Text To Speech (TTS) ──
   const targetIsNepali = mode === "en-to-np";
   const ttsDisabled = targetIsNepali && !nepaliTtsAvailable;
@@ -344,7 +358,7 @@ export default function NepaliTranslatorTool() {
 
           {/* Quick Example Phrases */}
           <div className="pt-1">
-            <span className="text-[11px] font-semibold text-[#71717A] mr-2">Try examples:</span>
+            <span className="text-[11px] font-semibold text-[#71717A] mr-2">Quick phrase suggestions:</span>
             <div className="inline-flex flex-wrap gap-1.5 mt-1">
               {(mode === "en-to-np"
                 ? [
@@ -352,14 +366,20 @@ export default function NepaliTranslatorTool() {
                     "Thank you very much",
                     "Welcome to Nepal",
                     "What is your name?",
-                    "Have a nice day!",
+                    "Where is the bus station?",
+                    "How much does this cost?",
+                    "I need medical assistance",
+                    "Please sign this document",
                   ]
                 : [
-                    "नमस्ते, तपाइँलाई कस्तो छ?",
+                    "नमस्ते, तपाईंलाई कस्तो छ?",
                     "धेरै धेरै धन्यवाद",
                     "नेपालमा स्वागत छ",
-                    "तपाइँको नाम के हो?",
-                    "शुभ दिन!",
+                    "तपाईंको नाम के हो?",
+                    "बस स्टेशन कहाँ छ?",
+                    "यसको कति पर्छ?",
+                    "मलाई मद्दत चाहिन्छ",
+                    "कृपया यो कागजात हेरिदिनुहोस्",
                   ]
               ).map((phrase, pIdx) => (
                 <button
@@ -414,6 +434,16 @@ export default function NepaliTranslatorTool() {
                   )}
                 </button>
 
+                {/* Download Button */}
+                <button
+                  onClick={downloadTranslation}
+                  title="Download translation text (.txt)"
+                  className="flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-lg border border-[#E4E0D8] dark:border-[#2A2F48] text-[#18181B] dark:text-[#F4F4F5] hover:bg-[#F7F5F0] dark:hover:bg-[#1E2338] transition-colors"
+                >
+                  <Download size={13} className="text-[#DC2626]" />
+                  <span>Save .txt</span>
+                </button>
+
                 {/* Copy Button */}
                 <button
                   onClick={copyTranslation}
@@ -465,7 +495,10 @@ export default function NepaliTranslatorTool() {
         className="w-full py-3.5 bg-[#1F2544] dark:bg-[#DC2626] text-white font-bold rounded-2xl text-sm hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm"
       >
         {loading ? (
-          "Translating..."
+          <>
+            <Loader2 size={16} className="animate-spin" />
+            <span>Translating...</span>
+          </>
         ) : (
           <>
             <Languages size={16} /> Translate Now (अनुवाद गर्नुहोस्)

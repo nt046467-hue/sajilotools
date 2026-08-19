@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sendMail } from "@/lib/mailer";
+import { sendMail, generateContactConfirmationEmailHtml } from "@/lib/mailer";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { SITE_URL } from "@/lib/site-config";
 
@@ -49,7 +49,13 @@ export async function POST(req: NextRequest) {
       replyTo: cleanEmail,
     });
 
-    // ── 5. Send confirmation email to the visitor ──
+    // ── 5. Send confirmation email to the visitor with rich branded HTML card & CTA ──
+    const confirmationHtml = generateContactConfirmationEmailHtml({
+      name: cleanName,
+      subject: cleanSubject,
+      message: cleanMessage,
+    });
+
     await sendMail({
       to: cleanEmail,
       subject: "We received your message — SajiloTools",
@@ -64,6 +70,7 @@ export async function POST(req: NextRequest) {
         "— The SajiloTools Team",
         SITE_URL,
       ].join("\n"),
+      html: confirmationHtml,
     });
 
     return NextResponse.json({ success: true });

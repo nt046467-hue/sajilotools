@@ -1,4 +1,5 @@
 import { PresetTemplate } from "./types";
+import { SITE_URL } from "@/lib/site-config";
 
 export const PRESET_TEMPLATES: PresetTemplate[] = [
   {
@@ -22,7 +23,7 @@ export const PRESET_TEMPLATES: PresetTemplate[] = [
       email: "nabin@example.com",
       organization: "SajiloTools",
       jobTitle: "Developer",
-      website: "https://sajilotools.vercel.app",
+      website: SITE_URL,
       city: "Kathmandu",
       country: "Nepal",
     },
@@ -46,7 +47,7 @@ export const PRESET_TEMPLATES: PresetTemplate[] = [
       errorCorrectionLevel: "M",
     },
     defaultData: {
-      url: "https://sajilotools.vercel.app/menu",
+      url: `${SITE_URL}/menu`,
     },
   },
   {
@@ -85,7 +86,7 @@ export const PRESET_TEMPLATES: PresetTemplate[] = [
       errorCorrectionLevel: "H",
     },
     defaultData: {
-      url: "https://sajilotools.vercel.app",
+      url: SITE_URL,
     },
   },
 ];

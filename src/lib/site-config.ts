@@ -3,9 +3,11 @@
 
 import { TOOLS } from "./tools-registry";
 
+export const SITE_NAME = "SajiloTools";
+
 const rawSiteUrl =
   process.env.NEXT_PUBLIC_SITE_URL ||
-  "https://sajilotools.vercel.app";
+  "https://nabint.com.np";
 
 // Ensure no trailing slash for consistent URL composition
 export const SITE_URL = rawSiteUrl.trim().replace(/\/+$/, "");

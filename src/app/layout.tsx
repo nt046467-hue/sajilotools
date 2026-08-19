@@ -174,6 +174,11 @@ export default function RootLayout({
       <head>
         <meta name="google-adsense-account" content="ca-pub-3896962422851508" />
         <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3896962422851508"
+          crossOrigin="anonymous"
+        />
+        <script
           id="json-ld-schema"
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

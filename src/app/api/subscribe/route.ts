@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { sendMail } from "@/lib/mailer";
+import { sendMail, generateWelcomeEmailHtml } from "@/lib/mailer";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { SITE_URL } from "@/lib/site-config";
 
@@ -57,7 +57,9 @@ export async function POST(req: NextRequest) {
       console.error("Subscriber owner notification failed:", err);
     });
 
-    // ── 6. Welcome email to the subscriber ──
+    // ── 6. Welcome email to the subscriber with rich branded HTML card & CTA ──
+    const welcomeHtml = generateWelcomeEmailHtml({ email: cleanEmail });
+
     sendMail({
       to: cleanEmail,
       subject: "Welcome to SajiloTools Newsletter! 🎉",
@@ -69,6 +71,7 @@ export async function POST(req: NextRequest) {
         "— The SajiloTools Team",
         SITE_URL,
       ].join("\n"),
+      html: welcomeHtml,
     }).catch((err) => {
       console.error("Subscriber welcome email failed:", err);
     });

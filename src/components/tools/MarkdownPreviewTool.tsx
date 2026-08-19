@@ -3,12 +3,13 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { Copy, Check, Eye, Code2, Columns, Download, Bold, Italic, Link, Heading, List, ListOrdered, Code, Quote, Table } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { SITE_URL } from "@/lib/site-config";
 
 const SAMPLE_MD = `# Markdown Preview
 
 ## Features
 - **Bold text** and *italic text*
-- [Links](https://sajilotools.vercel.app)
+- [Links](${SITE_URL})
 - Inline \`code\` blocks
 
 ### Code Block
@@ -164,7 +165,7 @@ export default function MarkdownPreviewTool() {
 </head>
 <body>
   ${html}
-  <div class="footer">Exported from SajiloTools Markdown Preview — sajilotools.vercel.app</div>
+  <div class="footer">Exported from SajiloTools Markdown Preview — nabint.com.np</div>
 </body>
 </html>`;
 

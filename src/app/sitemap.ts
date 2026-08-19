@@ -15,6 +15,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${SITE_URL}/contact`, lastModified: PLATFORM_LASTMOD, changeFrequency: "monthly", priority: 0.5 },
     { url: `${SITE_URL}/privacy-policy`, lastModified: PLATFORM_LASTMOD, changeFrequency: "monthly", priority: 0.4 },
     { url: `${SITE_URL}/terms`, lastModified: PLATFORM_LASTMOD, changeFrequency: "monthly", priority: 0.4 },
+    { url: `${SITE_URL}/disclaimer`, lastModified: PLATFORM_LASTMOD, changeFrequency: "monthly", priority: 0.4 },
   ];
 
   const categoryPages: MetadataRoute.Sitemap = CATEGORIES.map((cat) => ({
@@ -26,6 +27,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const toolPages: MetadataRoute.Sitemap = TOOLS.map((tool) => ({
     url: `${SITE_URL}/tools/${tool.categorySlug}/${tool.slug}`,
+    lastModified: PLATFORM_LASTMOD,
     changeFrequency: "weekly",
     priority: tool.featured ? 0.9 : 0.8,
   }));

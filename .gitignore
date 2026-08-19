@@ -22,3 +22,7 @@ Thumbs.db
 # Build info and logs
 *.tsbuildinfo
 *.log
+
+# Local data snapshots
+data/
+

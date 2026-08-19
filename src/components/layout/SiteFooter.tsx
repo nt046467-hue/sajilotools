@@ -99,6 +99,7 @@ export default function SiteFooter() {
               {[
                 { name: "Privacy Policy", href: "/privacy-policy" },
                 { name: "Terms of Use", href: "/terms" },
+                { name: "Disclaimer", href: "/disclaimer" },
                 { name: "Contact Support", href: "/contact" },
               ].map((l) => (
                 <li key={l.name}>

@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Upload, Archive, Play, AlertCircle, FileText, CheckCircle2 } from "lucide-react";
 import JSZip from "jszip";
 import { QrStyleOptions } from "./types";
+import { SITE_URL } from "@/lib/site-config";
 
 interface QrBatchToolProps {
   styleOptions: QrStyleOptions;
@@ -11,7 +12,7 @@ interface QrBatchToolProps {
 
 export default function QrBatchTool({ styleOptions }: QrBatchToolProps) {
   const [inputText, setInputText] = useState(
-    "Table 1, https://sajilotools.vercel.app/order?table=1\nTable 2, https://sajilotools.vercel.app/order?table=2\nTable 3, https://sajilotools.vercel.app/order?table=3"
+    `Table 1, ${SITE_URL}/order?table=1\nTable 2, ${SITE_URL}/order?table=2\nTable 3, ${SITE_URL}/order?table=3`
   );
   const [exportFormat, setExportFormat] = useState<"png" | "svg">("png");
   const [isGenerating, setIsGenerating] = useState(false);
