@@ -113,6 +113,7 @@ interface SearchBarProps {
   autoFocus?: boolean;
   onSelect?: () => void;
   placeholder?: string;
+  dropdownAlign?: "left" | "right" | "full";
 }
 
 export default function SearchBar({
@@ -120,6 +121,7 @@ export default function SearchBar({
   autoFocus = false,
   onSelect,
   placeholder,
+  dropdownAlign,
 }: SearchBarProps) {
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
@@ -330,8 +332,10 @@ export default function SearchBar({
           ref={dropdownRef}
           className={[
             "absolute top-full mt-2 bg-white/95 dark:bg-[#141829]/95 backdrop-blur-2xl border border-[#E4E0D8] dark:border-[#2A2F48] rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.18)] dark:shadow-[0_12px_40px_rgba(0,0,0,0.5)] z-50 overflow-hidden transition-all animate-in fade-in slide-in-from-top-2 duration-150",
-            large
+            large || dropdownAlign === "full"
               ? "left-0 right-0 w-full"
+              : dropdownAlign === "left"
+              ? "left-0 right-auto w-[360px] sm:w-[460px] max-w-[calc(100vw-2rem)]"
               : "right-0 left-auto w-[360px] sm:w-[460px] max-w-[calc(100vw-2rem)]",
           ].join(" ")}
         >

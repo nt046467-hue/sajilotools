@@ -30,8 +30,10 @@ export const BLOG_POSTS: BlogPost[] = [
 <div style="background-color: rgba(220, 38, 38, 0.08); border: 1px solid rgba(220, 38, 38, 0.25); padding: 16px 20px; border-radius: 14px; margin-bottom: 24px;">
   <h3 style="margin-top: 0; margin-bottom: 8px; font-size: 1.1rem; color: #DC2626;">🌐 Need Instant Translation?</h3>
   <p style="margin-bottom: 12px; font-size: 0.9rem; color: #52525B;">Translate full sentences between English and Nepali Devanagari with audio text-to-speech pronunciation on SajiloTools.</p>
-  <a href="/tools/nepal/nepali-translator" style="display: inline-block; background-color: #DC2626; color: #ffffff; padding: 8px 16px; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 0.85rem;">Open English to Nepali Translator →</a>
-  <a href="/tools/nepal/nepali-unicode" style="display: inline-block; margin-left: 12px; background-color: #FAFAF8; border: 1px solid #E4E0D8; color: #18181B; padding: 8px 16px; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 0.85rem;">Open Nepali Unicode Typing →</a>
+  <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+    <a href="/tools/nepal/nepali-translator" style="display: inline-block; background-color: #DC2626; color: #ffffff; padding: 8px 16px; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 0.85rem;">Open English to Nepali Translator →</a>
+    <a href="/tools/nepal/nepali-unicode" style="display: inline-block; background-color: #FAFAF8; border: 1px solid #E4E0D8; color: #18181B; padding: 8px 16px; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 0.85rem;">Open Nepali Unicode Typing →</a>
+  </div>
 </div>
 
 <h2>Why English to Nepali Translation Matters</h2>
@@ -91,13 +93,16 @@ export const BLOG_POSTS: BlogPost[] = [
     category: "Nepal",
     toolSlugs: [
       { slug: "nepali-unicode", categorySlug: "nepal", label: "Nepali Unicode Typing Tool" },
-      { slug: "preeti-to-unicode", categorySlug: "nepal", label: "Preeti to Unicode Converter" },
+      { slug: "nepali-unicode?mode=preetiToUni", categorySlug: "nepal", label: "Preeti to Unicode Converter" },
     ],
     content: `
 <div style="background-color: rgba(220, 38, 38, 0.08); border: 1px solid rgba(220, 38, 38, 0.25); padding: 16px 20px; border-radius: 14px; margin-bottom: 24px;">
   <h3 style="margin-top: 0; margin-bottom: 8px; font-size: 1.1rem; color: #DC2626;">⌨️ Type Nepali Instantly in Your Browser</h3>
   <p style="margin-bottom: 12px; font-size: 0.9rem; color: #52525B;">Type phonetic English letters (e.g. 'nepal') to produce clean Nepali Devanagari ('नेपाल') without installing complex software.</p>
-  <a href="/tools/nepal/nepali-unicode" style="display: inline-block; background-color: #DC2626; color: #ffffff; padding: 8px 16px; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 0.85rem;">Launch Nepali Unicode Tool →</a>
+  <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+    <a href="/tools/nepal/nepali-unicode" style="display: inline-block; background-color: #DC2626; color: #ffffff; padding: 8px 16px; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 0.85rem;">Launch Nepali Unicode Tool →</a>
+    <a href="/tools/nepal/nepali-unicode?mode=preetiToUni" style="display: inline-block; background-color: #FAFAF8; border: 1px solid #E4E0D8; color: #18181B; padding: 8px 16px; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 0.85rem;">Convert Preeti to Unicode →</a>
+  </div>
 </div>
 
 <h2>What is Nepali Unicode?</h2>
@@ -149,15 +154,17 @@ export const BLOG_POSTS: BlogPost[] = [
     readingTime: "6 min read",
     category: "Nepal",
     toolSlugs: [
-      { slug: "preeti-to-unicode", categorySlug: "nepal", label: "Preeti to Unicode Converter" },
-      { slug: "unicode-to-preeti", categorySlug: "nepal", label: "Unicode to Preeti Converter" },
+      { slug: "nepali-unicode?mode=preetiToUni", categorySlug: "nepal", label: "Preeti to Unicode Converter" },
+      { slug: "nepali-unicode?mode=uniToPreeti", categorySlug: "nepal", label: "Unicode to Preeti Converter" },
     ],
     content: `
 <div style="background-color: rgba(220, 38, 38, 0.08); border: 1px solid rgba(220, 38, 38, 0.25); padding: 16px 20px; border-radius: 14px; margin-bottom: 24px;">
   <h3 style="margin-top: 0; margin-bottom: 8px; font-size: 1.1rem; color: #DC2626;">🔄 Convert Preeti to Unicode in 1-Click</h3>
   <p style="margin-bottom: 12px; font-size: 0.9rem; color: #52525B;">Paste your legacy Preeti or Kantipur text to convert it into web-standard Nepali Unicode instantly.</p>
-  <a href="/tools/nepal/preeti-to-unicode" style="display: inline-block; background-color: #DC2626; color: #ffffff; padding: 8px 16px; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 0.85rem;">Convert Preeti to Unicode →</a>
-  <a href="/tools/nepal/unicode-to-preeti" style="display: inline-block; margin-left: 12px; background-color: #FAFAF8; border: 1px solid #E4E0D8; color: #18181B; padding: 8px 16px; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 0.85rem;">Convert Unicode to Preeti →</a>
+  <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+    <a href="/tools/nepal/nepali-unicode?mode=preetiToUni" style="display: inline-block; background-color: #DC2626; color: #ffffff; padding: 8px 16px; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 0.85rem;">Convert Preeti to Unicode →</a>
+    <a href="/tools/nepal/nepali-unicode?mode=uniToPreeti" style="display: inline-block; background-color: #FAFAF8; border: 1px solid #E4E0D8; color: #18181B; padding: 8px 16px; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 0.85rem;">Convert Unicode to Preeti →</a>
+  </div>
 </div>
 
 <h2>Why Preeti Font Text Breaks on the Web</h2>
@@ -205,8 +212,10 @@ export const BLOG_POSTS: BlogPost[] = [
 <div style="background-color: rgba(31, 37, 68, 0.05); border: 1px solid rgba(31, 37, 68, 0.15); padding: 16px 20px; border-radius: 14px; margin-bottom: 28px;">
   <h3 style="margin-top: 0; margin-bottom: 8px; font-size: 1.1rem; color: #1F2544;">🧮 Calculate Your Exact Tax & Take-Home Pay Instantly</h3>
   <p style="margin-bottom: 12px; font-size: 0.9rem; color: #52525B;">Use our free, instant <strong>Nepal Income Tax & Salary TDS Calculator</strong> to calculate your exact monthly TDS, deductions (EPF/CIT/SSF), and net take-home salary.</p>
-  <a href="/tools/finance/tax-calculator" style="display: inline-block; background-color: #1F2544; color: #ffffff; padding: 8px 16px; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 0.85rem;">Open Nepal Tax Calculator →</a>
-  <a href="/tools/finance/emi-calculator" style="display: inline-block; margin-left: 12px; background-color: #FAFAF8; border: 1px solid #E4E0D8; color: #18181B; padding: 8px 16px; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 0.85rem;">Open EMI Calculator →</a>
+  <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+    <a href="/tools/finance/tax-calculator" style="display: inline-block; background-color: #1F2544; color: #ffffff; padding: 8px 16px; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 0.85rem;">Open Nepal Tax Calculator →</a>
+    <a href="/tools/finance/emi-calculator" style="display: inline-block; background-color: #FAFAF8; border: 1px solid #E4E0D8; color: #18181B; padding: 8px 16px; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 0.85rem;">Open EMI Calculator →</a>
+  </div>
 </div>
 
 <h2>What Changed in FY 2083/84 Income Tax Rates?</h2>

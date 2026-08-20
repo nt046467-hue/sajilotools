@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Keyboard, Copy, Check, Download, Trash2, Info, ArrowRightLeft, FileText } from "lucide-react";
 
 // ── ROMANIZED PHONETIC TRANSLITERATION ENGINE ──────────────────────────────────
@@ -224,6 +224,7 @@ export function romanToNepaliPhonetic(text: string): string {
   }).join("");
 }
 
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { preetiToUnicode, unicodeToPreeti } from "@/lib/converters/preeti-converter";
 
 export { preetiToUnicode, unicodeToPreeti };
@@ -231,11 +232,35 @@ export { preetiToUnicode, unicodeToPreeti };
 // ── COMPONENT IMPLEMENTATION ───────────────────────────────────────────────
 
 export default function NepaliUnicodeTool() {
-  const [mode, setMode] = useState<"roman" | "preetiToUni" | "uniToPreeti">("roman");
-  const [inputText, setInputText] = useState<string>(
-    "namaste! sajilotools nepal ko unicode converter ma swagatam chha. yaha romanized nepali ma type garnuhos (eg: mero nepal ramro chha)."
-  );
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const modeParam = searchParams.get("mode");
+  const initialMode: "roman" | "preetiToUni" | "uniToPreeti" =
+    modeParam === "preetiToUni" || modeParam === "uniToPreeti" ? modeParam : "roman";
+
+  const [mode, setMode] = useState<"roman" | "preetiToUni" | "uniToPreeti">(initialMode);
+  const [inputText, setInputText] = useState<string>(() => {
+    if (initialMode === "preetiToUni") return "sD: g]kfn k|Llt";
+    if (initialMode === "uniToPreeti") return "नेपाल प्रीति युनिकोड";
+    return "namaste! sajilotools nepal ko unicode converter ma swagatam chha. yaha romanized nepali ma type garnuhos (eg: mero nepal ramro chha).";
+  });
   const [copied, setCopied] = useState<boolean>(false);
+
+  // Sync mode state if URL mode searchParam changes
+  useEffect(() => {
+    const currentParam = searchParams.get("mode");
+    if (currentParam === "preetiToUni" && mode !== "preetiToUni") {
+      setMode("preetiToUni");
+      setInputText("sD: g]kfn k|Llt");
+    } else if (currentParam === "uniToPreeti" && mode !== "uniToPreeti") {
+      setMode("uniToPreeti");
+      setInputText("नेपाल प्रीति युनिकोड");
+    } else if ((!currentParam || currentParam === "roman") && mode !== "roman" && currentParam !== null) {
+      setMode("roman");
+    }
+  }, [searchParams]);
 
   // Compute output based on selected conversion mode
   let unicodeOutput = "";
@@ -269,7 +294,7 @@ export default function NepaliUnicodeTool() {
   };
 
   const romanPhrases = [
-    { label: "k gardai xeu", text: "k gardai xeu karuna sanchai xeu humm" },
+    { label: "k gardai xeu", text: "sajilo tools nepal ma swagat chha xeu humm" },
     { label: "namaste nepal", text: "namaste mero nepal ramro chha" },
     { label: "kasto chha", text: "kasto chha sanchai ho" },
     { label: "dhanyabad", text: "dherai dherai dhanyabad tapailai" },
@@ -303,47 +328,53 @@ export default function NepaliUnicodeTool() {
 
   const virtualKeys = ["अ", "आ", "इ", "ई", "उ", "ऊ", "ऋ", "ए", "ऐ", "ओ", "औ", "क", "ख", "ग", "घ", "ङ", "च", "छ", "ज", "झ", "ञ", "ट", "ठ", "ड", "ढ", "ण", "त", "थ", "द", "ध", "न", "प", "फ", "ब", "भ", "म", "य", "र", "ल", "व", "श", "ष", "स", "ह", "क्ष", "त्र", "ज्ञ", "ा", "ि", "ी", "ु", "ू", "े", "ै", "ो", "ौ", "ं", "ँ", "ः", "्", "।"];
 
+  const switchMode = (newMode: "roman" | "preetiToUni" | "uniToPreeti", sampleText: string) => {
+    setMode(newMode);
+    setInputText(sampleText);
+    try {
+      const url = newMode === "roman" ? pathname : `${pathname}?mode=${newMode}`;
+      router.replace(url, { scroll: false });
+    } catch { }
+  };
+
   return (
     <div className="space-y-6">
       {/* Mode Selector Tabs */}
-      <div className="flex flex-wrap gap-2 p-1.5 rounded-2xl bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] shadow-xs">
+      <div className="grid grid-cols-3 gap-1.5 p-1.5 rounded-2xl bg-[#FAFAF8] dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338]">
         <button
-          onClick={() => {
-            setMode("roman");
-            setInputText("k gardai xeu karuna sanchai xeu humm");
-          }}
-          className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${mode === "roman"
+          onClick={() => switchMode("roman", "sajilo tools nepal ma swagat chha")}
+          className={`py-2 px-2 sm:py-2.5 sm:px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 text-center ${mode === "roman"
             ? "bg-[#1F2544] dark:bg-[#F5A623] text-white dark:text-[#0C0F1E] shadow-sm"
-            : "text-[#71717A] hover:bg-[#FAFAF8] dark:hover:bg-[#1E2338]"
+            : "text-[#71717A] hover:text-[#18181B] dark:hover:text-[#F4F4F5] hover:bg-black/5 dark:hover:bg-white/5"
             }`}
         >
-          <Keyboard size={15} /> Romanized Phonetic (रोमन युनिकोड)
+          <Keyboard size={14} className="shrink-0 hidden xs:inline" />
+          <span className="truncate">Romanized</span>
+          <span className="hidden lg:inline font-normal opacity-80">(रोमन)</span>
         </button>
 
         <button
-          onClick={() => {
-            setMode("preetiToUni");
-            setInputText("sD: g]kfn k|Llt");
-          }}
-          className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${mode === "preetiToUni"
+          onClick={() => switchMode("preetiToUni", "sD: g]kfn k|Llt")}
+          className={`py-2 px-2 sm:py-2.5 sm:px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 text-center ${mode === "preetiToUni"
             ? "bg-[#1F2544] dark:bg-[#F5A623] text-white dark:text-[#0C0F1E] shadow-sm"
-            : "text-[#71717A] hover:bg-[#FAFAF8] dark:hover:bg-[#1E2338]"
+            : "text-[#71717A] hover:text-[#18181B] dark:hover:text-[#F4F4F5] hover:bg-black/5 dark:hover:bg-white/5"
             }`}
         >
-          Preeti ➔ Unicode (प्रिती देखि युनिकोड)
+          <ArrowRightLeft size={14} className="shrink-0 hidden xs:inline" />
+          <span className="truncate">Preeti ➔ Uni</span>
+          <span className="hidden lg:inline font-normal opacity-80">(प्रिती)</span>
         </button>
 
         <button
-          onClick={() => {
-            setMode("uniToPreeti");
-            setInputText("नेपाल प्रीति युनिकोड");
-          }}
-          className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${mode === "uniToPreeti"
+          onClick={() => switchMode("uniToPreeti", "नेपाल प्रीति युनिकोड")}
+          className={`py-2 px-2 sm:py-2.5 sm:px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 text-center ${mode === "uniToPreeti"
             ? "bg-[#1F2544] dark:bg-[#F5A623] text-white dark:text-[#0C0F1E] shadow-sm"
-            : "text-[#71717A] hover:bg-[#FAFAF8] dark:hover:bg-[#1E2338]"
+            : "text-[#71717A] hover:text-[#18181B] dark:hover:text-[#F4F4F5] hover:bg-black/5 dark:hover:bg-white/5"
             }`}
         >
-          <FileText size={15} /> Unicode ➔ Preeti (युनिकोड देखि प्रिती)
+          <FileText size={14} className="shrink-0 hidden xs:inline" />
+          <span className="truncate">Uni ➔ Preeti</span>
+          <span className="hidden lg:inline font-normal opacity-80">(युनिकोड)</span>
         </button>
       </div>
 
@@ -362,7 +393,7 @@ export default function NepaliUnicodeTool() {
             </label>
             <span className="text-[10px] text-[#A1A1AA]">
               {mode === "roman"
-                ? "e.g. k gardai xeu karuna sanchai"
+                ? "e.g. sajilo tools nepal ma swagat chha"
                 : mode === "preetiToUni"
                   ? "e.g. sD: g]kfn k|Llt"
                   : "e.g. नेपाल"}
@@ -373,12 +404,12 @@ export default function NepaliUnicodeTool() {
             onChange={(e) => setInputText(e.target.value)}
             placeholder={
               mode === "roman"
-                ? "Type in Romanized Nepali (e.g., k gardai xeu karuna sanchai xeu humm)..."
+                ? "Type in Romanized Nepali (e.g., sajilo tools nepal ma swagat chha xeu humm)..."
                 : mode === "preetiToUni"
                   ? "Paste traditional Preeti font text here..."
                   : "Type Devanagari Unicode text here..."
             }
-            className="w-full h-64 p-4 rounded-2xl border border-[#E4E0D8] dark:border-[#1E2338] bg-white dark:bg-[#141829] text-[#18181B] dark:text-[#F4F4F5] placeholder:text-[#A1A1AA] focus:outline-none focus:ring-2 focus:ring-[#F5A623]/40 resize-none font-sans text-sm leading-relaxed shadow-xs"
+            className="w-full h-44 sm:h-64 p-4 rounded-2xl border border-[#E4E0D8] dark:border-[#1E2338] bg-white dark:bg-[#141829] text-[#18181B] dark:text-[#F4F4F5] placeholder:text-[#A1A1AA] focus:outline-none focus:ring-2 focus:ring-[#F5A623]/40 resize-none font-sans text-sm leading-relaxed shadow-xs"
           />
         </div>
 
@@ -411,7 +442,7 @@ export default function NepaliUnicodeTool() {
             value={unicodeOutput}
             readOnly
             placeholder="नेपाली नतिजा यहाँ देखा पर्नेछ..."
-            className="w-full h-64 p-4 rounded-2xl border border-[#E4E0D8] dark:border-[#1E2338] bg-[#FAFAF8] dark:bg-[#1E2338] text-[#18181B] dark:text-[#F4F4F5] placeholder:text-[#A1A1AA] resize-none font-devanagari text-base leading-relaxed shadow-xs"
+            className="w-full h-44 sm:h-64 p-4 rounded-2xl border border-[#E4E0D8] dark:border-[#1E2338] bg-[#FAFAF8] dark:bg-[#1E2338] text-[#18181B] dark:text-[#F4F4F5] placeholder:text-[#A1A1AA] resize-none font-devanagari text-base leading-relaxed shadow-xs"
           />
         </div>
       </div>
@@ -464,7 +495,7 @@ export default function NepaliUnicodeTool() {
       <div className="p-3.5 rounded-xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] text-xs text-[#71717A] flex items-start gap-2">
         <Info size={16} className="text-[#F5A623] shrink-0 mt-0.5" />
         <span>
-          <strong>How it works:</strong> Type in Romanized Nepali letters (e.g. <code>k gardai xeu karuna sanchai xeu humm</code>) and get instant Nepali Devanagari Unicode output (<code>के गर्दै छौ करुणा सन्चै छौ हुम्म</code>) ready to copy and use in Word, Facebook, or Nepalese government forms. Supports Preeti font ↔ Unicode conversions seamlessly!
+          <strong>How it works:</strong> Type in Romanized Nepali letters (e.g. <code>sajilo tools nepal ma swagat chha xeu humm</code>) and get instant Nepali Devanagari Unicode output (<code>के गर्दै छौ करुणा सन्चै छौ हुम्म</code>) ready to copy and use in Word, Facebook, or Nepalese government forms. Supports Preeti font ↔ Unicode conversions seamlessly!
         </span>
       </div>
     </div>

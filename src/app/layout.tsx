@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Inter, Sora, Noto_Sans_Devanagari } from "next/font/google";
 import "@/styles/index.css";
 import { NextAuthProvider } from "./providers";
@@ -113,6 +114,9 @@ export const metadata: Metadata = {
     images: ["/images/og-default.png"],
     creator: SITE_CONFIG.twitterHandle,
   },
+  other: {
+    "google-adsense-account": "ca-pub-3896962422851508",
+  },
   verification: {
     google: process.env.NEXT_PUBLIC_GSC_VERIFICATION || "I67sUfONhkQebjAhygVXf7dg-WkTRcxxeNUAaIGFjH0",
   },
@@ -171,20 +175,17 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${inter.variable} ${sora.variable} ${devanagari.variable}`}
     >
-      <head>
-        <meta name="google-adsense-account" content="ca-pub-3896962422851508" />
+      <body className={inter.className}>
         <script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3896962422851508"
-          crossOrigin="anonymous"
-        />
-        <script
-          id="json-ld-schema"
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-      </head>
-      <body className={inter.className}>
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3896962422851508"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
         <NextAuthProvider>{children}</NextAuthProvider>
         <PwaRegister />
         <CookieConsent adsenseClientId={adsenseClientId} />

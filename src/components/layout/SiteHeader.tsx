@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import Logo from "@/components/shared/Logo";
 import { useTheme } from "next-themes";
 import { useState, useEffect, useRef } from "react";
@@ -43,8 +44,10 @@ const NAV_LINKS = [
 
 export default function SiteHeader() {
   const { theme, setTheme } = useTheme();
+  const pathname = usePathname();
 
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -53,6 +56,13 @@ export default function SiteHeader() {
     { name: string; slug: string; categorySlug: string }[]
   >([]);
   const moreRef = useRef<HTMLDivElement>(null);
+
+  // Close mobile menus on route change
+  useEffect(() => {
+    setMobileOpen(false);
+    setMobileSearchOpen(false);
+    setMoreOpen(false);
+  }, [pathname]);
 
   // Check initial PWA service worker status
   useEffect(() => {
@@ -112,23 +122,31 @@ export default function SiteHeader() {
     };
   }, [moreOpen]);
 
-  // Handle mobile drawer Escape key and body scroll lock
+  // Handle mobile drawer / search Escape key and body scroll lock
   useEffect(() => {
-    if (!mobileOpen) return;
+    if (!mobileOpen && !mobileSearchOpen) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setMobileOpen(false);
+      if (e.key === "Escape") {
+        setMobileOpen(false);
+        setMobileSearchOpen(false);
+      }
     };
     window.addEventListener("keydown", handleKeyDown);
 
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    let previousOverflow = "";
+    if (mobileOpen) {
+      previousOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+    }
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = previousOverflow;
+      if (mobileOpen) {
+        document.body.style.overflow = previousOverflow;
+      }
     };
-  }, [mobileOpen]);
+  }, [mobileOpen, mobileSearchOpen]);
 
   useEffect(() => {
     if (!historyOpen) return;
@@ -267,6 +285,21 @@ export default function SiteHeader() {
 
               <button
                 onClick={() => {
+                  setMobileSearchOpen((o) => !o);
+                  if (mobileOpen) setMobileOpen(false);
+                }}
+                className={`lg:hidden min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg border transition-colors ${mobileSearchOpen
+                    ? "text-[#18181B] dark:text-[#F4F4F5] bg-[#F0EDE8] dark:bg-[#141829] border-[#1F2544] dark:border-[#F5A623]"
+                    : "text-[#71717A] hover:text-[#18181B] dark:hover:text-[#F4F4F5] hover:bg-[#F0EDE8] dark:hover:bg-[#141829] border-[#E4E0D8] dark:border-[#1E2338]"
+                  }`}
+                aria-label="Search tools"
+                title="Search"
+              >
+                <Search size={16} strokeWidth={2} />
+              </button>
+
+              <button
+                onClick={() => {
                   const isCurrentlyDark = document.documentElement.classList.contains("dark");
                   setTheme(isCurrentlyDark ? "light" : "dark");
                 }}
@@ -277,7 +310,10 @@ export default function SiteHeader() {
                 <Moon size={16} strokeWidth={2} className="block dark:hidden" />
               </button>
               <button
-                onClick={() => setMobileOpen((o) => !o)}
+                onClick={() => {
+                  setMobileOpen((o) => !o);
+                  if (mobileSearchOpen) setMobileSearchOpen(false);
+                }}
                 className="lg:hidden min-h-[44px] min-w-[44px] flex items-center justify-center -mr-1 rounded-lg text-[#71717A] hover:bg-[#F0EDE8] dark:hover:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] transition-colors"
                 aria-label="Toggle menu"
               >
@@ -286,6 +322,18 @@ export default function SiteHeader() {
             </div>
           </div>
         </div>
+
+        {/* ── MOBILE SEARCH SLIDE-DOWN BAR ── */}
+        {mobileSearchOpen && (
+          <div className="lg:hidden border-t border-[#E4E0D8] dark:border-[#1E2338] bg-white/95 dark:bg-[#0C0F1E]/95 backdrop-blur-xl px-4 py-3 shadow-md animate-in slide-in-from-top-2 duration-150">
+            <SearchBar
+              autoFocus
+              placeholder="Search 70+ tools (e.g. Base64, QR, PDF)..."
+              dropdownAlign="full"
+              onSelect={() => setMobileSearchOpen(false)}
+            />
+          </div>
+        )}
       </header>
 
       {/* ── MOBILE DRAWER (always in DOM, transitioned via CSS) ── */}
@@ -318,6 +366,15 @@ export default function SiteHeader() {
 
         {/* Drawer Body - Scrollable */}
         <div className="flex-1 overflow-y-auto p-4 space-y-6">
+          {/* SEARCH IN DRAWER */}
+          <div>
+            <SearchBar
+              placeholder="Search 70+ tools..."
+              dropdownAlign="full"
+              onSelect={() => setMobileOpen(false)}
+            />
+          </div>
+
           {/* MAIN SECTION */}
           <div>
             <div className="text-[10px] font-bold text-[#71717A] dark:text-[#6B7280] uppercase tracking-wider px-3 mb-2">

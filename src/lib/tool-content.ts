@@ -2214,7 +2214,7 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Neural machine translation provides natural everyday translations; official legal court affidavits and sworn government documents should be reviewed by a certified human translator.",
       "To type phonetically in Devanagari (e.g. typing 'mero naam' to get 'मेरो नाम'), use our dedicated Nepali Unicode Typing Tool rather than translation."
     ],
-    relatedToolSlugs: ["nepali-unicode", "nepali-date-converter", "nepali-number-words", "preeti-to-unicode", "nepali-calendar"],
+    relatedToolSlugs: ["nepali-unicode", "nepali-date-converter", "nepali-number-words", "traditional-unit-converter", "nepali-calendar"],
     privacyNote: "Translation text is sent via our secure server to translation providers for processing. Results are cached briefly for high performance. Your text is never permanently stored, logged, or sold. See our Privacy Policy for full details.",
     faqs: [
       {
