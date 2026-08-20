@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   AlertTriangle,
   CheckCircle2,
@@ -13,6 +13,7 @@ import {
   Wand2,
   Trash2,
   Archive,
+  Cpu,
 } from "lucide-react";
 import JSZip from "jszip";
 import ImageDropzone from "./shared/ImageDropzone";
@@ -23,8 +24,10 @@ interface BatchItem {
   id: string;
   file: File;
   sourceUrl: string;
+  previewSourceUrl: string;
   resultBlob: Blob | null;
   resultUrl: string | null;
+  previewResultUrl: string | null;
   status: "idle" | "downloading" | "processing" | "done" | "error";
   progress: number | null;
   message: string;
@@ -32,7 +35,6 @@ interface BatchItem {
 }
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB per file
-const MAX_BATCH_CAP = 15; // Soft cap for browser performance
 
 function formatBytes(bytes: number) {
   return `${(bytes / 1024 / 1024).toFixed(bytes >= 1024 * 1024 ? 1 : 2)} MB`;
@@ -46,59 +48,129 @@ export default function BackgroundRemoverTool() {
   const [globalMessage, setGlobalMessage] = useState("");
   const [batchNotice, setBatchNotice] = useState("");
   const [isSlowConnection, setIsSlowConnection] = useState(false);
+  const [isLowEndDevice, setIsLowEndDevice] = useState(false);
 
-  const urlsRef = useRef<string[]>([]);
+  const urlsRef = useRef<Set<string>>(new Set());
 
   useEffect(() => {
-    return () => urlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+    return () => {
+      urlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+      urlsRef.current.clear();
+    };
   }, []);
 
   useEffect(() => {
-    if (typeof window !== "undefined" && "connection" in navigator) {
-      const conn = (navigator as any).connection;
-      if (
-        conn?.saveData ||
-        conn?.effectiveType === "2g" ||
-        conn?.effectiveType === "3g" ||
-        conn?.effectiveType === "slow-2g"
-      ) {
-        setIsSlowConnection(true);
+    if (typeof window !== "undefined" && typeof navigator !== "undefined") {
+      const devMem = (navigator as any).deviceMemory;
+      const cores = navigator.hardwareConcurrency;
+      if ((devMem !== undefined && devMem <= 4) || (cores !== undefined && cores <= 4)) {
+        setIsLowEndDevice(true);
+      }
+
+      if ("connection" in navigator) {
+        const conn = (navigator as any).connection;
+        if (
+          conn?.saveData ||
+          conn?.effectiveType === "2g" ||
+          conn?.effectiveType === "3g" ||
+          conn?.effectiveType === "slow-2g"
+        ) {
+          setIsSlowConnection(true);
+        }
       }
     }
   }, []);
 
-  const createObjectUrl = (blobOrFile: Blob | File) => {
+  const maxBatchCap = isLowEndDevice ? 5 : 15;
+
+  const createObjectUrl = (blobOrFile: Blob | File): string => {
     const url = URL.createObjectURL(blobOrFile);
-    urlsRef.current.push(url);
+    urlsRef.current.add(url);
     return url;
   };
 
-  const handleFilesSelected = (selectedFiles: File[]) => {
+  const revokeUrl = (url: string | null | undefined) => {
+    if (!url) return;
+    try {
+      URL.revokeObjectURL(url);
+    } catch {
+      // Ignore cleanup error
+    }
+    urlsRef.current.delete(url);
+  };
+
+  const createThumbnailUrl = async (blobOrFile: Blob | File, maxDim = 400): Promise<string> => {
+    try {
+      const bitmap = await createImageBitmap(blobOrFile);
+      const scale = Math.min(1, maxDim / Math.max(bitmap.width, bitmap.height));
+      if (scale >= 1) {
+        bitmap.close();
+        return createObjectUrl(blobOrFile);
+      }
+
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+      canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        bitmap.close();
+        return createObjectUrl(blobOrFile);
+      }
+      ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+      bitmap.close();
+
+      const blob: Blob = await new Promise((res, rej) =>
+        canvas.toBlob(
+          (b) => (b ? res(b) : rej(new Error("Thumbnail generation failed"))),
+          "image/png"
+        )
+      );
+      return createObjectUrl(blob);
+    } catch {
+      return createObjectUrl(blobOrFile);
+    }
+  };
+
+  const handleFilesSelected = async (selectedFiles: File[]) => {
     setBatchNotice("");
     let validFiles = selectedFiles.filter(
       (f) => f.size <= MAX_FILE_SIZE && (f.type.startsWith("image/") || f.name.endsWith(".svg"))
     );
 
-    if (validFiles.length > MAX_BATCH_CAP) {
+    if (validFiles.length > maxBatchCap) {
       setBatchNotice(
-        `Batch cap is ${MAX_BATCH_CAP} images per run to preserve browser memory. The first ${MAX_BATCH_CAP} images were selected.`
+        `Batch cap is ${maxBatchCap} images per run on this device to preserve performance and prevent freezing. The first ${maxBatchCap} images were selected.`
       );
-      validFiles = validFiles.slice(0, MAX_BATCH_CAP);
+      validFiles = validFiles.slice(0, maxBatchCap);
     }
 
     if (validFiles.length === 0) return;
 
-    const newItems: BatchItem[] = validFiles.map((file, idx) => ({
-      id: `${Date.now()}-${idx}-${Math.random().toString(36).substr(2, 5)}`,
-      file,
-      sourceUrl: createObjectUrl(file),
-      resultBlob: null,
-      resultUrl: null,
-      status: "idle",
-      progress: null,
-      message: "",
-      error: "",
-    }));
+    const newItems: BatchItem[] = await Promise.all(
+      validFiles.map(async (file, idx) => {
+        const sourceUrl = createObjectUrl(file);
+        let previewSourceUrl = sourceUrl;
+        try {
+          previewSourceUrl = await createThumbnailUrl(file, 400);
+        } catch {
+          previewSourceUrl = sourceUrl;
+        }
+
+        return {
+          id: `${Date.now()}-${idx}-${Math.random().toString(36).substr(2, 5)}`,
+          file,
+          sourceUrl,
+          previewSourceUrl,
+          resultBlob: null,
+          resultUrl: null,
+          previewResultUrl: null,
+          status: "idle" as const,
+          progress: null,
+          message: "",
+          error: "",
+        };
+      })
+    );
 
     setItems((prev) => [...prev, ...newItems]);
   };
@@ -109,7 +181,12 @@ export default function BackgroundRemoverTool() {
     onProgress: (msg: string, pct: number | null, status: "downloading" | "processing") => void
   ): Promise<Blob> => {
     const { removeBackground: runRemoval } = await import("@imgly/background-removal");
-    const input = isSvg(item.file) ? await rasterizeSvg(item.file) : item.file;
+    
+    // Convert SVG to raster if needed
+    const rasterInput = isSvg(item.file) ? await rasterizeSvg(item.file) : item.file;
+    
+    // Downscale large input before passing to AI model to prevent WASM compute lag
+    const input = await downscaleForProcessing(rasterInput, 1800);
 
     const cdnBase = "https://staticimgly.com/@imgly/background-removal-data/1.7.0/dist/";
 
@@ -154,6 +231,11 @@ export default function BackgroundRemoverTool() {
       const currentItem = items[i];
       if (currentItem.status === "done") continue; // Skip already finished items
 
+      // Give browser main thread breathing room between heavy WASM inference passes
+      if (i > 0) {
+        await new Promise((r) => setTimeout(r, 60));
+      }
+
       setCurrentIndex(i);
       setGlobalMessage(`Processing image ${i + 1} of ${items.length} (${currentItem.file.name})…`);
 
@@ -177,7 +259,17 @@ export default function BackgroundRemoverTool() {
           }
         );
 
+        // Free previous results if any
+        revokeUrl(currentItem.resultUrl);
+        revokeUrl(currentItem.previewResultUrl);
+
         const resultUrl = createObjectUrl(blob);
+        let previewResultUrl = resultUrl;
+        try {
+          previewResultUrl = await createThumbnailUrl(blob, 400);
+        } catch {
+          previewResultUrl = resultUrl;
+        }
 
         setItems((prev) =>
           prev.map((it, idx) =>
@@ -186,6 +278,7 @@ export default function BackgroundRemoverTool() {
                   ...it,
                   resultBlob: blob,
                   resultUrl,
+                  previewResultUrl,
                   status: "done",
                   message: "Background removed successfully!",
                   progress: null,
@@ -216,10 +309,21 @@ export default function BackgroundRemoverTool() {
   };
 
   const removeItem = (id: string) => {
-    setItems((prev) => prev.filter((it) => it.id !== id));
+    setItems((prev) => {
+      const itemToRemove = prev.find((it) => it.id === id);
+      if (itemToRemove) {
+        revokeUrl(itemToRemove.sourceUrl);
+        revokeUrl(itemToRemove.previewSourceUrl);
+        revokeUrl(itemToRemove.resultUrl);
+        revokeUrl(itemToRemove.previewResultUrl);
+      }
+      return prev.filter((it) => it.id !== id);
+    });
   };
 
   const clearAll = () => {
+    urlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+    urlsRef.current.clear();
     setItems([]);
     setBatchNotice("");
     setGlobalMessage("");
@@ -262,10 +366,11 @@ export default function BackgroundRemoverTool() {
   };
 
   const doneCount = items.filter((it) => it.status === "done").length;
+  const pendingCount = items.length - doneCount;
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
-      {/* Network & Info Alerts */}
+      {/* Network & Device Info Alerts */}
       {isSlowConnection && (
         <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-700 dark:text-rose-300 text-xs flex items-start gap-3">
           <AlertTriangle size={18} className="shrink-0 text-rose-500 mt-0.5" />
@@ -278,6 +383,31 @@ export default function BackgroundRemoverTool() {
         </div>
       )}
 
+      {/* Device load notice */}
+      <div className="p-4 rounded-2xl bg-[#7C3AED]/10 border border-[#7C3AED]/20 text-[#18181B] dark:text-[#F4F4F5] text-xs sm:text-sm flex items-start sm:items-center gap-3 font-medium">
+        <ShieldCheck className="text-[#7C3AED] shrink-0 mt-0.5 sm:mt-0" size={20} />
+        <div>
+          <span>100% client-side AI: Background removal runs directly on your device.</span>
+          <p className="text-xs text-[#71717A] dark:text-[#A1A1AA] mt-0.5">
+            Images are never uploaded to any server. Larger images or older devices may take a moment to compute — keep this tab open during processing.
+          </p>
+        </div>
+      </div>
+
+      {/* Low-end device batch caution */}
+      {isLowEndDevice && pendingCount > 3 && (
+        <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 text-amber-800 dark:text-amber-300 text-xs flex items-start gap-3">
+          <Cpu size={18} className="shrink-0 text-amber-500 mt-0.5" />
+          <div>
+            <p className="font-bold mb-0.5">Device Optimization Active</p>
+            <p className="leading-relaxed">
+              You have {pendingCount} images queued. Processing multiple AI models sequentially on this device may cause temporary load. Images are optimized and spaced to preserve responsiveness.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* General Batch Info */}
       <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/60 text-amber-800 dark:text-amber-300 text-xs flex items-start gap-3">
         <Info size={18} className="shrink-0 text-amber-500 mt-0.5" />
         <div>
@@ -288,11 +418,6 @@ export default function BackgroundRemoverTool() {
             Processes multiple images sequentially directly in your browser. First run downloads the cached AI model (40–80 MB). All photos stay 100% private on your device.
           </p>
         </div>
-      </div>
-
-      <div className="p-4 rounded-2xl bg-[#7C3AED]/10 border border-[#7C3AED]/20 text-[#18181B] dark:text-[#F4F4F5] text-sm flex items-center gap-2.5 font-medium">
-        <ShieldCheck className="text-[#7C3AED] shrink-0" size={20} />
-        <span>100% client-side AI: images are processed on your device and never uploaded to any server.</span>
       </div>
 
       {/* Batch Cap Warning */}
@@ -309,7 +434,7 @@ export default function BackgroundRemoverTool() {
         multiple={true}
         maxSizeBytes={MAX_FILE_SIZE}
         accept="image/jpeg,image/png,image/webp,image/svg+xml,.svg"
-        description="Select single or multiple images (up to 15 max per batch)"
+        description={`Select single or multiple images (up to ${maxBatchCap} max per batch)`}
       />
 
       {/* Controls Bar & Global Actions */}
@@ -368,6 +493,7 @@ export default function BackgroundRemoverTool() {
                 onClick={clearAll}
                 disabled={isProcessing}
                 className="px-3.5 py-2.5 rounded-xl border border-[#E4E0D8] dark:border-[#2A2F48] bg-white dark:bg-[#1E2338] text-[#71717A] dark:text-[#A1A1AA] hover:text-rose-600 text-xs font-semibold transition-colors disabled:opacity-50"
+                title="Clear all images"
               >
                 <Trash2 size={15} />
               </button>
@@ -427,18 +553,19 @@ export default function BackgroundRemoverTool() {
                   onClick={() => removeItem(item.id)}
                   disabled={isProcessing && currentIndex === idx}
                   className="p-1.5 text-[#71717A] hover:text-rose-600 rounded-lg transition-colors disabled:opacity-40"
+                  title="Remove image"
                 >
                   <Trash2 size={15} />
                 </button>
               </div>
             </div>
 
-            {/* Previews Grid */}
+            {/* Previews Grid (uses lightweight downscaled thumbnails for high performance rendering) */}
             <div className="grid grid-cols-2 gap-3">
-              <Preview label="Original" url={item.sourceUrl} />
+              <Preview label="Original" url={item.previewSourceUrl || item.sourceUrl} />
               <Preview
                 label="No Background"
-                url={item.resultUrl}
+                url={item.previewResultUrl || item.resultUrl}
                 transparent={!item.resultUrl}
               />
             </div>
@@ -501,6 +628,45 @@ function Preview({
   );
 }
 
+async function downscaleForProcessing(file: File, maxDim = 1800): Promise<File> {
+  try {
+    let bitmap: ImageBitmap;
+    try {
+      bitmap = await createImageBitmap(file);
+    } catch {
+      return file;
+    }
+
+    const scale = Math.min(1, maxDim / Math.max(bitmap.width, bitmap.height));
+    if (scale >= 1) {
+      bitmap.close();
+      return file; // already small enough
+    }
+
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+    canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+    const ctx = canvas.getContext("2d");
+    if (!ctx) {
+      bitmap.close();
+      return file;
+    }
+    ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+    bitmap.close();
+
+    const blob: Blob = await new Promise((res, rej) =>
+      canvas.toBlob(
+        (b) => (b ? res(b) : rej(new Error("Downscale failed"))),
+        "image/png"
+      )
+    );
+    return new File([blob], file.name, { type: "image/png" });
+  } catch (err) {
+    console.warn("Could not downscale file before processing, using original", err);
+    return file;
+  }
+}
+
 function isSvg(file: File) {
   return file.type === "image/svg+xml" || /\.svg$/i.test(file.name);
 }
@@ -515,7 +681,7 @@ async function rasterizeSvg(file: File): Promise<File> {
       element.onerror = () => reject(new Error("The SVG could not be rendered."));
       element.src = svgUrl;
     });
-    const maxDimension = 4096;
+    const maxDimension = 2048;
     const scale = Math.min(
       1,
       maxDimension / Math.max(image.naturalWidth || 1, image.naturalHeight || 1)

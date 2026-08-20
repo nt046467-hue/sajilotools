@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { checkSafeUrl } from "@/lib/safe-browsing";
 
 // Valid URL schemes we'll accept
 const ALLOWED_SCHEMES = /^https?:\/\//i;
@@ -28,8 +31,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    const session = await getServerSession(authOptions);
+    const userId = (session?.user as any)?.id || null;
+
     const body = await req.json();
-    let { url, alias } = body as { url?: string; alias?: string };
+    let { url, alias, expiresIn } = body as {
+      url?: string;
+      alias?: string;
+      expiresIn?: "24h" | "7d" | "30d" | "never" | string;
+    };
 
     // ── Validate URL ──
     if (!url || typeof url !== "string") {
@@ -61,6 +71,25 @@ export async function POST(req: NextRequest) {
         { error: "Invalid URL format." },
         { status: 400 }
       );
+    }
+
+    // ── Safe Browsing & Abuse Screening ──
+    const safetyCheck = await checkSafeUrl(url);
+    if (!safetyCheck.safe) {
+      return NextResponse.json(
+        { error: safetyCheck.reason || "This URL is flagged as unsafe or malicious." },
+        { status: 400 }
+      );
+    }
+
+    // ── Expiration calculation ──
+    let expiresAt: Date | null = null;
+    if (expiresIn === "24h") {
+      expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    } else if (expiresIn === "7d") {
+      expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+    } else if (expiresIn === "30d") {
+      expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
     }
 
     // ── Validate or generate slug ──
@@ -113,6 +142,9 @@ export async function POST(req: NextRequest) {
       data: {
         slug,
         longUrl: url,
+        userId,
+        expiresAt,
+        isActive: true,
       },
     });
 
@@ -121,10 +153,15 @@ export async function POST(req: NextRequest) {
     const shortUrl = `${origin}/s/${shortLink.slug}`;
 
     return NextResponse.json({
+      id: shortLink.id,
       shortUrl,
       slug: shortLink.slug,
       longUrl: shortLink.longUrl,
+      clicks: shortLink.clicks,
+      isActive: shortLink.isActive,
+      expiresAt: shortLink.expiresAt,
       createdAt: shortLink.createdAt,
+      userId: shortLink.userId,
     });
   } catch (err: any) {
     console.error("Error in /api/shorten:", err);
@@ -134,3 +171,4 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+

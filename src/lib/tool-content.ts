@@ -232,8 +232,8 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
     examples: [
       {
         title: "Email Matching Pattern",
-        input: "Contact support@sajilotools.com for assistance.",
-        output: "Match 1: support@sajilotools.com (Index 8-31)"
+        input: "Contact support@nabint.com.np for assistance.",
+        output: "Match 1: support@nabint.com.np (Index 8-29)"
       }
     ],
     limitations: [
@@ -420,7 +420,7 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
     examples: [
       {
         title: "URL QR Code",
-        input: "https://sajilotools.com",
+        input: "https://nabint.com.np",
         output: "Scannable QR code linking directly to the SajiloTools homepage"
       }
     ],
@@ -561,12 +561,12 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
     examples: [
       {
         title: "Long URL to Short Link",
-        input: "https://sajilotools.com/tools/developer/link-shortener?ref=campaign2026",
-        output: "sajilotools.com/s/promo26"
+        input: "https://nabint.com.np/tools/developer/link-shortener?ref=campaign2026",
+        output: "nabint.com.np/s/promo26"
       }
     ],
     limitations: [
-      "Shortened links depend on the SajiloTools domain remaining active",
+      "Shortened links depend on the domain remaining active",
       "Custom aliases are assigned on a first-come, first-served basis"
     ],
     faqs: [

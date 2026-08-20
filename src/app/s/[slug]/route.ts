@@ -18,7 +18,23 @@ export async function GET(
     });
 
     if (!link) {
-      return NextResponse.redirect(new URL("/tools/developer/link-shortener?error=not-found", req.url));
+      return NextResponse.redirect(
+        new URL(`/tools/developer/link-shortener?error=not-found&slug=${encodeURIComponent(slug)}`, req.url)
+      );
+    }
+
+    // Check if link was soft-deleted / disabled by owner
+    if (!link.isActive) {
+      return NextResponse.redirect(
+        new URL(`/tools/developer/link-shortener?error=disabled&slug=${encodeURIComponent(slug)}`, req.url)
+      );
+    }
+
+    // Check if link has expired
+    if (link.expiresAt && new Date(link.expiresAt) < new Date()) {
+      return NextResponse.redirect(
+        new URL(`/tools/developer/link-shortener?error=expired&slug=${encodeURIComponent(slug)}`, req.url)
+      );
     }
 
     // Increment click count (fire-and-forget)
@@ -37,3 +53,4 @@ export async function GET(
     return NextResponse.redirect(new URL("/tools/developer/link-shortener?error=server-error", req.url));
   }
 }
+

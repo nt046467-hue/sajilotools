@@ -42,15 +42,7 @@ const NAV_LINKS = [
 ];
 
 export default function SiteHeader() {
-  const { theme, setTheme, systemTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const isDark =
-    mounted && (theme === "dark" || (theme === "system" && systemTheme === "dark"));
+  const { theme, setTheme } = useTheme();
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
@@ -275,17 +267,14 @@ export default function SiteHeader() {
 
               <button
                 onClick={() => {
-                  const currentlyDark = theme === "dark" || (theme === "system" && systemTheme === "dark");
-                  setTheme(currentlyDark ? "light" : "dark");
+                  const isCurrentlyDark = document.documentElement.classList.contains("dark");
+                  setTheme(isCurrentlyDark ? "light" : "dark");
                 }}
                 className="min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 flex items-center justify-center sm:inline-flex p-2.5 sm:p-2 rounded-lg text-[#71717A] hover:text-[#18181B] dark:hover:text-[#F4F4F5] hover:bg-[#F0EDE8] dark:hover:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] transition-colors"
                 aria-label="Toggle dark mode"
               >
-                {isDark ? (
-                  <Sun size={16} strokeWidth={2} />
-                ) : (
-                  <Moon size={16} strokeWidth={2} />
-                )}
+                <Sun size={16} strokeWidth={2} className="hidden dark:block" />
+                <Moon size={16} strokeWidth={2} className="block dark:hidden" />
               </button>
               <button
                 onClick={() => setMobileOpen((o) => !o)}

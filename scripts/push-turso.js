@@ -35,6 +35,8 @@ async function main() {
       "longUrl" TEXT NOT NULL,
       "clicks" INTEGER NOT NULL DEFAULT 0,
       "userId" TEXT,
+      "isActive" BOOLEAN NOT NULL DEFAULT 1,
+      "expiresAt" DATETIME,
       "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
     );`,
 
@@ -72,6 +74,7 @@ async function main() {
       "id" TEXT NOT NULL PRIMARY KEY,
       "userId" TEXT NOT NULL,
       "toolSlug" TEXT NOT NULL,
+      "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
       UNIQUE("userId", "toolSlug")
     );`,
 
@@ -96,7 +99,25 @@ async function main() {
   ];
 
   for (const stmt of statements) {
-    await db.execute(stmt);
+    try {
+      await db.execute(stmt);
+    } catch (e) {
+      console.warn("[DB Setup] Statement warning:", e?.message || e);
+    }
+  }
+
+  // Safe migrations for newly added columns on existing databases
+  const alterMigrations = [
+    `ALTER TABLE "ShortLink" ADD COLUMN "isActive" BOOLEAN NOT NULL DEFAULT 1;`,
+    `ALTER TABLE "ShortLink" ADD COLUMN "expiresAt" DATETIME;`
+  ];
+
+  for (const alterStmt of alterMigrations) {
+    try {
+      await db.execute(alterStmt);
+    } catch (e) {
+      // Column likely already exists, ignore safely
+    }
   }
 
   console.log("✅ [DB Setup] Turso tables created successfully!");

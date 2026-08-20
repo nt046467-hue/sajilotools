@@ -63,7 +63,7 @@ const TEMPLATES = [
     message:
       "Hello,\n\nWe're thrilled to announce that a brand new tool is live on SajiloTools!\n\nKey Highlights:\n• Fast, completely free, and privacy-first\n• Runs instantly in your browser with zero data tracking\n• Designed to make your daily digital tasks easier\n\nGive it a try and feel free to send us your feedback!",
     ctaText: "Try the New Tool",
-    ctaUrl: "https://sajilotools.com",
+    ctaUrl: "https://nabint.com.np",
   },
   {
     id: "digest",
@@ -73,7 +73,7 @@ const TEMPLATES = [
     message:
       "Hi there,\n\nHere's a quick roundup of everything we've improved across SajiloTools recently:\n\n• Faster processing speeds for PDF & image tools\n• Improved mobile responsiveness and dark mode\n• Enhanced client-side security & privacy protections\n\nThank you for being part of our community and supporting free, open utilities!",
     ctaText: "Explore SajiloTools",
-    ctaUrl: "https://sajilotools.com",
+    ctaUrl: "https://nabint.com.np",
   },
   {
     id: "tips",
@@ -83,7 +83,7 @@ const TEMPLATES = [
     message:
       "Hello,\n\nDid you know you can use SajiloTools offline and directly in your browser without any account required?\n\nHere are 3 popular tools you might find helpful:\n• Batch QR Code Generator with custom branding\n• Nepali Date & Unicode Converter\n• Lossless Image and PDF Compressor\n\nCheck them out whenever you need them!",
     ctaText: "View All Tools",
-    ctaUrl: "https://sajilotools.com",
+    ctaUrl: "https://nabint.com.np",
   },
 ];
 
@@ -693,7 +693,7 @@ export default function AdminAnalyticsClient() {
                     type="url"
                     value={broadcastCtaUrl}
                     onChange={(e) => setBroadcastCtaUrl(e.target.value)}
-                    placeholder="https://sajilotools.com/tools/..."
+                    placeholder="https://nabint.com.np/tools/..."
                     className="w-full px-3 py-2 rounded-xl border border-[#2A2F48] bg-[#1E2338] text-[#F4F4F5] text-xs focus:outline-none focus:ring-2 focus:ring-[#DC2626]"
                   />
                 </div>

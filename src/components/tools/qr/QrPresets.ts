@@ -65,7 +65,7 @@ export const PRESET_TEMPLATES: PresetTemplate[] = [
       errorCorrectionLevel: "M",
     },
     defaultData: {
-      ssid: "ChipsyMixsy_Guest",
+      ssid: "SajiloTools_Guest",
       password: "WelcomeToSajilo",
       encryption: "WPA",
       hidden: false,
