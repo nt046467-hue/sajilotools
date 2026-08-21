@@ -158,7 +158,7 @@ export default function HomePage() {
           <div className="max-w-xl mx-auto mb-12">
             <SearchBar
               large
-              placeholder={`Search ${REGISTERED_TOOLS.length}+ free developer & local tools (e.g. Nepali Date, Translator, Tax, EMI)...`}
+              placeholder="What do you want to do? e.g. compress PDF, calculate VAT, convert image..."
             />
           </div>
 

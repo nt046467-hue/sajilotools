@@ -134,17 +134,32 @@ export default function SiteHeader() {
     };
     window.addEventListener("keydown", handleKeyDown);
 
-    let previousOverflow = "";
     if (mobileOpen) {
-      previousOverflow = document.body.style.overflow;
-      document.body.style.overflow = "hidden";
+      const scrollY = window.scrollY;
+      const body = document.body;
+
+      // position:fixed is the only reliable way to block scroll on iOS/Android
+      // The drawer is its own fixed element so it scrolls independently
+      body.style.position = "fixed";
+      body.style.top = `-${scrollY}px`;
+      body.style.left = "0";
+      body.style.right = "0";
+      body.style.overflow = "hidden";
+
+      return () => {
+        window.removeEventListener("keydown", handleKeyDown);
+        body.style.position = "";
+        body.style.top = "";
+        body.style.left = "";
+        body.style.right = "";
+        body.style.overflow = "";
+        // Restore scroll position
+        window.scrollTo(0, scrollY);
+      };
     }
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      if (mobileOpen) {
-        document.body.style.overflow = previousOverflow;
-      }
     };
   }, [mobileOpen, mobileSearchOpen]);
 
@@ -346,7 +361,7 @@ export default function SiteHeader() {
       />
       {/* Drawer Panel */}
       <div
-        className={`lg:hidden fixed top-0 right-0 z-50 h-full w-[85vw] max-w-sm bg-white dark:bg-[#0C0F1E] border-l border-[#E4E0D8] dark:border-[#1E2338] shadow-2xl flex flex-col overflow-hidden transition-transform duration-250 ease-out will-change-transform ${mobileOpen ? "translate-x-0" : "translate-x-full"
+        className={`lg:hidden fixed top-0 right-0 z-50 h-dvh w-[85vw] max-w-sm bg-white dark:bg-[#0C0F1E] border-l border-[#E4E0D8] dark:border-[#1E2338] shadow-2xl flex flex-col overflow-hidden transition-transform duration-250 ease-out will-change-transform ${mobileOpen ? "translate-x-0" : "translate-x-full"
           }`}
         aria-hidden={!mobileOpen}
       >
@@ -365,7 +380,7 @@ export default function SiteHeader() {
         </div>
 
         {/* Drawer Body - Scrollable */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-6">
+        <div data-drawer-scroll className="flex-1 overflow-y-auto p-4 space-y-6">
           {/* SEARCH IN DRAWER */}
           <div>
             <SearchBar

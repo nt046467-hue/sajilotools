@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { searchTools } from "@/lib/search-engine";
 import {
   ArrowRight,
   Braces,
@@ -175,14 +176,18 @@ export default function CategoryPageClient({
 
   const HeaderIcon = getIcon(category.icon);
 
-  const filteredTools = tools.filter((t) => {
-    const matchesQuery =
-      !query.trim() ||
-      t.name.toLowerCase().includes(query.toLowerCase()) ||
-      t.desc.toLowerCase().includes(query.toLowerCase());
-    const matchesFav = !favoritesOnly || favorites.has(t.name);
-    return matchesQuery && matchesFav;
-  });
+  const filteredTools = useMemo(() => {
+    const baseTools = query.trim()
+      ? searchTools(query, 50)
+          .map((res) => res.tool)
+          .filter((t) => t.categorySlug === category.slug)
+      : tools;
+
+    return baseTools.filter((t) => {
+      const matchesFav = !favoritesOnly || favorites.has(t.name);
+      return matchesFav;
+    });
+  }, [query, category, tools, favoritesOnly, favorites]);
 
   const categoryFavCount = tools.filter((t) => favorites.has(t.name)).length;
 

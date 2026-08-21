@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import {
   Search,
   ArrowRight,
@@ -54,6 +54,7 @@ import {
   Wrench,
 } from "lucide-react";
 import { TOOLS, CATEGORIES } from "@/lib/tools-registry";
+import { searchTools } from "@/lib/search-engine";
 import { getToolAccentStyle } from "@/lib/theme-utils";
 import { trackSearch } from "@/lib/analytics";
 
@@ -148,16 +149,17 @@ export default function ToolsCatalogClient() {
     });
   };
 
-  const filtered = TOOLS.filter((t) => {
-    const matchesQuery =
-      query.length === 0 ||
-      t.name.toLowerCase().includes(query.toLowerCase()) ||
-      t.desc.toLowerCase().includes(query.toLowerCase());
-    const matchesCategory =
-      !activeCategory || t.categorySlug === activeCategory;
-    const matchesFav = !favoritesOnly || favorites.has(t.name);
-    return matchesQuery && matchesCategory && matchesFav;
-  });
+  const filtered = useMemo(() => {
+    const baseTools = query.trim()
+      ? searchTools(query, 100).map((res) => res.tool)
+      : TOOLS;
+
+    return baseTools.filter((t) => {
+      const matchesCategory = !activeCategory || t.categorySlug === activeCategory;
+      const matchesFav = !favoritesOnly || favorites.has(t.name);
+      return matchesCategory && matchesFav;
+    });
+  }, [query, activeCategory, favoritesOnly, favorites]);
 
   return (
     <div className="min-h-screen bg-[#F7F5F0] dark:bg-[#0C0F1E] transition-colors duration-300">
