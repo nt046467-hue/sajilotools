@@ -109,8 +109,8 @@ export default function QrPreviewExport({
 
   // Export functions helper
   async function getExportInstance(exportSize: number, extension: "png" | "svg") {
-    const module = await import("qr-code-styling");
-    const QRCodeStyling = module.default;
+    const qrModule = await import("qr-code-styling");
+    const QRCodeStyling = qrModule.default;
 
     const qrOptions: any = {
       width: exportSize,

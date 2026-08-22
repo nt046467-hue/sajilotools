@@ -63,8 +63,8 @@ export default function QrBatchTool({ styleOptions }: QrBatchToolProps) {
 
     try {
       const zip = new JSZip();
-      const module = await import("qr-code-styling");
-      const QRCodeStyling = module.default;
+      const qrModule = await import("qr-code-styling");
+      const QRCodeStyling = qrModule.default;
 
       for (let i = 0; i < items.length; i++) {
         const item = items[i];

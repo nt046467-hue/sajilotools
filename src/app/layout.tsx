@@ -1,11 +1,13 @@
+import { Suspense } from "react";
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
+
 import { Inter, Sora, Noto_Sans_Devanagari } from "next/font/google";
 import "@/styles/index.css";
 import { NextAuthProvider } from "./providers";
 
 import PwaRegister from "@/components/PwaRegister";
 import CookieConsent from "@/components/CookieConsent";
+import AnalyticsTracker from "@/components/AnalyticsTracker";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -42,6 +44,11 @@ import { SITE_CONFIG, SITE_URL, getCanonicalUrl } from "@/lib/site-config";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   applicationName: SITE_CONFIG.name,
+  appleWebApp: {
+    title: SITE_CONFIG.name,
+    statusBarStyle: "default",
+    capable: true,
+  },
   title: {
     default: "SajiloTools – Free Online Tools Made Simple for Nepal",
     template: "%s | SajiloTools",
@@ -180,13 +187,13 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3896962422851508"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
-        <NextAuthProvider>{children}</NextAuthProvider>
+
+        <NextAuthProvider>
+          <Suspense fallback={null}>
+            <AnalyticsTracker />
+          </Suspense>
+          {children}
+        </NextAuthProvider>
         <PwaRegister />
         <CookieConsent adsenseClientId={adsenseClientId} />
       </body>

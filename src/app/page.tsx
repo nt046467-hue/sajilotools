@@ -155,7 +155,7 @@ export default function HomePage() {
             Calculate, convert, translate, compress and simplify everyday digital tasks with fast, free online tools. Built for Nepal.
           </p>
 
-          <div className="max-w-xl mx-auto mb-12">
+          <div className="w-full max-w-2xl mx-auto mb-12 px-0 sm:px-2">
             <HeroGlowingSearchBar />
           </div>
 

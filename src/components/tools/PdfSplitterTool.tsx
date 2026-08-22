@@ -244,7 +244,7 @@ export default function PdfSplitterTool() {
 
           {pageCount === 1 && (
             <p className="text-xs font-semibold text-amber-600 dark:text-amber-400">
-              Note: This PDF has only 1 page. "Split Every N" and "Individual Pages" modes require at least 2 pages.
+              Note: This PDF has only 1 page. &quot;Split Every N&quot; and &quot;Individual Pages&quot; modes require at least 2 pages.
             </p>
           )}
 

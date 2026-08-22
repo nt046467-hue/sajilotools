@@ -12,7 +12,6 @@ import {
   X,
   History,
   Settings2,
-  ChevronDown,
   ArrowRight,
   ShieldCheck,
   Home,
@@ -20,23 +19,68 @@ import {
   FileText,
   Calculator,
   MapPin,
-  AlignLeft,
   Braces,
-  Boxes,
   Image as ImageIcon,
+  ChevronDown,
+  Layers,
+  Sparkles,
+  Info,
+  MessageSquarePlus,
+  AlignLeft,
+  Boxes,
 } from "lucide-react";
 import SearchBar from "@/components/SearchBar";
 import { TOOLS as REGISTERED_TOOLS } from "@/lib/tools-registry";
 
-const NAV_LINKS = [
-  { name: "Home", href: "/" },
-  { name: "Tools", href: "/tools" },
-  { name: "Guides", href: "/blog" },
-  { name: "PDF", href: "/tools/pdf" },
-  { name: "Image", href: "/tools/image" },
-  { name: "Finance", href: "/tools/finance" },
-  { name: "Developer", href: "/tools/developer" },
-  { name: "Nepal", href: "/tools/nepal" },
+const TOOL_CATEGORIES = [
+  {
+    name: "PDF Tools",
+    href: "/tools/pdf",
+    desc: "Merge, compress, split, convert",
+    icon: FileText,
+    badge: "Popular",
+    color: "text-rose-500 bg-rose-50 dark:bg-rose-950/40",
+  },
+  {
+    name: "Image Processing",
+    href: "/tools/image",
+    desc: "Compress, resize, background remover",
+    icon: ImageIcon,
+    badge: "",
+    color: "text-purple-500 bg-purple-50 dark:bg-purple-950/40",
+  },
+  {
+    name: "Developer Suite",
+    href: "/tools/developer",
+    desc: "JSON Formatter, Base64, JWT, Hash",
+    icon: Braces,
+    badge: "Dev",
+    color: "text-indigo-500 bg-indigo-50 dark:bg-indigo-950/40",
+  },
+  {
+    name: "Finance & Tax",
+    href: "/tools/finance",
+    desc: "EMI, SIP, Income Tax, Gold/Silver",
+    icon: Calculator,
+    badge: "",
+    color: "text-blue-500 bg-blue-50 dark:bg-blue-950/40",
+  },
+  {
+    name: "Text & Writing",
+    href: "/tools/text",
+    desc: "Word counter, text diff, case converter",
+    icon: AlignLeft,
+    badge: "",
+    color: "text-amber-500 bg-amber-50 dark:bg-amber-950/40",
+  },
+  {
+    name: "Everyday Utilities",
+    href: "/tools/everyday",
+    desc: "QR generator, unit converter, age calc",
+    icon: Boxes,
+    badge: "Quick",
+    color: "text-teal-600 bg-teal-50 dark:bg-teal-950/40",
+  },
 ];
 
 export default function SiteHeader() {
@@ -44,20 +88,50 @@ export default function SiteHeader() {
   const pathname = usePathname();
 
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [moreOpen, setMoreOpen] = useState(false);
+  const [toolsDropdownOpen, setToolsDropdownOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [pwaActive, setPwaActive] = useState(true);
   const [recentTools, setRecentTools] = useState<
     { name: string; slug: string; categorySlug: string }[]
   >([]);
-  const moreRef = useRef<HTMLDivElement>(null);
 
-  // Close mobile menus on route change
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close drawers & dropdowns on route change
   useEffect(() => {
     setMobileOpen(false);
-    setMoreOpen(false);
+    setToolsDropdownOpen(false);
   }, [pathname]);
+
+  // Robust click outside listener for Categories dropdown (supporting touch & mouse)
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent | TouchEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setToolsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("touchstart", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
+  }, []);
+
+  // Global Escape key listener to close active popups
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setToolsDropdownOpen(false);
+        setHistoryOpen(false);
+        setSettingsOpen(false);
+        setMobileOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   // Check initial PWA service worker status
   useEffect(() => {
@@ -70,7 +144,6 @@ export default function SiteHeader() {
   const togglePwa = async () => {
     if (typeof window === "undefined" || !("serviceWorker" in navigator)) return;
     if (pwaActive) {
-      // Turn OFF: unregister service workers & clear caches
       const regs = await navigator.serviceWorker.getRegistrations();
       for (const reg of regs) {
         await reg.unregister();
@@ -83,7 +156,6 @@ export default function SiteHeader() {
       }
       setPwaActive(false);
     } else {
-      // Turn ON: register service worker
       try {
         await navigator.serviceWorker.register("/sw.js");
         setPwaActive(true);
@@ -93,66 +165,27 @@ export default function SiteHeader() {
     }
   };
 
-  // Close "More" dropdown on click outside or Escape key
-  useEffect(() => {
-    if (!moreOpen) return;
-
-    const handleClickOutside = (e: MouseEvent) => {
-      if (moreRef.current && !moreRef.current.contains(e.target as Node)) {
-        setMoreOpen(false);
-      }
-    };
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setMoreOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [moreOpen]);
-
-  // Handle mobile drawer Escape key and body scroll lock
+  // Bulletproof body scroll lock when mobile drawer is open
   useEffect(() => {
     if (!mobileOpen) return;
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setMobileOpen(false);
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-
     const scrollY = window.scrollY;
-    const body = document.body;
-
-    // position:fixed is the only reliable way to block scroll on iOS/Android
-    // The drawer is its own fixed element so it scrolls independently
-    body.style.position = "fixed";
-    body.style.top = `-${scrollY}px`;
-    body.style.left = "0";
-    body.style.right = "0";
-    body.style.overflow = "hidden";
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = "100%";
+    document.body.style.overflow = "hidden";
 
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      body.style.position = "";
-      body.style.top = "";
-      body.style.left = "";
-      body.style.right = "";
-      body.style.overflow = "";
-      // Restore scroll position
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      document.body.style.overflow = "";
       window.scrollTo(0, scrollY);
     };
   }, [mobileOpen]);
 
+  // Load history from localStorage
   useEffect(() => {
-    if (!historyOpen) return;
     try {
       const raw = localStorage.getItem("sajilo_history");
       if (!raw) {
@@ -183,163 +216,262 @@ export default function SiteHeader() {
     try {
       localStorage.removeItem("sajilo_history");
     } catch {
-      /* storage unavailable — non-critical, fail silently */
+      /* ignore */
     }
     setRecentTools([]);
   }
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-white/80 dark:bg-[#0C0F1E]/80 backdrop-blur-xl border-b border-[#E4E0D8]/80 dark:border-[#1E2338]/80">
+      <header className="sticky top-0 z-40 w-full bg-white/80 dark:bg-[#080B16]/80 backdrop-blur-xl border-b border-[#E4E0D8] dark:border-[#1E2338] transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4 h-16">
-            {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-              <Logo size={28} priority />
-            </Link>
+          <div className="flex items-center justify-between h-16 gap-6">
+            
+            {/* 1. LEFT: Brand Logo & Navigation */}
+            <div className="flex items-center gap-8 shrink-0">
+              <Link href="/" className="flex items-center gap-2 group">
+                <Logo size={28} priority />
+              </Link>
 
-            {/* Nav links */}
-            <nav className="hidden lg:flex items-center gap-0.5 flex-1">
-              {NAV_LINKS.map((l) => (
+              {/* 2. REAL SAAS NAVIGATION LINKS */}
+              <nav className="hidden lg:flex items-center gap-1">
                 <Link
-                  key={l.name}
-                  href={l.href}
-                  className="px-2 xl:px-3 py-1.5 rounded-lg text-sm text-[#71717A] hover:text-[#18181B] dark:hover:text-[#F4F4F5] hover:bg-[#F0EDE8] dark:hover:bg-[#141829] transition-colors font-medium"
+                  href="/"
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                    pathname === "/"
+                      ? "text-[#18181B] dark:text-white bg-black/[0.05] dark:bg-white/[0.08] font-semibold"
+                      : "text-[#52525B] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
+                  }`}
                 >
-                  {l.name}
+                  Home
                 </Link>
-              ))}
-              <div className="relative" ref={moreRef}>
-                <button
-                  onClick={() => setMoreOpen(!moreOpen)}
-                  className="flex items-center gap-1 px-2 xl:px-3 py-1.5 rounded-lg text-sm text-[#71717A] hover:text-[#18181B] dark:hover:text-[#F4F4F5] hover:bg-[#F0EDE8] dark:hover:bg-[#141829] transition-colors font-medium"
+
+                <Link
+                  href="/tools"
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                    pathname === "/tools"
+                      ? "text-[#18181B] dark:text-white bg-black/[0.05] dark:bg-white/[0.08] font-semibold"
+                      : "text-[#52525B] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
+                  }`}
                 >
-                  More{" "}
-                  <ChevronDown
-                    size={13}
-                    strokeWidth={2}
-                    className={`transition-transform ${moreOpen ? "rotate-180" : ""}`}
-                  />
-                </button>
+                  Tools
+                </Link>
 
-                {moreOpen && (
-                  <div className="absolute top-full left-0 mt-2 w-56 bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] rounded-xl shadow-lg p-2 z-50">
-                    <Link
-                      href="/tools/everyday"
-                      onClick={() => setMoreOpen(false)}
-                      className="block px-3 py-2 text-sm font-semibold text-[#0D9488] dark:text-[#F5A623] hover:bg-[#F7F5F0] dark:hover:bg-[#1E2338] rounded-lg transition-colors"
-                    >
-                      Everyday &amp; Unit Tools
-                    </Link>
-                    <Link
-                      href="/tools/text"
-                      onClick={() => setMoreOpen(false)}
-                      className="block px-3 py-2 text-sm text-[#71717A] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-[#F4F4F5] hover:bg-[#F7F5F0] dark:hover:bg-[#1E2338] rounded-lg transition-colors"
-                    >
-                      Text Tools
-                    </Link>
-                    <Link
-                      href="/tools/developer/password-generator"
-                      onClick={() => setMoreOpen(false)}
-                      className="block px-3 py-2 text-sm text-[#71717A] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-[#F4F4F5] hover:bg-[#F7F5F0] dark:hover:bg-[#1E2338] rounded-lg transition-colors"
-                    >
-                      Password Generator
-                    </Link>
-                    <Link
-                      href="/tools/developer/json-formatter"
-                      onClick={() => setMoreOpen(false)}
-                      className="block px-3 py-2 text-sm text-[#71717A] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-[#F4F4F5] hover:bg-[#F7F5F0] dark:hover:bg-[#1E2338] rounded-lg transition-colors"
-                    >
-                      JSON Formatter
-                    </Link>
-                    <Link
-                      href="/tools/finance/nrs-converter"
-                      onClick={() => setMoreOpen(false)}
-                      className="block px-3 py-2 text-sm text-[#71717A] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-[#F4F4F5] hover:bg-[#F7F5F0] dark:hover:bg-[#1E2338] rounded-lg transition-colors"
-                    >
-                      NRs Currency Converter
-                    </Link>
-                  </div>
-                )}
-              </div>
-            </nav>
+                <Link
+                  href="/tools/nepal"
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                    pathname.startsWith("/tools/nepal")
+                      ? "text-[#18181B] dark:text-white bg-black/[0.05] dark:bg-white/[0.08] font-semibold"
+                      : "text-[#52525B] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
+                  }`}
+                >
+                  Nepali Tools
+                </Link>
 
-            {/* Header Search */}
-            <div className="hidden lg:block w-48 xl:w-64 ml-auto mr-1.5">
-              <SearchBar placeholder="Search tools..." />
+                <Link
+                  href="/tools/everyday"
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                    pathname.startsWith("/tools/everyday")
+                      ? "text-[#18181B] dark:text-white bg-black/[0.05] dark:bg-white/[0.08] font-semibold"
+                      : "text-[#52525B] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
+                  }`}
+                >
+                  Everyday
+                </Link>
+
+                <Link
+                  href="/blog"
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                    pathname.startsWith("/blog")
+                      ? "text-[#18181B] dark:text-white bg-black/[0.05] dark:bg-white/[0.08] font-semibold"
+                      : "text-[#52525B] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
+                  }`}
+                >
+                  Guides
+                </Link>
+
+                {/* Categories Dropdown */}
+                <div className="relative" ref={dropdownRef}>
+                  <button
+                    type="button"
+                    onClick={() => setToolsDropdownOpen((prev) => !prev)}
+                    className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+                      toolsDropdownOpen || pathname.startsWith("/tools/")
+                        ? "text-[#18181B] dark:text-white bg-black/[0.05] dark:bg-white/[0.08]"
+                        : "text-[#52525B] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
+                    }`}
+                  >
+                    <span>Categories</span>
+                    <ChevronDown
+                      size={14}
+                      className={`transition-transform duration-200 opacity-60 ${
+                        toolsDropdownOpen ? "rotate-180" : ""
+                      }`}
+                    />
+                  </button>
+
+                  {/* Dropdown Menu (Real SaaS Mega Menu) */}
+                  {toolsDropdownOpen && (
+                    <div
+                      className="absolute top-full left-0 mt-1.5 w-[380px] bg-white dark:bg-[#0E1322] border border-[#E4E0D8] dark:border-[#1E2338] rounded-2xl shadow-2xl p-2.5 z-50 animate-in fade-in slide-in-from-top-1 duration-150"
+                    >
+                      <div className="px-2.5 py-1.5 text-[11px] font-bold text-[#71717A] dark:text-[#8E95A8] uppercase tracking-wider">
+                        Categories
+                      </div>
+                      <div className="space-y-1">
+                        {TOOL_CATEGORIES.map((cat) => {
+                          const Icon = cat.icon;
+                          return (
+                            <Link
+                              key={cat.name}
+                              href={cat.href}
+                              onClick={() => setToolsDropdownOpen(false)}
+                              className="flex items-center justify-between p-2.5 rounded-xl hover:bg-black/[0.03] dark:hover:bg-white/[0.05] transition-colors group"
+                            >
+                              <div className="flex items-center gap-3">
+                                <div className={`p-2 rounded-lg ${cat.color} shrink-0`}>
+                                  <Icon size={16} />
+                                </div>
+                                <div>
+                                  <div className="text-xs font-semibold text-[#18181B] dark:text-[#F4F4F5] group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+                                    {cat.name}
+                                  </div>
+                                  <div className="text-[11px] text-[#71717A] dark:text-[#8E95A8] truncate">
+                                    {cat.desc}
+                                  </div>
+                                </div>
+                              </div>
+                              {cat.badge && (
+                                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300">
+                                  {cat.badge}
+                                </span>
+                              )}
+                            </Link>
+                          );
+                        })}
+                      </div>
+
+                      <div className="mt-2 pt-2 border-t border-[#E4E0D8] dark:border-[#1E2338] px-2.5 py-1 flex items-center justify-between">
+                        <Link
+                          href="/tools"
+                          onClick={() => setToolsDropdownOpen(false)}
+                          className="text-xs font-bold text-teal-600 dark:text-teal-400 hover:underline flex items-center gap-1"
+                        >
+                          Explore all 70+ Tools <ArrowRight size={13} />
+                        </Link>
+                        <span className="text-[11px] text-[#71717A]">100% Free &amp; Offline</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </nav>
             </div>
 
-            {/* Right controls */}
-            <div className="flex items-center gap-1.5 lg:ml-0 ml-auto">
+            {/* 3. RIGHT: Search Bar & Actions */}
+            <div className="flex items-center gap-2">
+              {/* Direct Search Bar (Desktop only) */}
+              <div className="hidden md:block w-48 lg:w-56 xl:w-64">
+                <SearchBar placeholder="Search tools..." dropdownAlign="right" />
+              </div>
+
+              {/* Suggest a Tool CTA */}
+              <Link
+                href="/contact"
+                className="hidden md:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold text-[#0D9488] dark:text-[#2DD4BF] border border-[#0D9488]/25 dark:border-[#2DD4BF]/25 bg-[#0D9488]/[0.06] dark:bg-[#2DD4BF]/[0.08] hover:bg-[#0D9488]/[0.12] dark:hover:bg-[#2DD4BF]/[0.14] transition-colors whitespace-nowrap"
+              >
+                <MessageSquarePlus size={14} />
+                Suggest a Tool
+              </Link>
+
+              {/* History Button (Beside Toggler) */}
               <button
+                type="button"
                 onClick={() => setHistoryOpen(true)}
-                className="hidden sm:flex p-2 rounded-lg text-[#71717A] hover:text-[#18181B] dark:hover:text-[#F4F4F5] hover:bg-[#F0EDE8] dark:hover:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] transition-colors"
-                title="History"
+                className="relative p-2 rounded-xl text-[#52525B] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.04] dark:hover:bg-white/[0.06] border border-[#E4E0D8] dark:border-[#1E2338] transition-all cursor-pointer flex items-center justify-center"
+                title="Recently Used Tools"
+                aria-label="Recent Tools"
               >
-                <History size={16} strokeWidth={2} />
-              </button>
-              <button
-                onClick={() => setSettingsOpen(true)}
-                className="hidden sm:flex p-2 rounded-lg text-[#71717A] hover:text-[#18181B] dark:hover:text-[#F4F4F5] hover:bg-[#F0EDE8] dark:hover:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] transition-colors"
-                title="Settings"
-              >
-                <Settings2 size={16} strokeWidth={2} />
+                <History size={16} />
+                {recentTools.length > 0 && (
+                  <span className="absolute top-1.5 right-1.5 flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-teal-500" />
+                  </span>
+                )}
               </button>
 
+              {/* Settings Button (Desktop) */}
               <button
+                type="button"
+                onClick={() => setSettingsOpen(true)}
+                className="hidden md:flex p-2 rounded-xl text-[#52525B] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.04] dark:hover:bg-white/[0.06] border border-[#E4E0D8] dark:border-[#1E2338] transition-colors cursor-pointer"
+                title="Preferences"
+                aria-label="Preferences"
+              >
+                <Settings2 size={16} />
+              </button>
+
+              {/* Dark/Light Mode Switcher */}
+              <button
+                type="button"
                 onClick={() => {
                   const isCurrentlyDark = document.documentElement.classList.contains("dark");
                   setTheme(isCurrentlyDark ? "light" : "dark");
                 }}
-                className="min-h-[44px] min-w-[44px] sm:min-h-0 sm:min-w-0 flex items-center justify-center sm:inline-flex p-2.5 sm:p-2 rounded-lg text-[#71717A] hover:text-[#18181B] dark:hover:text-[#F4F4F5] hover:bg-[#F0EDE8] dark:hover:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] transition-colors"
-                aria-label="Toggle dark mode"
+                className="p-2 rounded-xl text-[#52525B] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.04] dark:hover:bg-white/[0.06] border border-[#E4E0D8] dark:border-[#1E2338] transition-colors cursor-pointer"
+                aria-label="Toggle theme"
               >
-                <Sun size={16} strokeWidth={2} className="hidden dark:block" />
-                <Moon size={16} strokeWidth={2} className="block dark:hidden" />
+                <Sun size={16} className="hidden dark:block text-amber-400" />
+                <Moon size={16} className="block dark:hidden text-[#18181B]" />
               </button>
+
+              {/* Mobile Menu Hamburger */}
               <button
+                type="button"
                 onClick={() => setMobileOpen((o) => !o)}
-                className="lg:hidden min-h-[44px] min-w-[44px] flex items-center justify-center -mr-1 rounded-lg text-[#71717A] hover:bg-[#F0EDE8] dark:hover:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] transition-colors"
+                className="lg:hidden p-2 rounded-xl text-[#52525B] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.04] dark:hover:bg-white/[0.06] border border-[#E4E0D8] dark:border-[#1E2338] transition-colors cursor-pointer"
                 aria-label="Toggle menu"
               >
-                {mobileOpen ? <X size={16} strokeWidth={2} /> : <Menu size={16} strokeWidth={2} />}
+                {mobileOpen ? <X size={18} /> : <Menu size={18} />}
               </button>
             </div>
+
           </div>
         </div>
       </header>
 
-      {/* ── MOBILE DRAWER (always in DOM, transitioned via CSS) ── */}
-      {/* Backdrop */}
+      {/* ── MOBILE DRAWER ── */}
       <div
-        className={`lg:hidden fixed inset-0 z-40 bg-black/40 backdrop-blur-sm transition-all duration-250 ${mobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-          }`}
+        className={`lg:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-xs transition-opacity duration-300 ${
+          mobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
         onClick={() => setMobileOpen(false)}
         aria-hidden={!mobileOpen}
       />
-      {/* Drawer Panel */}
+      
       <div
-        className={`lg:hidden fixed top-0 right-0 z-50 h-dvh w-[85vw] max-w-sm bg-white dark:bg-[#0C0F1E] border-l border-[#E4E0D8] dark:border-[#1E2338] shadow-2xl flex flex-col overflow-hidden transition-transform duration-250 ease-out will-change-transform ${mobileOpen ? "translate-x-0" : "translate-x-full"
-          }`}
+        className={`lg:hidden fixed top-0 right-0 z-50 h-dvh w-[88vw] max-w-sm bg-white dark:bg-[#080B16] border-l border-[#E4E0D8] dark:border-[#1E2338] shadow-2xl flex flex-col overflow-hidden transition-transform duration-300 ease-out will-change-transform ${
+          mobileOpen ? "translate-x-0" : "translate-x-full"
+        }`}
         aria-hidden={!mobileOpen}
       >
         {/* Drawer Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-[#E4E0D8] dark:border-[#1E2338] shrink-0 bg-[#FAFAF8] dark:bg-[#141829]/60">
-          <Link href="/" onClick={() => setMobileOpen(false)} className="flex items-center gap-3">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-[#E4E0D8] dark:border-[#1E2338] shrink-0 bg-[#FAFAF8] dark:bg-[#0E1322]">
+          <Link href="/" onClick={() => setMobileOpen(false)} className="flex items-center gap-2">
             <Logo size={26} />
           </Link>
           <button
             onClick={() => setMobileOpen(false)}
             aria-label="Close menu"
-            className="p-2 rounded-lg text-[#71717A] hover:text-[#18181B] dark:hover:text-[#F4F4F5] hover:bg-[#E4E0D8]/50 dark:hover:bg-[#1E2338] transition-colors"
+            className="p-1.5 rounded-lg text-[#71717A] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors"
           >
-            <X size={18} strokeWidth={2} />
+            <X size={18} />
           </button>
         </div>
 
-        {/* Drawer Body - Scrollable */}
-        <div data-drawer-scroll className="flex-1 overflow-y-auto p-4 space-y-6">
-          {/* SEARCH IN DRAWER */}
+        {/* Drawer Body */}
+        <div data-drawer-scroll className="flex-1 overflow-y-auto overscroll-contain p-4 space-y-4">
+          {/* SEARCH */}
           <div>
             <SearchBar
               placeholder="Search 70+ tools..."
@@ -348,128 +480,149 @@ export default function SiteHeader() {
             />
           </div>
 
-          {/* MAIN SECTION */}
-          <div>
-            <div className="text-[10px] font-bold text-[#71717A] dark:text-[#6B7280] uppercase tracking-wider px-3 mb-2">
-              MAIN
+          {/* MAIN NAVIGATION */}
+          <div className="space-y-1">
+            <div className="text-[11px] font-bold text-[#71717A] dark:text-[#8E95A8] uppercase tracking-wider px-1 mb-1">
+              Explore
             </div>
-            <div className="space-y-1">
-              <Link
-                href="/"
-                onClick={() => setMobileOpen(false)}
-                className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-[#18181B] dark:text-[#F4F4F5] hover:bg-[#F0EDE8] dark:hover:bg-[#141829] transition-colors"
-              >
-                <span className="flex items-center gap-2.5">
-                  <Home size={17} className="text-[#1F2544] dark:text-[#F5A623]" />
-                  Home
-                </span>
-                <ArrowRight size={14} className="opacity-40" />
-              </Link>
-              <Link
-                href="/blog"
-                onClick={() => setMobileOpen(false)}
-                className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-[#18181B] dark:text-[#F4F4F5] hover:bg-[#F0EDE8] dark:hover:bg-[#141829] transition-colors"
-              >
-                <span className="flex items-center gap-2.5">
-                  <BookOpen size={17} className="text-[#1F2544] dark:text-[#F5A623]" />
-                  Guides
-                </span>
-                <ArrowRight size={14} className="opacity-40" />
-              </Link>
-            </div>
+            {[
+              { name: "Home", href: "/", icon: Home },
+              { name: "All 70+ Tools", href: "/tools", icon: Layers },
+              { name: "Nepali Tools", href: "/tools/nepal", icon: MapPin },
+              { name: "Guides & Articles", href: "/blog", icon: BookOpen },
+              { name: "Suggest a Tool", href: "/contact", icon: MessageSquarePlus },
+            ].map((link) => {
+              const Icon = link.icon;
+              const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href);
+              return (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  onClick={() => setMobileOpen(false)}
+                  className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
+                    isActive
+                      ? "bg-black/[0.05] dark:bg-white/[0.08] text-[#18181B] dark:text-white"
+                      : "text-[#52525B] dark:text-[#A1A1AA] hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
+                  }`}
+                >
+                  <span className="flex items-center gap-2.5">
+                    <Icon size={16} className="opacity-70" />
+                    {link.name}
+                  </span>
+                  <ArrowRight size={13} className="opacity-30" />
+                </Link>
+              );
+            })}
           </div>
 
-          <hr className="border-[#E4E0D8] dark:border-[#1E2338]" />
-
-          {/* TOOL CATEGORIES SECTION */}
+          {/* CATEGORIES */}
           <div>
-            <div className="text-[10px] font-bold text-[#71717A] dark:text-[#6B7280] uppercase tracking-wider px-3 mb-2">
-              TOOL CATEGORIES
+            <div className="text-[11px] font-bold text-[#71717A] dark:text-[#8E95A8] uppercase tracking-wider px-1 mb-2">
+              Categories
             </div>
             <div className="space-y-1">
-              {[
-                { name: "Text", href: "/tools/text", icon: AlignLeft, color: "text-amber-500" },
-                { name: "PDF", href: "/tools/pdf", icon: FileText, color: "text-red-500" },
-                { name: "Image", href: "/tools/image", icon: ImageIcon, color: "text-purple-500" },
-                { name: "Finance", href: "/tools/finance", icon: Calculator, color: "text-emerald-500" },
-                { name: "Developer", href: "/tools/developer", icon: Braces, color: "text-indigo-500 dark:text-indigo-400" },
-                { name: "Nepal", href: "/tools/nepal", icon: MapPin, color: "text-rose-500" },
-                { name: "Everyday", href: "/tools/everyday", icon: Boxes, color: "text-teal-500" },
-              ].map((cat) => {
+              {TOOL_CATEGORIES.map((cat) => {
                 const CatIcon = cat.icon;
                 return (
                   <Link
                     key={cat.name}
                     href={cat.href}
                     onClick={() => setMobileOpen(false)}
-                    className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium text-[#18181B] dark:text-[#F4F4F5] hover:bg-[#F0EDE8] dark:hover:bg-[#141829] transition-colors"
+                    className="flex items-center justify-between p-2.5 rounded-xl text-xs font-medium text-[#18181B] dark:text-[#F4F4F5] hover:bg-black/[0.03] dark:hover:bg-white/[0.04] transition-colors"
                   >
                     <span className="flex items-center gap-2.5">
-                      <CatIcon size={17} className={cat.color} />
-                      {cat.name}
+                      <div className={`p-1.5 rounded-lg ${cat.color}`}>
+                        <CatIcon size={15} />
+                      </div>
+                      <span className="font-semibold">{cat.name}</span>
                     </span>
-                    <ArrowRight size={14} className="opacity-40" />
+                    <ArrowRight size={13} className="opacity-30" />
                   </Link>
                 );
               })}
             </div>
           </div>
+        </div>
 
+        {/* Drawer Footer */}
+        <div className="p-4 border-t border-[#E4E0D8] dark:border-[#1E2338] bg-[#FAFAF8] dark:bg-[#0E1322] flex items-center justify-between shrink-0">
+          <button
+            onClick={() => {
+              const isDark = document.documentElement.classList.contains("dark");
+              setTheme(isDark ? "light" : "dark");
+            }}
+            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A304D] text-xs font-bold text-[#18181B] dark:text-[#F4F4F5]"
+          >
+            <Sun size={14} className="hidden dark:block text-amber-400" />
+            <Moon size={14} className="block dark:hidden" />
+            <span>Appearance</span>
+          </button>
+
+          <button
+            onClick={() => {
+              setMobileOpen(false);
+              setSettingsOpen(true);
+            }}
+            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A304D] text-xs font-bold text-[#18181B] dark:text-[#F4F4F5]"
+          >
+            <Settings2 size={14} />
+            <span>Settings</span>
+          </button>
         </div>
       </div>
 
       {/* ── HISTORY MODAL ── */}
       {historyOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-in fade-in duration-150"
           onClick={() => setHistoryOpen(false)}
         >
           <div
-            className="bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-4"
+            className="bg-white dark:bg-[#0E1322] border border-[#E4E0D8] dark:border-[#1E2338] rounded-2xl p-5 max-w-sm w-full shadow-2xl space-y-3"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between border-b border-[#E4E0D8] dark:border-[#1E2338] pb-3">
               <div className="flex items-center gap-2">
-                <History size={18} className="text-[#1F2544] dark:text-[#F5A623]" />
-                <h3 className="font-semibold text-lg text-[#18181B] dark:text-[#F4F4F5]">
+                <History size={16} className="text-teal-600 dark:text-teal-400" />
+                <h3 className="font-semibold text-sm text-[#18181B] dark:text-white">
                   Recently Used Tools
                 </h3>
               </div>
               <button
                 onClick={() => setHistoryOpen(false)}
-                className="text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-[#F4F4F5]"
+                className="text-[#71717A] hover:text-[#18181B] dark:hover:text-white"
               >
-                <X size={18} />
+                <X size={16} />
               </button>
             </div>
 
-            <div className="space-y-2 py-2 max-h-60 overflow-y-auto">
+            <div className="space-y-1 py-1 max-h-60 overflow-y-auto">
               {recentTools.length > 0 ? (
                 recentTools.map((item) => (
                   <Link
                     key={item.slug}
                     href={`/tools/${item.categorySlug}/${item.slug}`}
                     onClick={() => setHistoryOpen(false)}
-                    className="flex items-center justify-between p-3 rounded-xl bg-[#F7F5F0] dark:bg-[#1E2338] hover:bg-[#F0EDE8] dark:hover:bg-[#252A42] transition-colors"
+                    className="flex items-center justify-between p-2.5 rounded-xl hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors"
                   >
-                    <span className="text-sm font-medium text-[#18181B] dark:text-[#F4F4F5]">
+                    <span className="text-xs font-medium text-[#18181B] dark:text-white">
                       {item.name}
                     </span>
-                    <ArrowRight size={14} className="text-[#A1A1AA]" />
+                    <ArrowRight size={13} className="text-[#71717A]" />
                   </Link>
                 ))
               ) : (
-                <p className="text-xs text-[#71717A] dark:text-[#A1A1AA] text-center py-4">
-                  No tools used recently. Open any tool to build your history!
+                <p className="text-xs text-[#71717A] text-center py-6">
+                  No recently visited tools yet.
                 </p>
               )}
             </div>
 
-            <div className="flex items-center justify-between pt-2 border-t border-[#E4E0D8] dark:border-[#2A2F48]">
+            <div className="flex items-center justify-between pt-2 border-t border-[#E4E0D8] dark:border-[#1E2338]">
               {recentTools.length > 0 ? (
                 <button
                   onClick={clearHistory}
-                  className="px-3 py-2 text-xs font-semibold text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 rounded-xl transition-colors"
+                  className="text-xs font-medium text-rose-500 hover:underline cursor-pointer"
                 >
                   Clear History
                 </button>
@@ -478,7 +631,7 @@ export default function SiteHeader() {
               )}
               <button
                 onClick={() => setHistoryOpen(false)}
-                className="px-4 py-2 text-xs font-semibold text-[#71717A] dark:text-[#A1A1AA] hover:bg-[#F0EDE8] dark:hover:bg-[#1E2338] rounded-xl transition-colors"
+                className="px-3.5 py-1.5 text-xs font-semibold bg-[#18181B] text-white dark:bg-white dark:text-[#18181B] rounded-xl hover:opacity-90 transition-opacity cursor-pointer"
               >
                 Close
               </button>
@@ -490,147 +643,97 @@ export default function SiteHeader() {
       {/* ── SETTINGS MODAL ── */}
       {settingsOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-in fade-in duration-150"
           onClick={() => setSettingsOpen(false)}
         >
           <div
-            className="bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] rounded-2xl p-6 max-w-md w-full shadow-2xl space-y-5 max-h-[90vh] overflow-y-auto"
+            className="bg-white dark:bg-[#0E1322] border border-[#E4E0D8] dark:border-[#1E2338] rounded-2xl p-5 max-w-sm w-full shadow-2xl space-y-4"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-[#E4E0D8] dark:border-[#2A2F48] pb-4">
-              <div className="flex items-center gap-2.5">
-                <div className="p-2 rounded-xl bg-[#DC2626]/10 text-[#DC2626]">
-                  <Settings2 size={20} />
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg text-[#18181B] dark:text-[#F4F4F5]">
-                    Preferences &amp; Settings
-                  </h3>
-                  <p className="text-xs text-[#71717A]">Customize your SajiloTools experience</p>
-                </div>
+            <div className="flex items-center justify-between border-b border-[#E4E0D8] dark:border-[#1E2338] pb-3">
+              <div className="flex items-center gap-2">
+                <Settings2 size={16} className="text-teal-600 dark:text-teal-400" />
+                <h3 className="font-semibold text-sm text-[#18181B] dark:text-white">
+                  Preferences
+                </h3>
               </div>
               <button
                 onClick={() => setSettingsOpen(false)}
-                className="p-1.5 rounded-lg text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-[#F4F4F5] hover:bg-[#FAFAF8] dark:hover:bg-[#1E2338] transition-colors"
+                className="text-[#71717A] hover:text-[#18181B] dark:hover:text-white"
               >
-                <X size={18} />
+                <X size={16} />
               </button>
             </div>
 
             <div className="space-y-4">
-              {/* 1. Theme Mode */}
+              {/* Theme */}
               <div>
-                <label className="block text-xs font-bold text-[#71717A] uppercase tracking-wider mb-2">
-                  Appearance / Theme
+                <label className="block text-xs font-semibold text-[#71717A] uppercase tracking-wider mb-2">
+                  Theme
                 </label>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-3 gap-1.5">
                   <button
                     onClick={() => setTheme("light")}
-                    className={`px-3 py-2 rounded-xl text-xs font-bold border transition-colors flex items-center justify-center gap-1.5 ${theme === "light"
-                      ? "bg-[#DC2626] text-white border-[#DC2626] shadow-sm"
-                      : "border-[#E4E0D8] dark:border-[#2A2F48] text-[#71717A] hover:bg-[#FAFAF8] dark:hover:bg-[#1E2338]"
-                      }`}
+                    className={`py-2 rounded-xl text-xs font-semibold border transition-colors cursor-pointer ${
+                      theme === "light"
+                        ? "bg-[#18181B] text-white border-[#18181B]"
+                        : "border-[#E4E0D8] dark:border-[#1E2338] text-[#71717A] hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
+                    }`}
                   >
-                    <Sun size={14} /> Light
+                    Light
                   </button>
                   <button
                     onClick={() => setTheme("dark")}
-                    className={`px-3 py-2 rounded-xl text-xs font-bold border transition-colors flex items-center justify-center gap-1.5 ${theme === "dark"
-                      ? "bg-[#DC2626] text-white border-[#DC2626] shadow-sm"
-                      : "border-[#E4E0D8] dark:border-[#2A2F48] text-[#71717A] hover:bg-[#FAFAF8] dark:hover:bg-[#1E2338]"
-                      }`}
+                    className={`py-2 rounded-xl text-xs font-semibold border transition-colors cursor-pointer ${
+                      theme === "dark"
+                        ? "bg-teal-600 text-white border-teal-600"
+                        : "border-[#E4E0D8] dark:border-[#1E2338] text-[#71717A] hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
+                    }`}
                   >
-                    <Moon size={14} /> Dark
+                    Dark
                   </button>
                   <button
                     onClick={() => setTheme("system")}
-                    className={`px-3 py-2 rounded-xl text-xs font-bold border transition-colors flex items-center justify-center gap-1.5 ${theme === "system"
-                      ? "bg-[#DC2626] text-white border-[#DC2626] shadow-sm"
-                      : "border-[#E4E0D8] dark:border-[#2A2F48] text-[#71717A] hover:bg-[#FAFAF8] dark:hover:bg-[#1E2338]"
-                      }`}
+                    className={`py-2 rounded-xl text-xs font-semibold border transition-colors cursor-pointer ${
+                      theme === "system"
+                        ? "bg-[#18181B] text-white dark:bg-white dark:text-[#18181B] border-transparent"
+                        : "border-[#E4E0D8] dark:border-[#1E2338] text-[#71717A] hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
+                    }`}
                   >
-                    💻 System
+                    System
                   </button>
                 </div>
               </div>
 
-              {/* 2. Privacy & Telemetry */}
-              <div className="p-3.5 rounded-xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <ShieldCheck size={16} className="text-emerald-500" />
-                    <span className="text-xs font-bold text-[#18181B] dark:text-[#F4F4F5]">
-                      Privacy-First Telemetry
-                    </span>
-                  </div>
-                  <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold">
-                    Zero Cookies
-                  </span>
-                </div>
-                <p className="text-[11px] text-[#71717A]">
-                  Anonymous tool usage counts help prioritize future tool updates. No PII or cookies stored.
-                </p>
-              </div>
-
-              {/* 3. Offline PWA Status & Toggle */}
-              <div className="p-3.5 rounded-xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] flex items-center justify-between">
+              {/* PWA offline */}
+              <div className="flex items-center justify-between p-3 rounded-xl bg-black/[0.02] dark:bg-white/[0.03] border border-[#E4E0D8] dark:border-[#1E2338]">
                 <div className="space-y-0.5">
-                  <span className="text-xs font-bold text-[#18181B] dark:text-[#F4F4F5] block">
+                  <div className="text-xs font-semibold text-[#18181B] dark:text-white">
                     Offline PWA Mode
-                  </span>
-                  <span className="text-[11px] text-[#71717A] block">
-                    {pwaActive ? "App shell cached offline" : "Offline caching disabled"}
-                  </span>
+                  </div>
+                  <div className="text-[11px] text-[#71717A]">
+                    {pwaActive ? "App shell cached offline" : "Offline mode off"}
+                  </div>
                 </div>
                 <button
                   onClick={togglePwa}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${pwaActive
-                    ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30"
-                    : "bg-[#71717A]/15 text-[#71717A] dark:text-[#A1A1AA] border border-[#71717A]/30"
-                    }`}
+                  className="px-2.5 py-1 text-xs font-semibold rounded-lg border border-[#E4E0D8] dark:border-[#1E2338] hover:bg-white dark:hover:bg-[#1E2338] transition-colors cursor-pointer"
                 >
-                  <span
-                    className={`w-2 h-2 rounded-full ${pwaActive ? "bg-emerald-500 animate-pulse" : "bg-[#71717A]"
-                      }`}
-                  />
-                  {pwaActive ? "Active" : "Off"}
+                  {pwaActive ? "Turn Off" : "Enable"}
                 </button>
               </div>
 
-              {/* 4. Data Management */}
-              <div>
-                <label className="block text-xs font-bold text-[#71717A] uppercase tracking-wider mb-2">
-                  Storage &amp; Data Management
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    onClick={() => {
-                      clearHistory();
-                      alert("Recent tools history cleared!");
-                    }}
-                    className="px-3 py-2 rounded-xl border border-[#E4E0D8] dark:border-[#2A2F48] bg-white dark:bg-[#141829] text-[#71717A] hover:text-rose-600 hover:border-rose-500/30 text-xs font-bold transition-colors"
-                  >
-                    Clear History
-                  </button>
-                  <button
-                    onClick={() => {
-                      try {
-                        localStorage.removeItem("sajilo_favorites");
-                        alert("Saved favorites cleared!");
-                      } catch { }
-                    }}
-                    className="px-3 py-2 rounded-xl border border-[#E4E0D8] dark:border-[#2A2F48] bg-white dark:bg-[#141829] text-[#71717A] hover:text-rose-600 hover:border-rose-500/30 text-xs font-bold transition-colors"
-                  >
-                    Clear Favorites
-                  </button>
-                </div>
+              {/* Privacy note */}
+              <div className="text-[11px] text-[#71717A] flex items-center gap-1.5">
+                <ShieldCheck size={14} className="text-emerald-500 shrink-0" />
+                <span>100% Client-side. No tracking or data stored on servers.</span>
               </div>
             </div>
 
-            <div className="flex justify-end pt-3 border-t border-[#E4E0D8] dark:border-[#2A2F48]">
+            <div className="pt-2 border-t border-[#E4E0D8] dark:border-[#1E2338] flex justify-end">
               <button
                 onClick={() => setSettingsOpen(false)}
-                className="px-5 py-2 bg-[#DC2626] text-white font-bold text-xs rounded-xl hover:bg-[#DC2626]/90 transition-colors shadow-sm"
+                className="px-4 py-1.5 bg-[#18181B] text-white dark:bg-white dark:text-[#18181B] text-xs font-semibold rounded-xl hover:opacity-90 transition-opacity cursor-pointer"
               >
                 Done
               </button>
@@ -638,7 +741,6 @@ export default function SiteHeader() {
           </div>
         </div>
       )}
-
     </>
   );
 }

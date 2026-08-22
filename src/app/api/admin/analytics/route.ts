@@ -1,43 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/lib/auth";
 import { getAnalyticsData } from "@/lib/analytics-db";
-
-import crypto from "crypto";
+import { verifyAdminRequest } from "@/lib/admin-auth";
 
 export const dynamic = "force-dynamic";
 
-function safeCompareStrings(a: string | null, b: string | null): boolean {
-  if (!a || !b) return false;
-  const bufA = Buffer.from(a);
-  const bufB = Buffer.from(b);
-  if (bufA.length !== bufB.length) {
-    return false;
-  }
-  return crypto.timingSafeEqual(bufA, bufB);
-}
-
-function getAdminSecretKey(): string | null {
-  if (process.env.ADMIN_SECRET_KEY) {
-    return process.env.ADMIN_SECRET_KEY;
-  }
-  if (process.env.NODE_ENV !== "production") {
-    return "dev-only-admin-key";
-  }
-  return null;
-}
-
 export async function GET(req: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const isAdmin = await verifyAdminRequest(req);
 
-    const adminSecret = getAdminSecretKey();
-    const providedKey = req.headers.get("x-admin-key");
-
-    const isSessionAdmin = (session?.user as any)?.role === "admin";
-    const isKeyAdmin = safeCompareStrings(providedKey, adminSecret);
-
-    if (!isSessionAdmin && !isKeyAdmin) {
+    if (!isAdmin) {
       return NextResponse.json({ error: "Unauthorized: Admin access required" }, { status: 401 });
     }
 

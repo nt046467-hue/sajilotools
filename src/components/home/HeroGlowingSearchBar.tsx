@@ -94,6 +94,12 @@ interface PopularToolItem {
   slug: string;
 }
 
+export interface HeroGlowingSearchBarProps {
+  continuousAnimation?: boolean;
+  size?: "default" | "compact";
+  className?: string;
+}
+
 // SajiloTools most-used real utilities (ALL slugs verified against tools-registry.ts)
 const POPULAR_TOOLS: PopularToolItem[] = [
   { name: "Nepali Calendar (BS)", categorySlug: "nepal", slug: "nepali-calendar" },
@@ -116,7 +122,11 @@ const POPULAR_TOOLS: PopularToolItem[] = [
   { name: "NRs Currency Converter", categorySlug: "finance", slug: "nrs-converter" },
 ];
 
-export default function HeroGlowingSearchBar() {
+export default function HeroGlowingSearchBar({
+  continuousAnimation = false,
+  size = "default",
+  className = "",
+}: HeroGlowingSearchBarProps = {}) {
   const [isFocused, setIsFocused] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -273,9 +283,10 @@ export default function HeroGlowingSearchBar() {
   };
 
   const showDropdown = isFocused && query.trim().length > 0;
+  const isCompact = size === "compact";
 
   return (
-    <div ref={containerRef} className="relative w-full max-w-[580px] mx-auto px-2 sm:px-0">
+    <div ref={containerRef} className={`relative w-full ${isCompact ? "max-w-[560px]" : "max-w-[640px]"} mx-auto px-1 sm:px-0 ${className}`}>
       {/* Background ambient radial lighting */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] blur-[120px] rounded-full pointer-events-none -z-10 bg-[#F5A623]/8 dark:bg-[#e019ff]/5 transition-colors duration-500" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] blur-[100px] rounded-full pointer-events-none -z-10 bg-[#1F2544]/6 dark:bg-[#004cff]/10 transition-colors duration-500" />
@@ -284,15 +295,16 @@ export default function HeroGlowingSearchBar() {
       <form onSubmit={handlePerformSearch} className="relative z-20 w-full">
         {/* Main Container */}
         <div
-          className={`relative rounded-[24px] p-[6px] flex items-center h-[68px] sm:h-[72px] bg-white dark:bg-[#08070d] shadow-[0_10px_35px_rgba(0,0,0,0.06),0_2px_8px_rgba(0,0,0,0.04)] dark:shadow-[0_0_40px_rgba(0,0,0,0.8)] border transition-colors duration-500 ${isFocused
-            ? "border-transparent"
-            : "border-[#E4E0D8] dark:border-white/5"
-            }`}
+          className={`relative rounded-[22px] sm:rounded-[24px] p-[6px] flex items-center ${isCompact ? "h-[58px] sm:h-[62px]" : "h-[62px] sm:h-[70px]"} bg-white dark:bg-[#08070d] shadow-[0_10px_35px_rgba(0,0,0,0.06),0_2px_8px_rgba(0,0,0,0.04)] dark:shadow-[0_0_40px_rgba(0,0,0,0.8)] border transition-colors duration-500 ${
+            isFocused || continuousAnimation
+              ? "border-transparent"
+              : "border-[#E4E0D8] dark:border-white/5"
+          }`}
         >
           {/* Animated Meteor/Tracing Border */}
           <motion.div
             initial={false}
-            animate={{ opacity: isFocused ? 1 : 0 }}
+            animate={{ opacity: isFocused || continuousAnimation ? 1 : 0 }}
             transition={{ duration: 0.5, ease: "easeInOut" }}
             className="absolute inset-[-1.5px] rounded-[25.5px] pointer-events-none overflow-hidden"
             style={{
@@ -327,9 +339,9 @@ export default function HeroGlowingSearchBar() {
           </motion.div>
 
           {/* Left-side Search Icon */}
-          <div className="relative z-10 pl-3.5 sm:pl-4 pr-1 flex items-center justify-center shrink-0">
+          <div className={`relative z-10 ${isCompact ? "pl-3 sm:pl-3.5" : "pl-3.5 sm:pl-4"} pr-1 flex items-center justify-center shrink-0`}>
             <Search
-              size={22}
+              size={isCompact ? 18 : 22}
               strokeWidth={2.2}
               className="text-[#F5A623]"
             />
@@ -347,7 +359,7 @@ export default function HeroGlowingSearchBar() {
             onFocus={() => setIsFocused(true)}
             onKeyDown={handleKeyDown}
             placeholder={displayedPlaceholder}
-            className="relative z-10 flex-1 h-full bg-transparent border-none outline-none text-[16px] sm:text-[19px] px-3 sm:px-4 font-normal tracking-wide w-full text-[#18181B] dark:text-white placeholder:text-[#8E8B82] dark:placeholder:text-white/60 selection:bg-[#F5A623]/35 dark:selection:bg-[#004cff]/50 transition-colors"
+            className={`relative z-10 flex-1 h-full bg-transparent border-none outline-none ${isCompact ? "text-[14px] sm:text-[16px]" : "text-[16px] sm:text-[19px]"} px-3 sm:px-4 font-normal tracking-wide w-full text-[#18181B] dark:text-white placeholder:text-[#8E8B82] dark:placeholder:text-white/60 selection:bg-[#F5A623]/35 dark:selection:bg-[#004cff]/50 transition-colors`}
             aria-label="Search tools"
           />
 

@@ -387,7 +387,7 @@ export default function NepaliTranslatorTool() {
                   onClick={() => setSourceText(phrase)}
                   className="text-[11px] px-2.5 py-1 rounded-lg border border-[#E4E0D8] dark:border-[#2A2F48] bg-[#FAFAF8] dark:bg-[#1E2338] text-[#52525B] dark:text-[#A1A1AA] hover:text-[#DC2626] dark:hover:text-[#F87171] hover:border-[#DC2626]/40 transition-colors"
                 >
-                  "{phrase}"
+                  {`"${phrase}"`}
                 </button>
               ))}
             </div>

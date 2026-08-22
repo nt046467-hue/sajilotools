@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Compass, Search, Home, ArrowLeft, ArrowRight, Calculator, FileText, Image as ImageIcon, Braces, MapPin, Percent, ArrowLeftRight } from "lucide-react";
 import { getToolAccentStyle } from "@/lib/theme-utils";
-import SearchBar from "@/components/SearchBar";
+import HeroGlowingSearchBar from "@/components/home/HeroGlowingSearchBar";
 import SiteHeader from "@/components/layout/SiteHeader";
 import SiteFooter from "@/components/layout/SiteFooter";
 
@@ -103,11 +103,9 @@ export default function NotFoundView({
           </p>
         </div>
 
-        {/* Search Bar Block */}
-        <div className="max-w-md mx-auto pt-2">
-          <div className="p-1 rounded-2xl bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] shadow-sm">
-            <SearchBar placeholder="Search 60+ tools (e.g. converter, pdf, vat)..." />
-          </div>
+        {/* Continuous Glowing Search Bar Block */}
+        <div className="w-full max-w-xl mx-auto pt-2">
+          <HeroGlowingSearchBar continuousAnimation={true} size="compact" />
         </div>
 
         {/* Action Buttons */}

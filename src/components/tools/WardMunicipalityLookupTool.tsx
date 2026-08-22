@@ -881,7 +881,7 @@ export default function WardMunicipalityLookupTool() {
       <div className="p-3.5 rounded-xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] text-xs text-[#71717A] flex items-start gap-2">
         <Info size={16} className="text-[#F5A623] shrink-0 mt-0.5" />
         <span>
-          <strong>Nepal Local Government Database:</strong> Reflects Nepal's 753 local level administrative units (Metropolitan, Sub-Metropolitan, Municipality, and Rural Municipality) created under the Constitution of Nepal 2072. Crucial for citizenship applications, passport details, land registration, and tax filings.
+          <strong>Nepal Local Government Database:</strong> Reflects Nepal&apos;s 753 local level administrative units (Metropolitan, Sub-Metropolitan, Municipality, and Rural Municipality) created under the Constitution of Nepal 2072. Crucial for citizenship applications, passport details, land registration, and tax filings.
         </span>
       </div>
     </div>

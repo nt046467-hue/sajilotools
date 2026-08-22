@@ -130,12 +130,16 @@ export default function AdminAnalyticsClient() {
       }
       const res = await fetch(`/api/admin/analytics?range=${range}`, { headers });
       if (!res.ok) {
-        if (res.status === 401) throw new Error("Unauthorized: Invalid secret admin key or insufficient role.");
+        if (res.status === 401) {
+          sessionStorage.removeItem("sajilo_admin_key");
+          throw new Error("Invalid admin secret key. Access denied.");
+        }
         throw new Error("Failed to load live analytics data.");
       }
       const json = await res.json();
       setData(json);
       setAuthenticatedKey(keyToUse);
+      sessionStorage.setItem("sajilo_admin_key", keyToUse);
     } catch (err: any) {
       setError(err.message || "An error occurred.");
     } finally {
@@ -174,8 +178,10 @@ export default function AdminAnalyticsClient() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!keyInput.trim()) return;
-    sessionStorage.setItem("sajilo_admin_key", keyInput.trim());
+    if (!keyInput.trim()) {
+      setError("Please enter the admin secret key.");
+      return;
+    }
     fetchAnalytics(keyInput.trim(), timeRange);
     fetchSubscribers(keyInput.trim());
   };
@@ -350,19 +356,43 @@ export default function AdminAnalyticsClient() {
               <input
                 type="password"
                 value={keyInput}
-                onChange={(e) => setKeyInput(e.target.value)}
+                onChange={(e) => {
+                  setKeyInput(e.target.value);
+                  if (error) setError(null);
+                }}
                 placeholder="Enter secret admin key..."
-                className="w-full px-4 py-3 rounded-xl border border-[#2A2F48] bg-[#1E2338] text-[#F4F4F5] placeholder:text-[#71717A] text-sm focus:outline-none focus:ring-2 focus:ring-[#DC2626]"
+                className={`w-full px-4 py-3 rounded-xl border bg-[#1E2338] text-[#F4F4F5] placeholder:text-[#71717A] text-sm focus:outline-none focus:ring-2 transition-all ${
+                  error
+                    ? "border-rose-500/80 focus:ring-rose-500 text-rose-200"
+                    : "border-[#2A2F48] focus:ring-[#DC2626]"
+                }`}
                 autoFocus
               />
             </div>
-            {error && <p className="text-xs text-rose-400 font-semibold text-center">{error}</p>}
+
+            {error && (
+              <div className="flex items-start gap-2.5 p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-xs animate-in fade-in duration-200">
+                <AlertTriangle size={15} className="mt-0.5 shrink-0 text-rose-400" />
+                <span className="font-medium leading-relaxed">{error}</span>
+              </div>
+            )}
+
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded-xl bg-[#DC2626] text-white font-extrabold text-sm hover:bg-[#DC2626]/90 transition-colors shadow-lg disabled:opacity-50"
+              className="w-full py-3 rounded-xl bg-[#DC2626] text-white font-extrabold text-sm hover:bg-[#DC2626]/90 transition-colors shadow-lg disabled:opacity-50 flex items-center justify-center gap-2"
             >
-              {loading ? "Authenticating..." : "Unlock Dashboard"}
+              {loading ? (
+                <>
+                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  Authenticating...
+                </>
+              ) : (
+                <>
+                  <Lock size={15} />
+                  Unlock Dashboard
+                </>
+              )}
             </button>
           </form>
 
@@ -1013,6 +1043,63 @@ export default function AdminAnalyticsClient() {
             </div>
           </div>
 
+          {/* Interactive 30-Day Visual Activity Bar Chart */}
+          <div className="p-6 rounded-3xl bg-[#141829] border border-[#1E2338] space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-bold text-[#F4F4F5] flex items-center gap-2">
+                  <Activity size={16} className="text-[#DC2626]" /> Daily Activity Trend (Last 30 Days)
+                </h3>
+                <p className="text-xs text-[#A1A1AA] mt-0.5">Real-time daily traffic and distinct visitor volume over time.</p>
+              </div>
+              <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                {traffic.dailyTraffic.reduce((acc, d) => acc + d.views, 0)} Total 30D Views
+              </span>
+            </div>
+
+            {/* Visual Bar Chart */}
+            {traffic.dailyTraffic.length > 0 && (
+              <div className="pt-4 pb-2">
+                <div className="flex items-end gap-1.5 h-36 w-full border-b border-[#2A2F48] pb-1 px-1">
+                  {(() => {
+                    const maxViews = Math.max(1, ...traffic.dailyTraffic.map((d) => d.views));
+                    return traffic.dailyTraffic.map((day) => {
+                      const heightPct = Math.max(8, Math.round((day.views / maxViews) * 100));
+                      const isToday = day.date === new Date().toISOString().split("T")[0];
+                      return (
+                        <div
+                          key={day.date}
+                          className="flex-1 flex flex-col items-center justify-end h-full group relative"
+                        >
+                          {/* Tooltip */}
+                          <div className="absolute -top-12 left-1/2 -translate-x-1/2 hidden group-hover:flex flex-col items-center bg-[#1E2338] text-white text-[10px] py-1 px-2 rounded-lg border border-[#2A2F48] whitespace-nowrap shadow-xl z-20 pointer-events-none">
+                            <span className="font-bold text-[#F4F4F5]">{day.date}</span>
+                            <span className="text-emerald-400">{day.views} views • {day.visitors} visitors</span>
+                          </div>
+
+                          <div
+                            style={{ height: `${heightPct}%` }}
+                            className={`w-full max-w-[14px] rounded-t-sm transition-all duration-300 ${
+                              isToday
+                                ? "bg-gradient-to-t from-[#DC2626] to-red-400 shadow-md shadow-red-500/30 ring-1 ring-red-400"
+                                : day.views > 0
+                                ? "bg-gradient-to-t from-emerald-600 to-emerald-400 hover:from-emerald-500 hover:to-emerald-300"
+                                : "bg-[#1E2338] hover:bg-[#2A2F48]"
+                            }`}
+                          />
+                        </div>
+                      );
+                    });
+                  })()}
+                </div>
+                <div className="flex items-center justify-between text-[10px] text-[#71717A] mt-2 px-1">
+                  <span>{traffic.dailyTraffic[0]?.date || "30 days ago"}</span>
+                  <span className="text-red-400 font-bold">Today</span>
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Traffic Breakdown List */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Top Visited Pages */}
@@ -1023,23 +1110,39 @@ export default function AdminAnalyticsClient() {
               {traffic.topPages.length === 0 ? (
                 <p className="text-xs text-[#71717A]">No pageview events logged yet.</p>
               ) : (
-                <div className="space-y-2.5">
+                <div className="space-y-3">
                   {traffic.topPages.map((page, idx) => {
                     const pct = Math.max(
-                      5,
+                      8,
                       Math.round((page.views / (traffic.rangeViews || 1)) * 100)
                     );
+                    const isHome = page.path === "/" || !page.path;
+                    const displayLabel = isHome
+                      ? "Home Page ( / )"
+                      : page.path === "/tools"
+                      ? "All Tools Catalog ( /tools )"
+                      : page.path === "/blog"
+                      ? "Blog ( /blog )"
+                      : page.path;
+
                     return (
-                      <div key={page.path} className="space-y-1">
-                        <div className="flex justify-between text-xs font-medium">
-                          <span className="text-[#F4F4F5] font-mono text-[11px] truncate max-w-[280px]">
-                            {idx + 1}. {page.path}
+                      <div key={page.path} className="p-3 rounded-2xl bg-[#1E2338]/40 border border-[#2A2F48] space-y-2">
+                        <div className="flex items-center justify-between text-xs">
+                          <div className="flex items-center gap-2 min-w-0 pr-2">
+                            <span className="w-5 h-5 rounded-lg bg-emerald-500/10 text-emerald-400 font-bold text-[10px] flex items-center justify-center shrink-0">
+                              #{idx + 1}
+                            </span>
+                            <span className="text-[#F4F4F5] font-semibold text-xs truncate">
+                              {displayLabel}
+                            </span>
+                          </div>
+                          <span className="text-emerald-400 font-black text-xs shrink-0">
+                            {page.views.toLocaleString()} {page.views === 1 ? "view" : "views"}
                           </span>
-                          <span className="text-[#A1A1AA] font-bold">{page.views.toLocaleString()}</span>
                         </div>
                         <div className="h-1.5 w-full bg-[#1E2338] rounded-full overflow-hidden">
                           <div
-                            className="h-full bg-emerald-500 rounded-full"
+                            className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 rounded-full transition-all"
                             style={{ width: `${pct}%` }}
                           />
                         </div>
@@ -1050,31 +1153,50 @@ export default function AdminAnalyticsClient() {
               )}
             </div>
 
-            {/* Daily Traffic Breakdown */}
+            {/* Daily Traffic Log (Sorted Recent First) */}
             <div className="p-6 rounded-3xl bg-[#141829] border border-[#1E2338] space-y-4">
-              <h3 className="text-sm font-bold text-[#F4F4F5] flex items-center gap-2">
-                <Calendar size={16} className="text-blue-400" /> Daily Activity Trend
-              </h3>
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-bold text-[#F4F4F5] flex items-center gap-2">
+                  <Calendar size={16} className="text-blue-400" /> Daily Breakdown Log
+                </h3>
+                <span className="text-[10px] text-[#71717A]">Most recent dates first</span>
+              </div>
+
               {traffic.dailyTraffic.length === 0 ? (
                 <p className="text-xs text-[#71717A]">No daily records available for this period.</p>
               ) : (
-                <div className="space-y-2 max-h-[320px] overflow-y-auto pr-1">
-                  {traffic.dailyTraffic.map((day) => (
-                    <div
-                      key={day.date}
-                      className="p-3 rounded-2xl bg-[#1E2338]/50 border border-[#2A2F48] flex items-center justify-between text-xs"
-                    >
-                      <span className="font-semibold text-[#F4F4F5]">{day.date}</span>
-                      <div className="flex items-center gap-4 text-[#A1A1AA]">
-                        <span>
-                          <strong className="text-[#F4F4F5]">{day.views}</strong> views
-                        </span>
-                        <span>
-                          <strong className="text-[#F4F4F5]">{day.visitors}</strong> visitors
-                        </span>
+                <div className="space-y-2 max-h-[360px] overflow-y-auto pr-1">
+                  {[...traffic.dailyTraffic].reverse().map((day) => {
+                    const isToday = day.date === new Date().toISOString().split("T")[0];
+                    return (
+                      <div
+                        key={day.date}
+                        className={`p-3 rounded-2xl border flex items-center justify-between text-xs transition-all ${
+                          isToday
+                            ? "bg-red-950/20 border-red-500/30 ring-1 ring-red-500/20"
+                            : "bg-[#1E2338]/50 border-[#2A2F48]"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="font-semibold text-[#F4F4F5]">{day.date}</span>
+                          {isToday && (
+                            <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#DC2626] text-white">
+                              Today
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-3 text-xs font-semibold">
+                          <span className={day.views > 0 ? "text-emerald-400 font-bold" : "text-[#71717A]"}>
+                            {day.views} views
+                          </span>
+                          <span className="text-[#2A2F48]">•</span>
+                          <span className={day.visitors > 0 ? "text-purple-400 font-bold" : "text-[#71717A]"}>
+                            {day.visitors} visitors
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>

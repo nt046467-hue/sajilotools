@@ -315,7 +315,7 @@ export default function QrStyleControls({
             </span>
             {styleOptions.logoSrc && (
               <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
-                <ShieldCheck size={12} /> ECC Auto-bumped to 'H'
+                <ShieldCheck size={12} /> ECC Auto-bumped to &apos;H&apos;
               </span>
             )}
           </div>
@@ -429,7 +429,7 @@ export default function QrStyleControls({
           {styleOptions.logoSrc && (styleOptions.errorCorrectionLevel === "L" || styleOptions.errorCorrectionLevel === "M") && (
             <div className="p-2.5 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 text-amber-700 dark:text-amber-300 text-xs flex items-center gap-2">
               <AlertTriangle size={14} className="shrink-0" />
-              <span>Warning: Using low ECC with a logo may make the QR unscannable. 'H' is recommended.</span>
+              <span>Warning: Using low ECC with a logo may make the QR unscannable. &apos;H&apos; is recommended.</span>
             </div>
           )}
         </div>

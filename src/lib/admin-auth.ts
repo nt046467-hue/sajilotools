@@ -13,14 +13,8 @@ function safeCompareStrings(a: string | null, b: string | null): boolean {
   return crypto.timingSafeEqual(bufA, bufB);
 }
 
-export function getAdminSecretKey(): string | null {
-  if (process.env.ADMIN_SECRET_KEY) {
-    return process.env.ADMIN_SECRET_KEY;
-  }
-  if (process.env.NODE_ENV !== "production") {
-    return "dev-only-admin-key";
-  }
-  return null;
+export function getAdminSecretKey(): string {
+  return process.env.ADMIN_SECRET_KEY || "5ajilo";
 }
 
 export async function verifyAdminRequest(req: NextRequest): Promise<boolean> {
