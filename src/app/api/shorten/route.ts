@@ -164,11 +164,53 @@ export async function POST(req: NextRequest) {
       userId: shortLink.userId,
     });
   } catch (err: any) {
-    console.error("Error in /api/shorten:", err);
+    console.error("Error in /api/shorten POST:", err);
     return NextResponse.json(
       { error: err?.message || "Internal server error." },
       { status: 500 }
     );
   }
 }
+
+export async function GET(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const slugsParam = searchParams.get("slugs");
+
+    if (!slugsParam) {
+      return NextResponse.json({ error: "Missing slugs query parameter." }, { status: 400 });
+    }
+
+    const slugs = slugsParam
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean)
+      .slice(0, 50);
+
+    if (slugs.length === 0) {
+      return NextResponse.json({ stats: [] });
+    }
+
+    const links = await prisma.shortLink.findMany({
+      where: {
+        slug: { in: slugs },
+      },
+      select: {
+        slug: true,
+        clicks: true,
+        isActive: true,
+        expiresAt: true,
+      },
+    });
+
+    return NextResponse.json({ stats: links });
+  } catch (err: any) {
+    console.error("Error in /api/shorten GET:", err);
+    return NextResponse.json(
+      { error: err?.message || "Failed to fetch link stats." },
+      { status: 500 }
+    );
+  }
+}
+
 

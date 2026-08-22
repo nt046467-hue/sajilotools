@@ -37,13 +37,15 @@ export async function GET(
       );
     }
 
-    // Increment click count (fire-and-forget)
-    prisma.shortLink
-      .update({
+    // Increment click count reliably
+    try {
+      await prisma.shortLink.update({
         where: { slug },
         data: { clicks: { increment: 1 } },
-      })
-      .catch(() => {});
+      });
+    } catch (e) {
+      console.warn("Could not increment click count:", e);
+    }
 
     const res = NextResponse.redirect(link.longUrl, 302);
     res.headers.set("X-Robots-Tag", "noindex, nofollow");

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import SiteHeader from "@/components/layout/SiteHeader";
 import SiteFooter from "@/components/layout/SiteFooter";
-import SearchBar from "@/components/SearchBar";
+import HeroGlowingSearchBar from "@/components/home/HeroGlowingSearchBar";
 import { getToolAccentStyle } from "@/lib/theme-utils";
 import {
   BadgeCheck,
@@ -156,10 +156,7 @@ export default function HomePage() {
           </p>
 
           <div className="max-w-xl mx-auto mb-12">
-            <SearchBar
-              large
-              placeholder="What do you want to do? e.g. compress PDF, calculate VAT, convert image..."
-            />
+            <HeroGlowingSearchBar />
           </div>
 
           <div className="flex items-center justify-center gap-2 mb-4">

@@ -229,8 +229,10 @@ export const SEARCH_INTENTS: Record<string, string[]> = {
     "amount in words nepali", "rupees in words", "bank cheque writer"
   ],
   "nepali-calendar": [
-    "nepali calendar", "bikram sambat calendar", "nepali patro", "nepali holidays",
-    "nepali festivals", "saturday holiday", "bs calendar"
+    "nepali calendar", "calendar", "calender", "nepali calender", "bikram sambat calendar",
+    "nepali patro", "patro", "nepal calendar", "bs calendar", "bikram sambat", "nepali holidays",
+    "nepali festivals", "saturday holiday", "aaja ko miti", "miti", "today nepali date",
+    "nepal calender", "nepali date calendar", "calendar grid"
   ],
   "traditional-unit-converter": [
     "traditional nepali units", "dharni to kg", "mana pathi muri", "tola pau seer",
@@ -283,7 +285,8 @@ export const SEARCH_INTENTS: Record<string, string[]> = {
 // Popular search recommendation keywords for empty/quick discovery
 export const POPULAR_SEARCH_CHIPS = [
   { label: "PDF Compressor", query: "compress pdf", icon: "FileText" },
-  { label: "Nepali Date", query: "nepali date", icon: "Calendar" },
+  { label: "Nepali Calendar", query: "calendar", icon: "Calendar" },
+  { label: "Nepali Date", query: "nepali date", icon: "CalendarDays" },
   { label: "13% VAT", query: "vat calculator", icon: "Receipt" },
   { label: "QR Generator", query: "qr generator", icon: "QrCode" },
   { label: "Image Compressor", query: "image compressor", icon: "Image" },
@@ -292,22 +295,60 @@ export const POPULAR_SEARCH_CHIPS = [
   { label: "Land Unit", query: "land converter", icon: "Ruler" },
 ];
 
+const COMMON_TYPOS: Record<string, string> = {
+  calender: "calendar",
+  calendr: "calendar",
+  calandar: "calendar",
+  calculater: "calculator",
+  calculatr: "calculator",
+  translater: "translator",
+  translatr: "translator",
+  compresh: "compress",
+  compres: "compress",
+  compresor: "compressor",
+  compresser: "compressor",
+  convet: "convert",
+  convertr: "converter",
+  convrtr: "converter",
+  formater: "formatter",
+  generater: "generator",
+  resiz: "resize",
+  resizr: "resizer",
+  watermrk: "watermark",
+  passwrd: "password",
+  unicod: "unicode",
+  translat: "translate",
+  pdf2word: "pdf to word",
+  jpg2pdf: "jpg to pdf",
+  wordcount: "word counter",
+  removebg: "background remover",
+  bgremove: "background remover",
+  bgremover: "background remover",
+};
+
 /**
- * Normalizes strings by removing extra spaces and special punctuation for fuzzy matching
+ * Normalizes strings by replacing typos, removing extra spaces and special punctuation
  */
 function normalize(str: string): string {
-  return str
+  const cleaned = str
     .toLowerCase()
     .trim()
     .replace(/[^\w\s\d.-]/g, " ")
     .replace(/\s+/g, " ");
+
+  return cleaned
+    .split(" ")
+    .map((word) => COMMON_TYPOS[word] || word)
+    .join(" ");
 }
 
 /**
  * Main Unified Search Ranking Engine
  */
 export function searchTools(query: string, limit = 8): SearchResult[] {
+  const rawQ = query.toLowerCase().trim();
   const q = normalize(query);
+
   if (!q) {
     // Return curated popular & featured tools when query is empty
     return TOOLS.filter((t) => t.featured || ["Popular", "New", "Nepal"].includes(t.badge))
@@ -320,6 +361,8 @@ export function searchTools(query: string, limit = 8): SearchResult[] {
   }
 
   const queryWords = q.split(" ").filter(Boolean);
+  const rawWords = rawQ.split(" ").filter(Boolean);
+  const allSearchWords = Array.from(new Set([...queryWords, ...rawWords]));
   const results: SearchResult[] = [];
 
   for (const tool of TOOLS) {
@@ -334,19 +377,19 @@ export function searchTools(query: string, limit = 8): SearchResult[] {
     const seoDescNorm = normalize(tool.seoDescription || "");
     const synonyms = SEARCH_INTENTS[tool.slug] || [];
 
-    // 1. Exact Name Match (Score: 120)
-    if (nameNorm === q || slugNorm === q) {
-      score += 120;
+    // 1. Exact Name Match (Score: 140)
+    if (nameNorm === q || slugNorm === q || tool.name.toLowerCase() === rawQ) {
+      score += 140;
       matchedOn = "exact";
     }
-    // 2. Name Starts With Query (Score: 90)
-    else if (nameNorm.startsWith(q) || slugNorm.startsWith(q)) {
-      score += 90;
+    // 2. Name Starts With Query (Score: 100)
+    else if (nameNorm.startsWith(q) || slugNorm.startsWith(q) || tool.name.toLowerCase().startsWith(rawQ)) {
+      score += 100;
       matchedOn = "name";
     }
-    // 3. Name Contains Full Query (Score: 70)
-    else if (nameNorm.includes(q) || slugNorm.includes(q)) {
-      score += 70;
+    // 3. Name Contains Full Query (Score: 80)
+    else if (nameNorm.includes(q) || slugNorm.includes(q) || tool.name.toLowerCase().includes(rawQ)) {
+      score += 80;
       matchedOn = "name";
     }
 
@@ -354,22 +397,22 @@ export function searchTools(query: string, limit = 8): SearchResult[] {
     let maxSynonymScore = 0;
     for (const syn of synonyms) {
       const synNorm = normalize(syn);
-      if (synNorm === q) {
-        maxSynonymScore = Math.max(maxSynonymScore, 85);
-      } else if (synNorm.startsWith(q)) {
-        maxSynonymScore = Math.max(maxSynonymScore, 65);
-      } else if (synNorm.includes(q) || q.includes(synNorm)) {
-        maxSynonymScore = Math.max(maxSynonymScore, 50);
+      if (synNorm === q || syn.toLowerCase() === rawQ) {
+        maxSynonymScore = Math.max(maxSynonymScore, 95);
+      } else if (synNorm.startsWith(q) || syn.toLowerCase().startsWith(rawQ)) {
+        maxSynonymScore = Math.max(maxSynonymScore, 75);
+      } else if (synNorm.includes(q) || q.includes(synNorm) || syn.toLowerCase().includes(rawQ)) {
+        maxSynonymScore = Math.max(maxSynonymScore, 60);
       } else {
         // Multi-word partial synonym match
         const synWords = synNorm.split(" ");
-        const matchedWordsCount = queryWords.filter((w) =>
-          synWords.some((sw) => sw.includes(w) || w.includes(sw))
+        const matchedWordsCount = allSearchWords.filter((w) =>
+          synWords.some((sw) => (sw.length >= 3 && w.length >= 3 && (sw.includes(w) || w.includes(sw))) || sw === w)
         ).length;
         if (matchedWordsCount > 0) {
           maxSynonymScore = Math.max(
             maxSynonymScore,
-            25 + (matchedWordsCount / queryWords.length) * 20
+            30 + (matchedWordsCount / allSearchWords.length) * 25
           );
         }
       }
@@ -380,27 +423,28 @@ export function searchTools(query: string, limit = 8): SearchResult[] {
       if (matchedOn === "popular") matchedOn = "intent";
     }
 
-    // 5. Individual Query Words in Tool Name
+    // 5. Individual Query Words in Tool Name (Clean word matching without stopwords)
     const nameWords = nameNorm.split(" ");
     let nameWordsMatchCount = 0;
-    for (const qw of queryWords) {
-      if (nameWords.some((nw) => nw.includes(qw) || qw.includes(nw))) {
+    for (const qw of allSearchWords) {
+      if (qw.length < 2) continue;
+      if (nameWords.some((nw) => nw === qw || (nw.length >= 3 && qw.length >= 3 && nw.includes(qw)))) {
         nameWordsMatchCount++;
       }
     }
     if (nameWordsMatchCount > 0) {
-      score += (nameWordsMatchCount / queryWords.length) * 45;
+      score += (nameWordsMatchCount / allSearchWords.length) * 50;
       if (matchedOn === "popular") matchedOn = "name";
     }
 
     // 6. Description / SEO Text Match
     if (descNorm.includes(q) || seoTitleNorm.includes(q) || seoDescNorm.includes(q)) {
-      score += 25;
+      score += 30;
       if (matchedOn === "popular") matchedOn = "desc";
     } else {
-      const descWordsMatch = queryWords.filter((w) => descNorm.includes(w)).length;
+      const descWordsMatch = allSearchWords.filter((w) => w.length >= 3 && descNorm.includes(w)).length;
       if (descWordsMatch > 0) {
-        score += (descWordsMatch / queryWords.length) * 15;
+        score += (descWordsMatch / allSearchWords.length) * 18;
         if (matchedOn === "popular") matchedOn = "desc";
       }
     }
@@ -419,7 +463,7 @@ export function searchTools(query: string, limit = 8): SearchResult[] {
 
     // 9. Nepal context boost
     if (
-      (q.includes("nepal") || q.includes("nrs") || q.includes("bs") || q.includes("miti")) &&
+      (q.includes("nepal") || q.includes("nrs") || q.includes("bs") || q.includes("miti") || q.includes("calendar")) &&
       tool.categorySlug === "nepal"
     ) {
       score += 15;

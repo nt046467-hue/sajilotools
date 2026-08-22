@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import Logo from "@/components/shared/Logo";
 import { useTheme } from "next-themes";
@@ -15,8 +14,6 @@ import {
   Settings2,
   ChevronDown,
   ArrowRight,
-  Search,
-  Command,
   ShieldCheck,
   Home,
   BookOpen,
@@ -47,7 +44,6 @@ export default function SiteHeader() {
   const pathname = usePathname();
 
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -60,7 +56,6 @@ export default function SiteHeader() {
   // Close mobile menus on route change
   useEffect(() => {
     setMobileOpen(false);
-    setMobileSearchOpen(false);
     setMoreOpen(false);
   }, [pathname]);
 
@@ -122,46 +117,39 @@ export default function SiteHeader() {
     };
   }, [moreOpen]);
 
-  // Handle mobile drawer / search Escape key and body scroll lock
+  // Handle mobile drawer Escape key and body scroll lock
   useEffect(() => {
-    if (!mobileOpen && !mobileSearchOpen) return;
+    if (!mobileOpen) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setMobileOpen(false);
-        setMobileSearchOpen(false);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
 
-    if (mobileOpen) {
-      const scrollY = window.scrollY;
-      const body = document.body;
+    const scrollY = window.scrollY;
+    const body = document.body;
 
-      // position:fixed is the only reliable way to block scroll on iOS/Android
-      // The drawer is its own fixed element so it scrolls independently
-      body.style.position = "fixed";
-      body.style.top = `-${scrollY}px`;
-      body.style.left = "0";
-      body.style.right = "0";
-      body.style.overflow = "hidden";
-
-      return () => {
-        window.removeEventListener("keydown", handleKeyDown);
-        body.style.position = "";
-        body.style.top = "";
-        body.style.left = "";
-        body.style.right = "";
-        body.style.overflow = "";
-        // Restore scroll position
-        window.scrollTo(0, scrollY);
-      };
-    }
+    // position:fixed is the only reliable way to block scroll on iOS/Android
+    // The drawer is its own fixed element so it scrolls independently
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.overflow = "hidden";
 
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
+      body.style.position = "";
+      body.style.top = "";
+      body.style.left = "";
+      body.style.right = "";
+      body.style.overflow = "";
+      // Restore scroll position
+      window.scrollTo(0, scrollY);
     };
-  }, [mobileOpen, mobileSearchOpen]);
+  }, [mobileOpen]);
 
   useEffect(() => {
     if (!historyOpen) return;
@@ -300,21 +288,6 @@ export default function SiteHeader() {
 
               <button
                 onClick={() => {
-                  setMobileSearchOpen((o) => !o);
-                  if (mobileOpen) setMobileOpen(false);
-                }}
-                className={`lg:hidden min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg border transition-colors ${mobileSearchOpen
-                    ? "text-[#18181B] dark:text-[#F4F4F5] bg-[#F0EDE8] dark:bg-[#141829] border-[#1F2544] dark:border-[#F5A623]"
-                    : "text-[#71717A] hover:text-[#18181B] dark:hover:text-[#F4F4F5] hover:bg-[#F0EDE8] dark:hover:bg-[#141829] border-[#E4E0D8] dark:border-[#1E2338]"
-                  }`}
-                aria-label="Search tools"
-                title="Search"
-              >
-                <Search size={16} strokeWidth={2} />
-              </button>
-
-              <button
-                onClick={() => {
                   const isCurrentlyDark = document.documentElement.classList.contains("dark");
                   setTheme(isCurrentlyDark ? "light" : "dark");
                 }}
@@ -325,10 +298,7 @@ export default function SiteHeader() {
                 <Moon size={16} strokeWidth={2} className="block dark:hidden" />
               </button>
               <button
-                onClick={() => {
-                  setMobileOpen((o) => !o);
-                  if (mobileSearchOpen) setMobileSearchOpen(false);
-                }}
+                onClick={() => setMobileOpen((o) => !o)}
                 className="lg:hidden min-h-[44px] min-w-[44px] flex items-center justify-center -mr-1 rounded-lg text-[#71717A] hover:bg-[#F0EDE8] dark:hover:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] transition-colors"
                 aria-label="Toggle menu"
               >
@@ -337,18 +307,6 @@ export default function SiteHeader() {
             </div>
           </div>
         </div>
-
-        {/* ── MOBILE SEARCH SLIDE-DOWN BAR ── */}
-        {mobileSearchOpen && (
-          <div className="lg:hidden border-t border-[#E4E0D8] dark:border-[#1E2338] bg-white/95 dark:bg-[#0C0F1E]/95 backdrop-blur-xl px-4 py-3 shadow-md animate-in slide-in-from-top-2 duration-150">
-            <SearchBar
-              autoFocus
-              placeholder="Search 70+ tools (e.g. Base64, QR, PDF)..."
-              dropdownAlign="full"
-              onSelect={() => setMobileSearchOpen(false)}
-            />
-          </div>
-        )}
       </header>
 
       {/* ── MOBILE DRAWER (always in DOM, transitioned via CSS) ── */}

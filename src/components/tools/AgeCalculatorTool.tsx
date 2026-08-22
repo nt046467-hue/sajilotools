@@ -190,8 +190,8 @@ export default function AgeCalculatorTool() {
       <div className="pt-2">
         <CalculatorCrossLink
           icon={Calendar}
-          title="Nepali Date Converter & Age Calculator (BS ↔ AD)"
-          desc="Need Bikram Sambat (BS) date conversion or age calculation in Nepali calendar?"
+          title="Nepali Date Converter (BS ↔ AD)"
+          desc="Convert Bikram Sambat (वि.सं.) dates to English (AD) and calculate Nepali BS birthdate."
           href="/tools/nepal/nepali-date-converter"
         />
       </div>

@@ -835,8 +835,8 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "nepali-date-converter",
-    name: "Nepali Date Converter & Age Calculator (BS ↔ AD)",
-    desc: "Convert Bikram Sambat (वि.सं.) to Gregorian AD dates & calculate exact age in BS & AD with birthday countdown",
+    name: "Nepali Date Converter (BS ↔ AD)",
+    desc: "Convert Bikram Sambat (वि.सं.) to Gregorian English (AD) dates with exact Miti and Day",
     category: "Nepal Tools",
     categorySlug: "nepal",
     icon: "Calendar",
@@ -845,8 +845,8 @@ export const TOOLS: ToolDef[] = [
     darkColor: "#F87171",
     isClientSide: true,
     trending: true,
-    seoTitle: "Nepali Date Converter – BS to AD & Age Calculator",
-    seoDescription: "Convert Bikram Sambat (वि.सं.) dates to Gregorian AD and calculate exact age with a birthday countdown. Free and instant.",
+    seoTitle: "Nepali Date Converter – BS to AD & AD to BS Online",
+    seoDescription: "Convert Bikram Sambat (वि.सं.) dates to Gregorian AD instantly with accurate Nepali months and days. Free, fast, and 100% private.",
   },
   {
     slug: "nepali-unicode",

@@ -7,7 +7,8 @@ import type { LucideIcon } from "lucide-react";
 interface CalculatorCrossLinkProps {
   icon: LucideIcon;
   title: string;
-  desc: string;
+  desc?: string;
+  description?: string;
   href: string;
 }
 
@@ -15,8 +16,10 @@ export default function CalculatorCrossLink({
   icon: Icon,
   title,
   desc,
+  description,
   href,
 }: CalculatorCrossLinkProps) {
+  const displayText = desc || description || "";
   return (
     <Link
       href={href}
@@ -32,7 +35,7 @@ export default function CalculatorCrossLink({
         <span className="text-sm font-bold text-[#18181B] dark:text-[#F4F4F5] block truncate">
           {title}
         </span>
-        <span className="text-xs text-[#A1A1AA] block truncate">{desc}</span>
+        <span className="text-xs text-[#A1A1AA] block truncate">{displayText}</span>
       </div>
       <ChevronRight
         size={18}

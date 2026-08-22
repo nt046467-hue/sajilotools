@@ -54,6 +54,7 @@ import {
   Activity,
   Tag,
   Flame,
+  Sparkles,
   HeartPulse,
   Cake,
   MessageSquarePlus,
@@ -374,18 +375,38 @@ export default function SearchBar({
           ].join(" ")}
         >
           {/* Header Label Bar */}
-          <div className="px-4 py-2.5 bg-[#FAFAF8] dark:bg-[#1E2338]/60 border-b border-[#E4E0D8] dark:border-[#2A2F48] flex items-center justify-between text-[11px] font-semibold text-[#71717A] dark:text-[#A1A1AA] uppercase tracking-wider">
+          <div className="px-3.5 sm:px-4 py-2 bg-[#FAFAF8] dark:bg-[#1E2338]/60 border-b border-[#E4E0D8] dark:border-[#2A2F48] flex items-center justify-between text-[11px] font-semibold text-[#71717A] dark:text-[#A1A1AA] uppercase tracking-wider">
             <span className="flex items-center gap-1.5">
-              <Search size={12} className="text-[#F5A623]" />
+              {query.trim() ? (
+                <Search size={13} className="text-[#F5A623]" />
+              ) : (
+                <Sparkles size={13} className="text-[#F5A623]" />
+              )}
               <span>{query.trim() ? `Search Results (${searchResults.length})` : "Quick Suggestions"}</span>
             </span>
-            <span className="text-[10px] lowercase font-normal opacity-75 hidden sm:inline">
-              use ↑ ↓ arrows &amp; ↵ to select
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] lowercase font-normal opacity-75 hidden sm:inline">
+                use ↑ ↓ arrows &amp; ↵ to select
+              </span>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsOpen(false);
+                  inputRef.current?.blur();
+                }}
+                className="px-1.5 py-0.5 rounded-md text-[#71717A] hover:text-[#18181B] dark:hover:text-[#F4F4F5] hover:bg-[#E4E0D8]/60 dark:hover:bg-[#2A2F48] transition-colors flex items-center gap-1 text-[11px] font-semibold"
+                title="Close suggestions"
+              >
+                <X size={13} strokeWidth={2.5} />
+                <span className="sm:hidden normal-case">Close</span>
+              </button>
+            </div>
           </div>
 
           {/* ── RESULTS LIST CONTAINER ── */}
-          <div ref={listContainerRef} className="max-h-[380px] overflow-y-auto p-1.5 space-y-1 relative">
+          <div ref={listContainerRef} className="max-h-[50vh] sm:max-h-[380px] overflow-y-auto p-1.5 space-y-1 relative">
             {/* When Query Exists */}
             {query.trim() ? (
               searchResults.length > 0 ? (
@@ -420,13 +441,13 @@ export default function SearchBar({
 
                       {/* Tool Info */}
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold text-sm truncate">
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-semibold text-sm truncate text-[#18181B] dark:text-[#F4F4F5] group-hover:text-inherit">
                             {highlightMatch(tool.name, query)}
                           </span>
                           {tool.badge && (
                             <span
-                              className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wide shrink-0 ${
+                              className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider shrink-0 hidden sm:inline-block ${
                                 isSelected
                                   ? "bg-white/20 text-white dark:bg-black/20 dark:text-[#0C0F1E]"
                                   : "bg-[#F0EDE8] dark:bg-[#2A2F48] text-[#71717A] dark:text-[#A1A1AA]"
@@ -448,9 +469,9 @@ export default function SearchBar({
                       </div>
 
                       {/* Category & Arrow / Enter key */}
-                      <div className="flex items-center gap-2 shrink-0">
+                      <div className="flex items-center gap-1.5 shrink-0">
                         <span
-                          className={`text-[11px] font-medium hidden xs:inline ${
+                          className={`text-[11px] font-medium hidden sm:inline ${
                             isSelected
                               ? "text-white/70 dark:text-[#0C0F1E]/70"
                               : "text-[#A1A1AA]"
@@ -510,29 +531,29 @@ export default function SearchBar({
                     href={`/tools/${tool.categorySlug}/${tool.slug}`}
                     onClick={() => handleSelectTool(tool)}
                     onMouseEnter={() => setSelectedIndex(idx)}
-                    className={`w-full flex items-center gap-3.5 px-3.5 py-3 rounded-xl text-left transition-all ${
+                    className={`w-full flex items-center gap-2.5 sm:gap-3.5 px-2.5 sm:px-3.5 py-2.5 sm:py-3 rounded-xl text-left transition-all ${
                       isSelected
                         ? "bg-[#1F2544] text-white dark:bg-[#F5A623] dark:text-[#0C0F1E] shadow-sm"
                         : "hover:bg-[#FAFAF8] dark:hover:bg-[#1E2338] text-[#18181B] dark:text-[#F4F4F5]"
                     }`}
                   >
                     <div
-                      className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                      className={`w-8.5 h-8.5 sm:w-9 sm:h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
                         isSelected
                           ? "bg-white/20 dark:bg-black/20"
                           : "bg-[#F0EDE8] dark:bg-[#1E2338] tool-accent-text"
                       }`}
                       style={isSelected ? { color: "currentColor" } : getToolAccentStyle(tool.color, tool.darkColor)}
                     >
-                      <IconComponent size={18} strokeWidth={2} />
+                      <IconComponent size={17} strokeWidth={2} />
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5">
                         <span className="font-semibold text-sm truncate">{tool.name}</span>
                         {tool.badge && (
                           <span
-                            className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wide shrink-0 ${
+                            className={`text-[9px] font-bold px-1.5 py-0.5 rounded-full uppercase tracking-wider shrink-0 hidden sm:inline-block ${
                               isSelected
                                 ? "bg-white/20 text-white dark:bg-black/20 dark:text-[#0C0F1E]"
                                 : "bg-[#F0EDE8] dark:bg-[#2A2F48] text-[#71717A] dark:text-[#A1A1AA]"
@@ -551,9 +572,9 @@ export default function SearchBar({
                       </p>
                     </div>
 
-                    <div className="flex items-center gap-2 shrink-0">
+                    <div className="flex items-center gap-1.5 shrink-0">
                       <span
-                        className={`text-[11px] font-medium hidden xs:inline ${
+                        className={`text-[11px] font-medium hidden sm:inline ${
                           isSelected ? "text-white/70 dark:text-[#0C0F1E]/70" : "text-[#A1A1AA]"
                         }`}
                       >
@@ -572,31 +593,21 @@ export default function SearchBar({
           </div>
 
           {/* ── Footer Info Bar ── */}
-          <div className="px-4 py-2.5 bg-[#FAFAF8] dark:bg-[#1E2338]/60 border-t border-[#E4E0D8] dark:border-[#2A2F48] flex items-center justify-between text-[11px] text-[#71717A] dark:text-[#A1A1AA]">
-            <span className="flex items-center gap-1.5 truncate">
-              <Boxes size={12} className="text-[#F5A623] shrink-0" />
-              <span>{ALL_TOOLS.length} Browser Tools</span>
+          <div className="px-3.5 sm:px-4 py-2.5 bg-[#FAFAF8] dark:bg-[#1E2338]/60 border-t border-[#E4E0D8] dark:border-[#2A2F48] flex items-center justify-between gap-2 text-[11px] text-[#71717A] dark:text-[#A1A1AA]">
+            <span className="flex items-center gap-1.5 font-medium shrink-0">
+              <Boxes size={13} className="text-[#F5A623] shrink-0" />
+              <span>{ALL_TOOLS.length} Free Tools</span>
             </span>
-            <div className="flex items-center gap-2.5 shrink-0">
+            <div className="flex items-center gap-2 shrink-0">
               <Link
                 href="/tools"
                 onClick={() => setIsOpen(false)}
-                className="hover:text-[#F5A623] transition-colors font-medium text-xs sm:text-[11px]"
+                className="font-semibold text-[#1F2544] dark:text-[#F5A623] hover:underline transition-colors text-xs sm:text-[11px] flex items-center gap-1"
               >
                 Browse all &rarr;
               </Link>
               <span className="opacity-40 hidden sm:inline">|</span>
               <span className="font-mono text-[10px] hidden sm:inline">ESC to close</span>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsOpen(false);
-                }}
-                className="sm:hidden px-2.5 py-1 rounded-md bg-[#F0EDE8] dark:bg-[#2A2F48] text-[#18181B] dark:text-[#F4F4F5] font-semibold text-[11px] hover:bg-[#E4E0D8] dark:hover:bg-[#323854] transition-colors"
-              >
-                Close
-              </button>
             </div>
           </div>
         </div>

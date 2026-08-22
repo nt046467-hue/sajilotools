@@ -20,6 +20,7 @@ import {
   CheckCircle2,
   ShieldCheck,
   Globe,
+  RefreshCw,
 } from "lucide-react";
 
 export type ShortLinkItem = {
@@ -52,6 +53,7 @@ export default function UrlShortenerTool() {
   // History
   const [history, setHistory] = useState<ShortLinkItem[]>([]);
   const [historySearch, setHistorySearch] = useState("");
+  const [isRefreshingStats, setIsRefreshingStats] = useState(false);
 
   // Copy feedback
   const [copiedSlug, setCopiedSlug] = useState<string | null>(null);
@@ -67,6 +69,49 @@ export default function UrlShortenerTool() {
     title: string;
     message: string;
   } | null>(null);
+
+  // ── Sync Live Click Counts & Status from Database ──
+  async function syncLiveStats(itemsToSync?: ShortLinkItem[]) {
+    const list = itemsToSync || history;
+    if (!list || list.length === 0) return;
+    const slugs = list.map((i) => i.slug).filter(Boolean);
+    if (slugs.length === 0) return;
+
+    setIsRefreshingStats(true);
+    try {
+      const res = await fetch(`/api/shorten?slugs=${encodeURIComponent(slugs.join(","))}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.stats && Array.isArray(data.stats)) {
+          const statsMap = new Map<string, { clicks: number; isActive: boolean; expiresAt: string | null }>();
+          data.stats.forEach((s: any) => statsMap.set(s.slug, s));
+
+          setHistory((prev) => {
+            const updated = prev.map((item) => {
+              const live = statsMap.get(item.slug);
+              if (live) {
+                return {
+                  ...item,
+                  clicks: live.clicks ?? item.clicks ?? 0,
+                  isActive: live.isActive ?? item.isActive ?? true,
+                  expiresAt: live.expiresAt ?? item.expiresAt ?? null,
+                };
+              }
+              return item;
+            });
+            try {
+              localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(updated));
+            } catch {}
+            return updated;
+          });
+        }
+      }
+    } catch (err) {
+      console.warn("Failed to sync live shortlink stats:", err);
+    } finally {
+      setIsRefreshingStats(false);
+    }
+  }
 
   // ── Check URL params for redirect errors ──
   useEffect(() => {
@@ -99,13 +144,17 @@ export default function UrlShortenerTool() {
     }
   }, [searchParams]);
 
-  // ── Hydrate localStorage on mount ──
+  // ── Hydrate localStorage on mount and sync live click counts ──
   useEffect(() => {
     try {
       const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) setHistory(parsed.slice(0, MAX_LOCAL_HISTORY));
+        if (Array.isArray(parsed)) {
+          const list = parsed.slice(0, MAX_LOCAL_HISTORY);
+          setHistory(list);
+          syncLiveStats(list);
+        }
       }
     } catch {}
   }, []);
@@ -253,7 +302,10 @@ export default function UrlShortenerTool() {
           <Link2 size={14} /> Shorten Link
         </button>
         <button
-          onClick={() => setActiveTab("history")}
+          onClick={() => {
+            setActiveTab("history");
+            syncLiveStats();
+          }}
           className={`flex-1 py-2.5 px-4 rounded-xl text-xs font-semibold flex items-center justify-center gap-2 transition-all ${
             activeTab === "history"
               ? "bg-white dark:bg-[#1E2338] text-[#18181B] dark:text-[#F4F4F5] shadow-sm"
@@ -426,22 +478,33 @@ export default function UrlShortenerTool() {
       {/* ═══════════════════════════════════════════ */}
       {activeTab === "history" && (
         <div className="space-y-4 animate-in fade-in duration-200">
-          {/* Search */}
+          {/* Search & Refresh Controls */}
           {history.length > 0 && (
-            <div className="relative">
-              <input
-                type="text"
-                value={historySearch}
-                onChange={(e) => setHistorySearch(e.target.value)}
-                placeholder="Search by alias or URL..."
-                className="w-full pl-9 pr-8 py-2 rounded-xl border border-[#E4E0D8] dark:border-[#1E2338] bg-white dark:bg-[#141829] text-xs text-[#18181B] dark:text-[#F4F4F5] focus:outline-none focus:ring-2 focus:ring-[#F5A623]/40"
-              />
-              <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A1A1AA]" />
-              {historySearch && (
-                <button onClick={() => setHistorySearch("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#A1A1AA] hover:text-[#18181B]">
-                  <X size={12} />
-                </button>
-              )}
+            <div className="flex items-center gap-2">
+              <div className="relative flex-1">
+                <input
+                  type="text"
+                  value={historySearch}
+                  onChange={(e) => setHistorySearch(e.target.value)}
+                  placeholder="Search by alias or URL..."
+                  className="w-full pl-9 pr-8 py-2 rounded-xl border border-[#E4E0D8] dark:border-[#1E2338] bg-white dark:bg-[#141829] text-xs text-[#18181B] dark:text-[#F4F4F5] focus:outline-none focus:ring-2 focus:ring-[#F5A623]/40"
+                />
+                <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A1A1AA]" />
+                {historySearch && (
+                  <button onClick={() => setHistorySearch("")} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#A1A1AA] hover:text-[#18181B]">
+                    <X size={12} />
+                  </button>
+                )}
+              </div>
+              <button
+                onClick={() => syncLiveStats()}
+                disabled={isRefreshingStats}
+                className="px-3 py-2 rounded-xl border border-[#E4E0D8] dark:border-[#1E2338] bg-white dark:bg-[#141829] text-xs font-semibold text-[#71717A] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-[#F4F4F5] transition-colors flex items-center gap-1.5 shrink-0"
+                title="Refresh Click Counts"
+              >
+                <RefreshCw size={13} className={isRefreshingStats ? "animate-spin text-[#F5A623]" : ""} />
+                <span className="hidden sm:inline">{isRefreshingStats ? "Refreshing..." : "Refresh Stats"}</span>
+              </button>
             </div>
           )}
 

@@ -2247,8 +2247,8 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
   "nepali-date-converter": {
     slug: "nepali-date-converter",
     aboutParagraphs: [
-      "Nepali Date Converter & Age Calculator performs accurate conversion between Bikram Sambat (वि.सं.) and Gregorian AD (ई.सं.) calendars from 2000 BS to 2090 BS.",
-      "Includes a built-in Age Calculator that computes your exact age in years, months, days, total days alive, and next birthday countdown in both Nepali and English date systems. Crucial for filling out Nepalese government forms, passport applications, and academic admissions."
+      "Nepali Date Converter (BS ↔ AD) performs accurate conversion between Bikram Sambat (वि.सं.) and Gregorian AD (ई.सं.) calendars from 2000 BS to 2090 BS.",
+      "Converts birthdates and historical dates between Nepali Patro and English calendar systems instantly. Crucial for filling out Nepalese government forms, passport applications, citizenship documents, and academic admissions."
     ],
     useCases: [
       "Converting birthdates from Bikram Sambat (BS) to English AD for passport, visa, and university applications",
@@ -2643,7 +2643,7 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       },
       {
         question: "Looking for Bikram Sambat (BS) age calculation?",
-        answer: "Use our Nepali Date Converter & Age Calculator tool for full Bikram Sambat (BS) calendar age conversion."
+        answer: "Use our Nepali Date Converter (BS ↔ AD) tool for full Bikram Sambat (BS) calendar date conversion."
       },
       {
         question: "Does it show a countdown to the next birthday?",

@@ -118,6 +118,16 @@ export default function ToolsCatalogClient() {
   const [favoritesOnly, setFavoritesOnly] = useState(false);
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const q = params.get("q") || params.get("search");
+      if (q) {
+        setQuery(q);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
     if (!query.trim() || query.length < 3) return;
     const timer = setTimeout(() => {
       trackSearch(query);
