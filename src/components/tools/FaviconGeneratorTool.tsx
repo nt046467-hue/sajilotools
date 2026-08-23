@@ -12,6 +12,16 @@ import {
   Archive,
   Monitor,
   Smartphone,
+  Sun,
+  Moon,
+  RotateCw,
+  ArrowLeft,
+  ArrowRight,
+  Lock,
+  Plus,
+  X,
+  Star,
+  Layers,
 } from "lucide-react";
 import JSZip from "jszip";
 import ImageDropzone from "./shared/ImageDropzone";
@@ -115,8 +125,11 @@ const WEBMANIFEST = JSON.stringify(
 export default function FaviconGeneratorTool() {
   const [file, setFile] = useState<File | null>(null);
   const [imgDims, setImgDims] = useState({ w: 0, h: 0 });
+  const [transparentBg, setTransparentBg] = useState(false);
   const [bgColor, setBgColor] = useState("#ffffff");
   const [padding, setPadding] = useState(0); // percentage 0-20
+  const [browserTheme, setBrowserTheme] = useState<"dark" | "light">("dark");
+  const [previewTab, setPreviewTab] = useState<"browser" | "mobile" | "assets">("browser");
 
   const [isProcessing, setIsProcessing] = useState(false);
   const [processError, setProcessError] = useState<string | null>(null);
@@ -131,6 +144,15 @@ export default function FaviconGeneratorTool() {
 
   const isSmallSource = imgDims.w > 0 && (imgDims.w < 260 || imgDims.h < 260);
   const isNonSquare = imgDims.w > 0 && imgDims.w !== imgDims.h;
+
+  const subtleCheckerboard: React.CSSProperties = transparentBg
+    ? {
+        backgroundImage:
+          "linear-gradient(45deg, rgba(140, 140, 140, 0.2) 25%, transparent 25%), linear-gradient(-45deg, rgba(140, 140, 140, 0.2) 25%, transparent 25%), linear-gradient(45deg, transparent 75%, rgba(140, 140, 140, 0.2) 75%), linear-gradient(-45deg, transparent 75%, rgba(140, 140, 140, 0.2) 75%)",
+        backgroundSize: "8px 8px",
+        backgroundPosition: "0 0, 0 4px, 4px -4px, -4px 0px",
+      }
+    : {};
 
   // Handle file selection
   const handleFilesSelected = (files: File[]) => {
@@ -173,9 +195,11 @@ export default function FaviconGeneratorTool() {
       const innerSize = Math.round(targetSize * (1 - padFraction * 2));
       const { canvas, ctx } = createCanvas(targetSize, targetSize);
 
-      // Fill background
-      ctx.fillStyle = bgColor;
-      ctx.fillRect(0, 0, targetSize, targetSize);
+      // Fill background if not transparent
+      if (!transparentBg) {
+        ctx.fillStyle = bgColor;
+        ctx.fillRect(0, 0, targetSize, targetSize);
+      }
 
       // Fit the image into the inner area, preserving aspect ratio
       const srcW = img.naturalWidth;
@@ -189,7 +213,7 @@ export default function FaviconGeneratorTool() {
       ctx.drawImage(img, drawX, drawY, drawW, drawH);
       return canvasToBlob(canvas, "image/png", 1);
     },
-    [bgColor, padding]
+    [bgColor, padding, transparentBg]
   );
 
   // ── Generate preview thumbnails ─────────────────────────────────────────
@@ -335,7 +359,12 @@ export default function FaviconGeneratorTool() {
           {isNonSquare && (
             <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center gap-2.5 text-sm">
               <AlertTriangle size={16} className="shrink-0" />
-              Source image is not square. It will be fitted with background fill — adjust the color below.
+              <span>
+                Source image is not square. It will be centered
+                {transparentBg
+                  ? " with transparent padding."
+                  : " — adjust the background color below."}
+              </span>
             </div>
           )}
 
@@ -348,22 +377,42 @@ export default function FaviconGeneratorTool() {
               </h3>
 
               <div>
-                <label className="block text-xs font-semibold text-[#71717A] mb-1.5">
-                  Background Color
+                <label className="flex items-center gap-2 text-xs font-semibold text-[#71717A] dark:text-[#A1A1AA] mb-2 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={transparentBg}
+                    onChange={(e) => setTransparentBg(e.target.checked)}
+                    className="w-4 h-4 rounded accent-violet-500 cursor-pointer"
+                  />
+                  <span>No background (transparent PNG)</span>
                 </label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="color"
-                    value={bgColor}
-                    onChange={(e) => setBgColor(e.target.value)}
-                    className="w-10 h-10 rounded-lg border border-[#E4E0D8] dark:border-[#2A2F48] cursor-pointer"
-                  />
-                  <input
-                    type="text"
-                    value={bgColor}
-                    onChange={(e) => setBgColor(e.target.value)}
-                    className="flex-1 px-3 py-2 rounded-xl border border-[#E4E0D8] dark:border-[#2A2F48] bg-[#FAFAF8] dark:bg-[#1E2338] text-[#18181B] dark:text-[#F4F4F5] text-sm font-mono focus:outline-none focus:ring-2 focus:ring-violet-500/40"
-                  />
+
+                {transparentBg && (file?.type === "image/jpeg" || file?.type === "image/jpg") && (
+                  <p className="text-[11px] text-amber-600 dark:text-amber-400 mb-2 leading-relaxed">
+                    JPEGs have no transparency — only the padding around your image will be transparent.
+                  </p>
+                )}
+
+                <div className={`transition-opacity ${transparentBg ? "opacity-40 pointer-events-none" : ""}`}>
+                  <label className="block text-xs font-semibold text-[#71717A] mb-1.5">
+                    Background Color
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={bgColor}
+                      disabled={transparentBg}
+                      onChange={(e) => setBgColor(e.target.value)}
+                      className="w-10 h-10 rounded-lg border border-[#E4E0D8] dark:border-[#2A2F48] cursor-pointer disabled:cursor-not-allowed"
+                    />
+                    <input
+                      type="text"
+                      value={bgColor}
+                      disabled={transparentBg}
+                      onChange={(e) => setBgColor(e.target.value)}
+                      className="flex-1 px-3 py-2 rounded-xl border border-[#E4E0D8] dark:border-[#2A2F48] bg-[#FAFAF8] dark:bg-[#1E2338] text-[#18181B] dark:text-[#F4F4F5] text-sm font-mono focus:outline-none focus:ring-2 focus:ring-violet-500/40 disabled:cursor-not-allowed"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -406,92 +455,372 @@ export default function FaviconGeneratorTool() {
               </div>
             </div>
 
-            {/* Preview: Browser tab & Homescreen mockups */}
-            <div className="p-5 rounded-2xl bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] space-y-5">
-              <h3 className="font-extrabold text-base text-[#18181B] dark:text-[#F4F4F5]">
-                Preview
-              </h3>
+            {/* Preview: Authentic Browser tab, Homescreen & Asset Inspection */}
+            <div className="p-5 rounded-2xl bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] space-y-4">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <h3 className="font-extrabold text-base text-[#18181B] dark:text-[#F4F4F5]">
+                  Live Preview
+                </h3>
 
-              {/* Browser tab mockup */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-xs font-semibold text-[#71717A]">
-                  <Monitor size={14} />
-                  Browser Tab
+                {/* View Switcher Tabs */}
+                <div className="flex items-center gap-1 p-1 rounded-xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48]">
+                  <button
+                    type="button"
+                    onClick={() => setPreviewTab("browser")}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                      previewTab === "browser"
+                        ? "bg-white dark:bg-[#2A2F48] text-violet-600 dark:text-violet-400 shadow-sm"
+                        : "text-[#71717A] hover:text-[#18181B] dark:hover:text-[#F4F4F5]"
+                    }`}
+                  >
+                    <Monitor size={13} />
+                    <span>Browser</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPreviewTab("mobile")}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                      previewTab === "mobile"
+                        ? "bg-white dark:bg-[#2A2F48] text-violet-600 dark:text-violet-400 shadow-sm"
+                        : "text-[#71717A] hover:text-[#18181B] dark:hover:text-[#F4F4F5]"
+                    }`}
+                  >
+                    <Smartphone size={13} />
+                    <span>Mobile</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPreviewTab("assets")}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                      previewTab === "assets"
+                        ? "bg-white dark:bg-[#2A2F48] text-violet-600 dark:text-violet-400 shadow-sm"
+                        : "text-[#71717A] hover:text-[#18181B] dark:hover:text-[#F4F4F5]"
+                    }`}
+                  >
+                    <Layers size={13} />
+                    <span>Assets</span>
+                  </button>
                 </div>
-                <div className="rounded-xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] overflow-hidden">
-                  {/* Tab bar */}
-                  <div className="flex items-center gap-2 px-3 py-2 border-b border-[#E4E0D8] dark:border-[#2A2F48] bg-[#F0EDE8] dark:bg-[#191D30]">
-                    <div className="flex items-center gap-1.5">
-                      <div className="w-2.5 h-2.5 rounded-full bg-rose-400" />
-                      <div className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-                      <div className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+              </div>
+
+              {/* BROWSER TAB MOCKUP */}
+              {previewTab === "browser" && (
+                <div className="space-y-2.5">
+                  {/* Theme Switcher for Browser */}
+                  <div className="flex items-center justify-between text-xs text-[#71717A]">
+                    <span className="font-semibold flex items-center gap-1.5">
+                      <Monitor size={13} /> Chrome / Edge Tab View
+                    </span>
+                    <div className="flex items-center gap-1 bg-[#FAFAF8] dark:bg-[#1E2338] p-0.5 rounded-lg border border-[#E4E0D8] dark:border-[#2A2F48]">
+                      <button
+                        type="button"
+                        onClick={() => setBrowserTheme("light")}
+                        className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-medium transition-all ${
+                          browserTheme === "light"
+                            ? "bg-white dark:bg-[#2A2F48] text-[#18181B] dark:text-[#F4F4F5] shadow-xs font-semibold"
+                            : "text-[#71717A] hover:text-[#18181B]"
+                        }`}
+                      >
+                        <Sun size={11} className="text-amber-500" />
+                        <span>Light</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setBrowserTheme("dark")}
+                        className={`flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-medium transition-all ${
+                          browserTheme === "dark"
+                            ? "bg-white dark:bg-[#2A2F48] text-[#18181B] dark:text-[#F4F4F5] shadow-xs font-semibold"
+                            : "text-[#71717A] hover:text-[#18181B]"
+                        }`}
+                      >
+                        <Moon size={11} className="text-violet-400" />
+                        <span>Dark</span>
+                      </button>
                     </div>
-                    <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#2A2F48] min-w-0 flex-1 max-w-[200px]">
-                      {preview16Url && (
-                        <img
-                          src={preview16Url}
-                          alt="Favicon 16px"
-                          className="w-4 h-4 shrink-0"
-                          style={{ imageRendering: "pixelated" }}
+                  </div>
+
+                  {/* Authentic Browser Window */}
+                  <div
+                    className={`rounded-2xl border overflow-hidden shadow-xl transition-colors duration-200 ${
+                      browserTheme === "dark"
+                        ? "bg-[#1f2023] border-[#323639] text-[#e8eaed]"
+                        : "bg-[#dfe1e5] border-[#c4c7cc] text-[#202124]"
+                    }`}
+                  >
+                    {/* Top Tab Bar */}
+                    <div className="flex items-center gap-2 pt-2.5 px-3">
+                      {/* Window Controls */}
+                      <div className="flex items-center gap-1.5 mr-1 shrink-0">
+                        <div className="w-3 h-3 rounded-full bg-[#ff5f56] border border-[#e0443e]/40" />
+                        <div className="w-3 h-3 rounded-full bg-[#ffbd2e] border border-[#dea123]/40" />
+                        <div className="w-3 h-3 rounded-full bg-[#27c93f] border border-[#1aab29]/40" />
+                      </div>
+
+                      {/* Active Tab */}
+                      <div
+                        className={`flex items-center gap-2 px-3 py-1.5 rounded-t-xl min-w-[140px] max-w-[220px] flex-1 text-xs font-medium relative transition-colors ${
+                          browserTheme === "dark"
+                            ? "bg-[#292a2d] text-[#e8eaed] shadow-xs"
+                            : "bg-[#ffffff] text-[#202124] shadow-sm"
+                        }`}
+                      >
+                        {preview16Url ? (
+                          <img
+                            src={preview16Url}
+                            alt="Favicon"
+                            className="w-4 h-4 shrink-0 object-contain"
+                            style={{ imageRendering: "pixelated" }}
+                          />
+                        ) : (
+                          <div className="w-4 h-4 rounded-sm bg-violet-500/20 shrink-0" />
+                        )}
+                        <span className="truncate flex-1 text-[11px] select-none">
+                          {file?.name ? file.name.replace(/\.[^/.]+$/, "") : "Your Website"}
+                        </span>
+                        <X
+                          size={12}
+                          className="opacity-50 hover:opacity-100 cursor-pointer shrink-0 transition-opacity"
                         />
-                      )}
-                      <span className="text-[10px] text-[#71717A] truncate">
-                        Your Website
+                      </div>
+
+                      {/* Inactive Tab Mockup */}
+                      <div
+                        className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-t-xl text-[11px] opacity-60 select-none ${
+                          browserTheme === "dark"
+                            ? "text-[#9aa0a6] hover:bg-[#292a2d]/50"
+                            : "text-[#5f6368] hover:bg-white/50"
+                        } transition-colors`}
+                      >
+                        <div className="w-3.5 h-3.5 rounded-full bg-current opacity-30 shrink-0" />
+                        <span className="truncate max-w-[80px]">New Tab</span>
+                      </div>
+
+                      {/* Add Tab Button */}
+                      <div
+                        className={`p-1 rounded-full opacity-60 hover:opacity-100 cursor-pointer transition-opacity ${
+                          browserTheme === "dark" ? "hover:bg-[#35363a]" : "hover:bg-white/60"
+                        }`}
+                      >
+                        <Plus size={13} />
+                      </div>
+                    </div>
+
+                    {/* Navigation & Address Bar Toolbar */}
+                    <div
+                      className={`flex items-center gap-2 px-3 py-2 border-t ${
+                        browserTheme === "dark"
+                          ? "bg-[#292a2d] border-[#323639]"
+                          : "bg-[#ffffff] border-[#d3d7de]"
+                      }`}
+                    >
+                      <div className="flex items-center gap-1 text-current opacity-60 shrink-0">
+                        <ArrowLeft size={13} className="hover:opacity-100 cursor-pointer" />
+                        <ArrowRight size={13} className="opacity-40" />
+                        <RotateCw size={12} className="hover:opacity-100 cursor-pointer ml-0.5" />
+                      </div>
+
+                      {/* Omnibox / URL bar */}
+                      <div
+                        className={`flex items-center gap-2 px-3 py-1 rounded-full flex-1 text-[11px] font-sans ${
+                          browserTheme === "dark"
+                            ? "bg-[#202124] text-[#9aa0a6] border border-[#3c4043]"
+                            : "bg-[#f1f3f4] text-[#3c4043] border border-[#e0e3e7]"
+                        }`}
+                      >
+                        <Lock size={10} className="text-emerald-500 shrink-0" />
+                        <span className="truncate flex-1">
+                          <span className="text-emerald-600 dark:text-emerald-400 font-medium">https://</span>
+                          <span>yoursite.com</span>
+                        </span>
+                        <Star size={11} className="opacity-40 hover:opacity-80 cursor-pointer shrink-0" />
+                      </div>
+                    </div>
+
+                    {/* Mock Webpage Viewport */}
+                    <div
+                      className={`h-28 flex flex-col items-center justify-center p-4 text-center select-none ${
+                        browserTheme === "dark" ? "bg-[#18191c]" : "bg-[#f8f9fa]"
+                      }`}
+                    >
+                      <div className="w-8 h-8 rounded-xl bg-violet-500/10 flex items-center justify-center mb-2">
+                        {preview32Url ? (
+                          <img
+                            src={preview32Url}
+                            alt="Logo"
+                            className="w-5 h-5 object-contain"
+                          />
+                        ) : (
+                          <Monitor size={16} className="text-violet-500" />
+                        )}
+                      </div>
+                      <p className={`text-xs font-semibold ${browserTheme === "dark" ? "text-white" : "text-gray-900"}`}>
+                        {file?.name ? file.name.replace(/\.[^/.]+$/, "") : "Your Awesome Website"}
+                      </p>
+                      <p className="text-[10px] opacity-60 mt-0.5">
+                        Favicon is live &amp; {transparentBg ? "transparently rendered" : `filled with ${bgColor}`}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* MOBILE HOMESCREEN MOCKUP */}
+              {previewTab === "mobile" && (
+                <div className="space-y-2.5">
+                  <div className="text-xs text-[#71717A] font-semibold flex items-center gap-1.5">
+                    <Smartphone size={13} /> iOS &amp; Android Homescreen Display
+                  </div>
+
+                  <div className="rounded-2xl bg-gradient-to-b from-[#181a29] via-[#10121d] to-[#0c0d14] border border-[#2A2F48] p-6 text-white overflow-hidden shadow-xl">
+                    <div className="max-w-xs mx-auto space-y-5">
+                      <div className="text-[10px] text-center text-[#71717A] uppercase tracking-widest font-mono">
+                        Homescreen Preview
+                      </div>
+
+                      <div className="flex items-center justify-around gap-4 pt-1">
+                        {/* iOS Touch Icon (180x180) */}
+                        <div className="flex flex-col items-center gap-2">
+                          <div
+                            className="w-16 h-16 rounded-[22%] shadow-2xl p-1 flex items-center justify-center overflow-hidden border border-white/10"
+                            style={subtleCheckerboard}
+                          >
+                            {preview180Url && (
+                              <img
+                                src={preview180Url}
+                                alt="Apple Touch Icon"
+                                className="w-full h-full object-contain"
+                              />
+                            )}
+                          </div>
+                          <span className="text-[11px] font-medium text-white/90 truncate max-w-[70px]">
+                            iOS App
+                          </span>
+                          <span className="text-[9px] text-[#71717A]">180×180</span>
+                        </div>
+
+                        {/* Android Adaptive Icon */}
+                        <div className="flex flex-col items-center gap-2">
+                          <div
+                            className="w-16 h-16 rounded-full shadow-2xl p-2 flex items-center justify-center overflow-hidden border border-white/10"
+                            style={subtleCheckerboard}
+                          >
+                            {preview180Url && (
+                              <img
+                                src={preview180Url}
+                                alt="Android Icon"
+                                className="w-full h-full object-contain"
+                              />
+                            )}
+                          </div>
+                          <span className="text-[11px] font-medium text-white/90 truncate max-w-[70px]">
+                            Android
+                          </span>
+                          <span className="text-[9px] text-[#71717A]">Adaptive</span>
+                        </div>
+
+                        {/* 32px Web Shortcut */}
+                        <div className="flex flex-col items-center gap-2">
+                          <div
+                            className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 shadow-2xl flex items-center justify-center overflow-hidden"
+                            style={subtleCheckerboard}
+                          >
+                            {preview32Url && (
+                              <img
+                                src={preview32Url}
+                                alt="Favicon 32px"
+                                className="w-8 h-8 object-contain"
+                              />
+                            )}
+                          </div>
+                          <span className="text-[11px] font-medium text-white/90 truncate max-w-[70px]">
+                            Bookmark
+                          </span>
+                          <span className="text-[9px] text-[#71717A]">32×32</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ASSET TILES INSPECTION */}
+              {previewTab === "assets" && (
+                <div className="space-y-2.5">
+                  <div className="text-xs text-[#71717A] font-semibold flex items-center justify-between">
+                    <span className="flex items-center gap-1.5">
+                      <Layers size={13} /> Generated PNG Assets
+                    </span>
+                    {transparentBg && (
+                      <span className="text-[10px] text-violet-500 font-medium">
+                        Alpha checkerboard active
                       </span>
-                    </div>
+                    )}
                   </div>
-                  {/* Page area */}
-                  <div className="h-16 flex items-center justify-center text-xs text-[#A1A1AA]">
-                    Page content
-                  </div>
-                </div>
-              </div>
 
-              {/* Homescreen mockup */}
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 text-xs font-semibold text-[#71717A]">
-                  <Smartphone size={14} />
-                  App Icon / Homescreen
-                </div>
-                <div className="flex items-center gap-4 p-4 rounded-xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48]">
-                  {preview180Url && (
-                    <div className="space-y-1.5 text-center">
-                      <img
-                        src={preview180Url}
-                        alt="Apple touch icon"
-                        className="w-16 h-16 rounded-2xl shadow-md border border-[#E4E0D8] dark:border-[#2A2F48]"
-                      />
-                      <p className="text-[9px] text-[#71717A]">180×180</p>
-                    </div>
-                  )}
-                  {preview32Url && (
-                    <div className="space-y-1.5 text-center">
-                      <div className="w-16 h-16 rounded-2xl bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#2A2F48] flex items-center justify-center shadow-md">
-                        <img
-                          src={preview32Url}
-                          alt="Favicon 32px"
-                          className="w-8 h-8"
-                          style={{ imageRendering: "auto" }}
-                        />
+                  <div className="grid grid-cols-3 gap-3">
+                    {/* 180px */}
+                    <div className="p-3 rounded-xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] flex flex-col items-center text-center">
+                      <div
+                        className="w-14 h-14 rounded-xl border border-[#E4E0D8] dark:border-[#2A2F48] flex items-center justify-center p-1 overflow-hidden"
+                        style={subtleCheckerboard}
+                      >
+                        {preview180Url && (
+                          <img
+                            src={preview180Url}
+                            alt="180px"
+                            className="w-full h-full object-contain"
+                          />
+                        )}
                       </div>
-                      <p className="text-[9px] text-[#71717A]">32×32</p>
+                      <span className="text-[11px] font-bold text-[#18181B] dark:text-[#F4F4F5] mt-2">
+                        180×180
+                      </span>
+                      <span className="text-[9px] text-[#71717A]">Apple Touch</span>
                     </div>
-                  )}
-                  {preview16Url && (
-                    <div className="space-y-1.5 text-center">
-                      <div className="w-16 h-16 rounded-2xl bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#2A2F48] flex items-center justify-center shadow-md">
-                        <img
-                          src={preview16Url}
-                          alt="Favicon 16px"
-                          className="w-4 h-4"
-                          style={{ imageRendering: "pixelated" }}
-                        />
+
+                    {/* 32px */}
+                    <div className="p-3 rounded-xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] flex flex-col items-center text-center">
+                      <div
+                        className="w-14 h-14 rounded-xl border border-[#E4E0D8] dark:border-[#2A2F48] flex items-center justify-center p-1 overflow-hidden"
+                        style={subtleCheckerboard}
+                      >
+                        {preview32Url && (
+                          <img
+                            src={preview32Url}
+                            alt="32px"
+                            className="w-8 h-8 object-contain"
+                          />
+                        )}
                       </div>
-                      <p className="text-[9px] text-[#71717A]">16×16</p>
+                      <span className="text-[11px] font-bold text-[#18181B] dark:text-[#F4F4F5] mt-2">
+                        32×32
+                      </span>
+                      <span className="text-[9px] text-[#71717A]">Retina Favicon</span>
                     </div>
-                  )}
+
+                    {/* 16px */}
+                    <div className="p-3 rounded-xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] flex flex-col items-center text-center">
+                      <div
+                        className="w-14 h-14 rounded-xl border border-[#E4E0D8] dark:border-[#2A2F48] flex items-center justify-center p-1 overflow-hidden"
+                        style={subtleCheckerboard}
+                      >
+                        {preview16Url && (
+                          <img
+                            src={preview16Url}
+                            alt="16px"
+                            className="w-4 h-4 shrink-0"
+                            style={{ imageRendering: "pixelated" }}
+                          />
+                        )}
+                      </div>
+                      <span className="text-[11px] font-bold text-[#18181B] dark:text-[#F4F4F5] mt-2">
+                        16×16
+                      </span>
+                      <span className="text-[9px] text-[#71717A]">Classic Favicon</span>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
           </div>
 

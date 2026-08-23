@@ -209,7 +209,7 @@ export default function CategoryClient({
               className="text-3xl font-bold text-[#18181B] dark:text-[#F4F4F5]"
               style={{ fontFamily: "'Sora', sans-serif" }}
             >
-              {category.name} Tools
+              {category.name}{category.name.endsWith("Tools") ? "" : " Tools"}
             </h1>
             <p className="text-[#71717A] dark:text-[#A1A1AA] mt-1">
               {category.desc} Free, fast, 100% private in-browser utilities.

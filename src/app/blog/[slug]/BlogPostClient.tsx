@@ -8,7 +8,25 @@ interface Props {
   post: BlogPost;
 }
 
+function processBlogHtml(content: string): string {
+  if (!content) return "";
+  return content.replace(/<table\b([^>]*)>([\s\S]*?)<\/table>/gi, (match) => {
+    return `<div class="table-wrapper not-prose">
+      <div class="sm:hidden flex items-center justify-between px-3.5 py-2 bg-[#F4F2EB] dark:bg-[#1A1F36] border-b border-[#E4E0D8] dark:border-[#2A2F48] text-[11px] font-semibold text-[#71717A] dark:text-[#A1A1AA] select-none">
+        <span class="flex items-center gap-1.5 text-[#DC2626] font-bold">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
+          Scroll table horizontally
+        </span>
+        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/90 dark:bg-[#0C0F1E] text-[#18181B] dark:text-[#F4F4F5] border border-[#E4E0D8] dark:border-[#2A2F48] shadow-xs">Swipe ➔</span>
+      </div>
+      <div class="table-scroll">${match}</div>
+    </div>`;
+  });
+}
+
 export default function BlogPostClient({ post }: Props) {
+  const formattedHtml = processBlogHtml(post.content);
+
   return (
     <div className="min-h-screen bg-[#F7F5F0] dark:bg-[#0C0F1E]">
       {/* Header */}
@@ -59,18 +77,15 @@ export default function BlogPostClient({ post }: Props) {
       {/* Article Content */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-10">
         <article
-          className="prose prose-lg dark:prose-invert max-w-none
+          className="blog-content prose prose-lg dark:prose-invert max-w-none
             prose-headings:font-extrabold prose-headings:text-[#18181B] dark:prose-headings:text-[#F4F4F5]
             prose-h2:text-xl prose-h2:mt-10 prose-h2:mb-4 prose-h2:border-b prose-h2:border-[#E4E0D8] dark:prose-h2:border-[#2A2F48] prose-h2:pb-2
             prose-h3:text-lg prose-h3:mt-6 prose-h3:mb-3
             prose-p:text-[#3F3F46] dark:prose-p:text-[#D4D4D8] prose-p:leading-relaxed
             prose-li:text-[#3F3F46] dark:prose-li:text-[#D4D4D8]
             prose-strong:text-[#18181B] dark:prose-strong:text-[#F4F4F5]
-            prose-table:border-collapse prose-table:w-full
-            prose-th:bg-[#FAFAF8] dark:prose-th:bg-[#1E2338] prose-th:text-left prose-th:px-4 prose-th:py-2.5 prose-th:border prose-th:border-[#E4E0D8] dark:prose-th:border-[#2A2F48] prose-th:text-sm prose-th:font-bold prose-th:text-[#18181B] dark:prose-th:text-[#F4F4F5]
-            prose-td:px-4 prose-td:py-2.5 prose-td:border prose-td:border-[#E4E0D8] dark:prose-td:border-[#2A2F48] prose-td:text-sm
             prose-a:text-[#DC2626] prose-a:font-semibold hover:prose-a:underline"
-          dangerouslySetInnerHTML={{ __html: post.content }}
+          dangerouslySetInnerHTML={{ __html: formattedHtml }}
         />
 
         {/* Tool CTA Banners */}

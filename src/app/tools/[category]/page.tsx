@@ -13,7 +13,7 @@ export async function generateMetadata({
   if (!cat) return {};
 
   const isNepalCat = cat.slug === "nepal" || cat.name === "Nepal Tools";
-  const title = `${cat.name} Tools – Free Online Utilities`;
+  const title = `${cat.name}${cat.name.endsWith("Tools") ? "" : " Tools"} – Free Online Utilities`;
   const description = `${cat.desc} Free, fast, no sign-up required.${isNepalCat ? " Built for Nepal." : ""}`;
   const url = getCanonicalUrl(`/tools/${cat.slug}`);
 
@@ -54,7 +54,7 @@ export default async function CategoryPage({
         "@graph": [
           {
             "@type": "CollectionPage",
-            "name": `${category.name} Tools`,
+            "name": `${category.name}${category.name.endsWith("Tools") ? "" : " Tools"}`,
             "description": category.desc,
             "url": getCanonicalUrl(`/tools/${category.slug}`),
             "mainEntity": {

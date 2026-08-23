@@ -59,19 +59,37 @@ export const BLOG_POSTS: BlogPost[] = [
   </tbody>
 </table>
 
-<h2>Essential Everyday Phrases (English to Nepali Dictionary)</h2>
+<h2>Essential Everyday Phrases & Greetings</h2>
 <table>
-  <thead><tr><th>English Phrase</th><th>Nepali (Devanagari)</th><th>Pronunciation (Roman)</th></tr></thead>
+  <thead><tr><th>English Phrase</th><th>Nepali (Devanagari)</th><th>Pronunciation (Romanized)</th><th>Meaning / Usage</th></tr></thead>
   <tbody>
-    <tr><td>Hello / Greetings</td><td>नमस्ते / नमस्कार</td><td>Namaste / Namaskar</td></tr>
-    <tr><td>How are you?</td><td>तपाईंलाई कस्तो छ?</td><td>Tapailai kasto cha?</td></tr>
-    <tr><td>I am fine.</td><td>मलाई सन्चै छ।</td><td>Malai sanchai cha.</td></tr>
-    <tr><td>Thank you very much.</td><td>धेरै धेरै धन्यवाद।</td><td>Dherai dherai dhanyabad.</td></tr>
-    <tr><td>What is your name?</td><td>तपाईंको नाम के हो?</td><td>Tapai ko naam ke ho?</td></tr>
-    <tr><td>My name is Nabin.</td><td>मेरो नाम नविन हो।</td><td>Mero naam Nabin ho.</td></tr>
-    <tr><td>Where is the bus station?</td><td>बस स्टेशन कहाँ छ?</td><td>Bus station kaha cha?</td></tr>
-    <tr><td>How much does this cost?</td><td>यसको कति पर्छ?</td><td>Yesko kati parcha?</td></tr>
-    <tr><td>Goodbye / See you again.</td><td>फेरि भेटौँला।</td><td>Pheri bhetaula.</td></tr>
+    <tr><td>Hello / Greetings</td><td>नमस्ते / नमस्कार</td><td>Namaste / Namaskar</td><td>Universal respectful greeting</td></tr>
+    <tr><td>How are you? (Polite)</td><td>तपाईंलाई कस्तो छ?</td><td>Tapailai kasto cha?</td><td>Standard polite greeting</td></tr>
+    <tr><td>I am fine.</td><td>मलाई सन्चै छ।</td><td>Malai sanchai cha.</td><td>Replying that you're well</td></tr>
+    <tr><td>Thank you very much.</td><td>धेरै धेरै धन्यवाद।</td><td>Dherai dherai dhanyabad.</td><td>Expressing gratitude</td></tr>
+    <tr><td>Please (Request)</td><td>कृपया / गरिदिनुहोस्</td><td>Kripaya / Garidinuhos</td><td>Polite request</td></tr>
+    <tr><td>Excuse me / Sorry</td><td>माफ गर्नुहोस्</td><td>Maaf garnuhos</td><td>Apology or getting attention</td></tr>
+    <tr><td>Yes / No</td><td>हो (अँ) / होइन (छैन)</td><td>Ho (Aa) / Hoina (Chhaina)</td><td>Agreement / Disagreement</td></tr>
+    <tr><td>Goodbye / See you again</td><td>फेरि भेटौँला</td><td>Pheri bhetaula</td><td>Polite parting phrase</td></tr>
+  </tbody>
+</table>
+
+<h2>Conversations, Questions & Real-Life Situations</h2>
+<table>
+  <thead><tr><th>English Phrase</th><th>Nepali (Devanagari)</th><th>Pronunciation (Romanized)</th><th>Category</th></tr></thead>
+  <tbody>
+    <tr><td>What is your name?</td><td>तपाईंको नाम के हो?</td><td>Tapai ko naam ke ho?</td><td>Introduction</td></tr>
+    <tr><td>My name is...</td><td>मेरो नाम ... हो।</td><td>Mero naam ... ho.</td><td>Introduction</td></tr>
+    <tr><td>Where is the bus station?</td><td>बसपार्क / स्टेशन कहाँ छ?</td><td>Bus park / station kaha cha?</td><td>Directions</td></tr>
+    <tr><td>Where is the restroom?</td><td>शौचालय कहाँ छ?</td><td>Sauchalaya kaha cha?</td><td>Directions</td></tr>
+    <tr><td>Go straight and turn left</td><td>सिधा जानुहोस् अनि बायाँ मोडिनुहोस्</td><td>Sidha jaanuhos ani baaya modinuhos</td><td>Directions</td></tr>
+    <tr><td>How much does this cost?</td><td>यसको कति पर्छ?</td><td>Yesko kati parcha?</td><td>Shopping</td></tr>
+    <tr><td>It is too expensive!</td><td>यो धेरै महँगो भयो!</td><td>Yo dherai mahango bhayo!</td><td>Shopping</td></tr>
+    <tr><td>Please give some discount</td><td>थोरै छुट मिलाइदिनुहोस् न</td><td>Thorai chhut milaidinuhos na</td><td>Shopping</td></tr>
+    <tr><td>Give me drinking water please</td><td>पिउने पानी दिनुहोस् न</td><td>Piune paani dinuhos na</td><td>Dining / Restaurant</td></tr>
+    <tr><td>The food was delicious</td><td>खाना धेरै मीठो थियो</td><td>Khana dherai meetho thiyo</td><td>Dining / Restaurant</td></tr>
+    <tr><td>I don't understand</td><td>मैले बुझिन</td><td>Maile bujhina</td><td>Help / Communication</td></tr>
+    <tr><td>Can you please help me?</td><td>के तपाईं मलाई सहयोग गर्न सक्नुहुन्छ?</td><td>Ke tapai malai sahayog garna saknuhunchha?</td><td>Emergency / Help</td></tr>
   </tbody>
 </table>
 

@@ -3,3 +3,105 @@
 
 @plugin '@tailwindcss/typography';
 @import 'tw-animate-css';
+
+/* ── Mobile-Friendly Blog Tables ───────────────────────────── */
+.blog-content .table-wrapper {
+  margin: 1.75rem 0;
+  border-radius: 1rem;
+  border: 1px solid #E4E0D8;
+  overflow: hidden;
+  background-color: #FFFFFF;
+  box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.05);
+}
+
+:is(.dark .blog-content .table-wrapper) {
+  border-color: #2A2F48;
+  background-color: #141829;
+  box-shadow: 0 2px 8px -2px rgba(0, 0, 0, 0.3);
+}
+
+.blog-content .table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+}
+
+.blog-content table {
+  width: 100%;
+  min-width: 520px;
+  border-collapse: collapse;
+  margin: 0 !important;
+}
+
+.blog-content thead {
+  background-color: #F9F8F5;
+  border-bottom: 1px solid #E4E0D8;
+}
+
+:is(.dark .blog-content thead) {
+  background-color: #1A1F36;
+  border-bottom-color: #2A2F48;
+}
+
+.blog-content th {
+  padding: 0.85rem 1rem !important;
+  text-align: left;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #18181B;
+  border-bottom: 1px solid #E4E0D8;
+  border-right: 1px solid #F0ECE1;
+  white-space: nowrap;
+}
+
+:is(.dark .blog-content th) {
+  color: #F4F4F5;
+  border-bottom-color: #2A2F48;
+  border-right-color: #22273E;
+}
+
+.blog-content th:last-child {
+  border-right: none;
+}
+
+.blog-content td {
+  padding: 0.85rem 1rem !important;
+  font-size: 0.875rem;
+  color: #3F3F46;
+  border-bottom: 1px solid #F0ECE1;
+  border-right: 1px solid #F0ECE1;
+  vertical-align: middle;
+}
+
+:is(.dark .blog-content td) {
+  color: #D4D4D8;
+  border-bottom-color: #1E2338;
+  border-right-color: #1E2338;
+}
+
+.blog-content td:last-child {
+  border-right: none;
+}
+
+.blog-content tr:last-child td {
+  border-bottom: none;
+}
+
+.blog-content tbody tr:nth-child(even) {
+  background-color: #FCFBF9;
+}
+
+:is(.dark .blog-content tbody tr:nth-child(even)) {
+  background-color: rgba(26, 31, 54, 0.35);
+}
+
+.blog-content tbody tr:hover {
+  background-color: rgba(220, 38, 38, 0.035);
+}
+
+:is(.dark .blog-content tbody tr:hover) {
+  background-color: rgba(220, 38, 38, 0.08);
+}
+

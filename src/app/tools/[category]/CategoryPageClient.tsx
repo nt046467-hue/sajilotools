@@ -227,7 +227,7 @@ export default function CategoryPageClient({
                 className="text-2xl sm:text-3xl font-bold text-[#18181B] dark:text-[#F4F4F5]"
                 style={{ fontFamily: "'Sora', sans-serif" }}
               >
-                {category.name} Tools
+                {category.name}{category.name.endsWith("Tools") ? "" : " Tools"}
               </h1>
               <p className="text-[#71717A] dark:text-[#A1A1AA] mt-1 text-sm sm:text-base">
                 {category.desc}
@@ -245,7 +245,7 @@ export default function CategoryPageClient({
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder={`Search ${category.name} tools...`}
+                placeholder={`Search ${category.name.endsWith("Tools") ? category.name : `${category.name} tools`}...`}
                 className="w-full pl-9 pr-3 py-2 rounded-xl border border-[#E4E0D8] dark:border-[#1E2338] bg-white dark:bg-[#141829] text-xs text-[#18181B] dark:text-[#F4F4F5] placeholder-[#C4C0B8] dark:placeholder-[#4B5563] outline-none focus:border-[#1F2544] dark:focus:border-[#F5A623]"
               />
             </div>

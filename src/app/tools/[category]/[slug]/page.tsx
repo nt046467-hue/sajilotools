@@ -501,7 +501,7 @@ export default function ToolPage({
               href={`/tools/${category.slug}`}
               className="mt-6 inline-flex items-center gap-1.5 text-xs font-semibold text-[#1F2544] dark:text-[#F5A623] hover:underline"
             >
-              View all {category.name} tools →
+              View all {category.name}{category.name.endsWith("Tools") ? "" : " tools"} →
             </Link>
           </div>
         </div>
