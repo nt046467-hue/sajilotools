@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import {
   Download,
   Trash2,
@@ -15,13 +15,21 @@ import {
   Sun,
   Moon,
   RotateCw,
+  RotateCcw,
   ArrowLeft,
   ArrowRight,
   Lock,
   Plus,
+  Minus,
   X,
   Star,
   Layers,
+  Crop,
+  Move,
+  ZoomIn,
+  ZoomOut,
+  Maximize2,
+  Sliders,
 } from "lucide-react";
 import JSZip from "jszip";
 import ImageDropzone from "./shared/ImageDropzone";
@@ -34,30 +42,23 @@ import {
 } from "@/lib/image-utils";
 
 // ── ICO binary format encoder ─────────────────────────────────────────────────
-// Modern ICO = header + directory entries + PNG data blocks
-// Spec: https://en.wikipedia.org/wiki/ICO_(file_format)
-
 async function buildIcoFile(pngBlobs: Blob[]): Promise<Blob> {
   const pngBuffers: ArrayBuffer[] = [];
   for (const blob of pngBlobs) {
     pngBuffers.push(await blob.arrayBuffer());
   }
 
-  // ICO Header: 6 bytes
-  // reserved (2) + type=1 (2) + image count (2)
   const headerSize = 6;
-  const entrySize = 16; // each directory entry
+  const entrySize = 16;
   const directorySize = entrySize * pngBuffers.length;
   let dataOffset = headerSize + directorySize;
 
-  // Build header
   const header = new ArrayBuffer(headerSize);
   const headerView = new DataView(header);
-  headerView.setUint16(0, 0, true); // reserved
-  headerView.setUint16(2, 1, true); // type = ICO
-  headerView.setUint16(4, pngBuffers.length, true); // image count
+  headerView.setUint16(0, 0, true);
+  headerView.setUint16(2, 1, true);
+  headerView.setUint16(4, pngBuffers.length, true);
 
-  // Build directory entries
   const directory = new ArrayBuffer(directorySize);
   const dirView = new DataView(directory);
 
@@ -65,25 +66,22 @@ async function buildIcoFile(pngBlobs: Blob[]): Promise<Blob> {
     const buf = pngBuffers[i];
     const offset = i * entrySize;
 
-    // Parse PNG dimensions from IHDR chunk (bytes 16-23 of PNG)
     const pngView = new DataView(buf);
-    const width = pngView.getUint32(16, false); // big-endian
+    const width = pngView.getUint32(16, false);
     const height = pngView.getUint32(20, false);
 
-    // ICO directory entry: width/height 0 means 256
     dirView.setUint8(offset + 0, width >= 256 ? 0 : width);
     dirView.setUint8(offset + 1, height >= 256 ? 0 : height);
-    dirView.setUint8(offset + 2, 0); // color palette count
-    dirView.setUint8(offset + 3, 0); // reserved
-    dirView.setUint16(offset + 4, 1, true); // color planes
-    dirView.setUint16(offset + 6, 32, true); // bits per pixel
-    dirView.setUint32(offset + 8, buf.byteLength, true); // data size
-    dirView.setUint32(offset + 12, dataOffset, true); // data offset
+    dirView.setUint8(offset + 2, 0);
+    dirView.setUint8(offset + 3, 0);
+    dirView.setUint16(offset + 4, 1, true);
+    dirView.setUint16(offset + 6, 32, true);
+    dirView.setUint32(offset + 8, buf.byteLength, true);
+    dirView.setUint32(offset + 12, dataOffset, true);
 
     dataOffset += buf.byteLength;
   }
 
-  // Concatenate: header + directory + all PNG data
   const parts: ArrayBuffer[] = [header, directory, ...pngBuffers];
   return new Blob(parts, { type: "image/x-icon" });
 }
@@ -122,25 +120,50 @@ const WEBMANIFEST = JSON.stringify(
   2
 );
 
+interface CropRect {
+  x: number;
+  y: number;
+  size: number;
+}
+
 export default function FaviconGeneratorTool() {
   const [file, setFile] = useState<File | null>(null);
   const [imgDims, setImgDims] = useState({ w: 0, h: 0 });
+  const [fitMode, setFitMode] = useState<"crop" | "fit">("crop");
   const [transparentBg, setTransparentBg] = useState(false);
   const [bgColor, setBgColor] = useState("#ffffff");
   const [padding, setPadding] = useState(0); // percentage 0-20
   const [browserTheme, setBrowserTheme] = useState<"dark" | "light">("dark");
   const [previewTab, setPreviewTab] = useState<"browser" | "mobile" | "assets">("browser");
 
+  // ── Crop & Pan/Zoom State ──
+  const [cropRect, setCropRect] = useState<CropRect>({ x: 0, y: 0, size: 0 });
+  const [zoomLevel, setZoomLevel] = useState(1); // 1 to 3
+
+  // Dragging state for crop box
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragAction, setDragAction] = useState<"move" | "nw" | "ne" | "sw" | "se" | "n" | "s" | "e" | "w" | null>(null);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [initialCropRect, setInitialCropRect] = useState<CropRect>({ x: 0, y: 0, size: 0 });
+
+  // Pinch-to-zoom touch state
+  const touchDistanceRef = useRef<number | null>(null);
+
   const [isProcessing, setIsProcessing] = useState(false);
   const [processError, setProcessError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [copiedSnippet, setCopiedSnippet] = useState(false);
 
-  // Preview URLs for browser tab and homescreen mockups
+  // Preview URLs
   const [preview16Url, setPreview16Url] = useState<string | null>(null);
   const [preview32Url, setPreview32Url] = useState<string | null>(null);
   const [preview180Url, setPreview180Url] = useState<string | null>(null);
   const [previewOrigUrl, setPreviewOrigUrl] = useState<string | null>(null);
+
+  // DOM Refs
+  const editorContainerRef = useRef<HTMLDivElement>(null);
+  const imageElementRef = useRef<HTMLImageElement>(null);
+  const loadedImageObjRef = useRef<HTMLImageElement | null>(null);
 
   const isSmallSource = imgDims.w > 0 && (imgDims.w < 260 || imgDims.h < 260);
   const isNonSquare = imgDims.w > 0 && imgDims.w !== imgDims.h;
@@ -154,6 +177,19 @@ export default function FaviconGeneratorTool() {
       }
     : {};
 
+  // Reset crop to center 1:1 default
+  const resetCropToCenter = useCallback((natW: number, natH: number) => {
+    if (!natW || !natH) return;
+    const minDim = Math.min(natW, natH);
+    const newRect = {
+      x: Math.round((natW - minDim) / 2),
+      y: Math.round((natH - minDim) / 2),
+      size: Math.round(minDim),
+    };
+    setCropRect(newRect);
+    setZoomLevel(1);
+  }, []);
+
   // Handle file selection
   const handleFilesSelected = (files: File[]) => {
     if (!files.length) return;
@@ -165,10 +201,11 @@ export default function FaviconGeneratorTool() {
     const url = URL.createObjectURL(f);
     setPreviewOrigUrl(url);
 
-    // Read dimensions
     const img = new Image();
     img.onload = () => {
+      loadedImageObjRef.current = img;
       setImgDims({ w: img.naturalWidth, h: img.naturalHeight });
+      resetCropToCenter(img.naturalWidth, img.naturalHeight);
     };
     img.src = url;
   };
@@ -186,45 +223,74 @@ export default function FaviconGeneratorTool() {
     setPreview180Url(null);
     setProcessError(null);
     setSuccessMessage(null);
+    setCropRect({ x: 0, y: 0, size: 0 });
+    setZoomLevel(1);
+    loadedImageObjRef.current = null;
   };
 
-  // ── Resize with padding/background for non-square ──────────────────────
-  const resizeToSquare = useCallback(
+  // ── Render 1:1 square canvas at target size ──────────────────────────────────
+  const renderSquareBlob = useCallback(
     async (img: HTMLImageElement, targetSize: number): Promise<Blob> => {
       const padFraction = padding / 100;
       const innerSize = Math.round(targetSize * (1 - padFraction * 2));
+      const innerOffset = Math.round(targetSize * padFraction);
       const { canvas, ctx } = createCanvas(targetSize, targetSize);
 
-      // Fill background if not transparent
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+
+      // Background
       if (!transparentBg) {
         ctx.fillStyle = bgColor;
         ctx.fillRect(0, 0, targetSize, targetSize);
       }
 
-      // Fit the image into the inner area, preserving aspect ratio
-      const srcW = img.naturalWidth;
-      const srcH = img.naturalHeight;
-      const scale = Math.min(innerSize / srcW, innerSize / srcH);
-      const drawW = Math.round(srcW * scale);
-      const drawH = Math.round(srcH * scale);
-      const drawX = Math.round((targetSize - drawW) / 2);
-      const drawY = Math.round((targetSize - drawH) / 2);
+      if (fitMode === "crop" && cropRect.size > 0) {
+        // Draw cropped 1:1 sub-rectangle
+        ctx.drawImage(
+          img,
+          cropRect.x,
+          cropRect.y,
+          cropRect.size,
+          cropRect.size,
+          innerOffset,
+          innerOffset,
+          innerSize,
+          innerSize
+        );
+      } else {
+        // Fit & Pad (letterbox)
+        const srcW = img.naturalWidth;
+        const srcH = img.naturalHeight;
+        const scale = Math.min(innerSize / srcW, innerSize / srcH);
+        const drawW = Math.round(srcW * scale);
+        const drawH = Math.round(srcH * scale);
+        const drawX = Math.round((targetSize - drawW) / 2);
+        const drawY = Math.round((targetSize - drawH) / 2);
 
-      ctx.drawImage(img, drawX, drawY, drawW, drawH);
+        ctx.drawImage(img, drawX, drawY, drawW, drawH);
+      }
+
       return canvasToBlob(canvas, "image/png", 1);
     },
-    [bgColor, padding, transparentBg]
+    [bgColor, cropRect, fitMode, padding, transparentBg]
   );
 
-  // ── Generate preview thumbnails ─────────────────────────────────────────
+  // ── Generate preview thumbnails in real time ────────────────────────────────
   const generatePreviews = useCallback(async () => {
     if (!file) return;
     try {
-      const img = await loadImageFromFile(file);
+      let img = loadedImageObjRef.current;
+      if (!img) {
+        img = await loadImageFromFile(file);
+        loadedImageObjRef.current = img;
+      }
 
-      const blob16 = await resizeToSquare(img, 16);
-      const blob32 = await resizeToSquare(img, 32);
-      const blob180 = await resizeToSquare(img, 180);
+      const [blob16, blob32, blob180] = await Promise.all([
+        renderSquareBlob(img, 16),
+        renderSquareBlob(img, 32),
+        renderSquareBlob(img, 180),
+      ]);
 
       if (preview16Url) URL.revokeObjectURL(preview16Url);
       if (preview32Url) URL.revokeObjectURL(preview32Url);
@@ -236,14 +302,162 @@ export default function FaviconGeneratorTool() {
     } catch (e) {
       console.warn("Preview gen error:", e);
     }
-  }, [file, resizeToSquare]);
+  }, [file, preview16Url, preview32Url, preview180Url, renderSquareBlob]);
 
   useEffect(() => {
-    const timer = setTimeout(() => generatePreviews(), 200);
+    const timer = setTimeout(() => generatePreviews(), 120);
     return () => clearTimeout(timer);
-  }, [generatePreviews]);
+  }, [cropRect, fitMode, transparentBg, bgColor, padding]);
 
-  // ── Generate & download zip ─────────────────────────────────────────────
+  // ── Zoom Adjustment ────────────────────────────────────────────────────────
+  const handleZoomChange = (newZoom: number) => {
+    if (!imgDims.w || !imgDims.h) return;
+    const clampedZoom = Math.max(1, Math.min(3, newZoom));
+    setZoomLevel(clampedZoom);
+
+    const minDim = Math.min(imgDims.w, imgDims.h);
+    const newSize = Math.max(16, Math.round(minDim / clampedZoom));
+
+    // Keep center of current crop
+    const currentCenterX = cropRect.x + cropRect.size / 2;
+    const currentCenterY = cropRect.y + cropRect.size / 2;
+
+    let newX = Math.round(currentCenterX - newSize / 2);
+    let newY = Math.round(currentCenterY - newSize / 2);
+
+    newX = Math.max(0, Math.min(imgDims.w - newSize, newX));
+    newY = Math.max(0, Math.min(imgDims.h - newSize, newY));
+
+    setCropRect({ x: newX, y: newY, size: newSize });
+  };
+
+  // ── Drag & Resize Interaction Logic ─────────────────────────────────────────
+  const getScaleFactor = () => {
+    if (!imageElementRef.current || !imgDims.w) return 1;
+    const rect = imageElementRef.current.getBoundingClientRect();
+    return rect.width / imgDims.w;
+  };
+
+  const handlePointerDown = (
+    e: React.MouseEvent | React.TouchEvent,
+    action: "move" | "nw" | "ne" | "sw" | "se" | "n" | "s" | "e" | "w"
+  ) => {
+    e.stopPropagation();
+    const clientX = "touches" in e ? e.touches[0].clientX : (e as React.MouseEvent).clientX;
+    const clientY = "touches" in e ? e.touches[0].clientY : (e as React.MouseEvent).clientY;
+
+    setIsDragging(true);
+    setDragAction(action);
+    setDragStart({ x: clientX, y: clientY });
+    setInitialCropRect({ ...cropRect });
+  };
+
+  useEffect(() => {
+    if (!isDragging || !dragAction) return;
+
+    const handlePointerMove = (e: MouseEvent | TouchEvent) => {
+      // Handle pinch zoom if 2 touches
+      if ("touches" in e && (e as TouchEvent).touches.length === 2) {
+        const t1 = (e as TouchEvent).touches[0];
+        const t2 = (e as TouchEvent).touches[1];
+        const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
+
+        if (touchDistanceRef.current !== null) {
+          const delta = (dist - touchDistanceRef.current) * 0.01;
+          handleZoomChange(zoomLevel + delta);
+        }
+        touchDistanceRef.current = dist;
+        return;
+      }
+
+      const clientX = "touches" in e ? (e as TouchEvent).touches[0].clientX : (e as MouseEvent).clientX;
+      const clientY = "touches" in e ? (e as TouchEvent).touches[0].clientY : (e as MouseEvent).clientY;
+
+      const scale = getScaleFactor();
+      if (!scale || !imgDims.w || !imgDims.h) return;
+
+      const dx = (clientX - dragStart.x) / scale;
+      const dy = (clientY - dragStart.y) / scale;
+
+      if (dragAction === "move") {
+        let newX = Math.round(initialCropRect.x + dx);
+        let newY = Math.round(initialCropRect.y + dy);
+
+        newX = Math.max(0, Math.min(imgDims.w - initialCropRect.size, newX));
+        newY = Math.max(0, Math.min(imgDims.h - initialCropRect.size, newY));
+
+        setCropRect({
+          x: newX,
+          y: newY,
+          size: initialCropRect.size,
+        });
+      } else {
+        // Corner & Edge 1:1 Resizing
+        let delta = 0;
+        let newX = initialCropRect.x;
+        let newY = initialCropRect.y;
+        let newSize = initialCropRect.size;
+
+        if (dragAction === "se" || dragAction === "e" || dragAction === "s") {
+          delta = Math.max(dx, dy);
+          newSize = Math.max(24, Math.min(imgDims.w - initialCropRect.x, imgDims.h - initialCropRect.y, initialCropRect.size + delta));
+        } else if (dragAction === "nw") {
+          delta = Math.min(dx, dy);
+          const potentialSize = initialCropRect.size - delta;
+          if (potentialSize >= 24) {
+            const shift = initialCropRect.size - potentialSize;
+            newX = Math.max(0, initialCropRect.x + shift);
+            newY = Math.max(0, initialCropRect.y + shift);
+            newSize = Math.min(initialCropRect.x + initialCropRect.size - newX, initialCropRect.y + initialCropRect.size - newY);
+          }
+        } else if (dragAction === "ne" || dragAction === "n") {
+          delta = Math.max(dx, -dy);
+          const potentialSize = Math.max(24, initialCropRect.size + delta);
+          const allowedSize = Math.min(potentialSize, imgDims.w - initialCropRect.x, initialCropRect.y + initialCropRect.size);
+          newY = initialCropRect.y + initialCropRect.size - allowedSize;
+          newSize = allowedSize;
+        } else if (dragAction === "sw" || dragAction === "w") {
+          delta = Math.max(-dx, dy);
+          const potentialSize = Math.max(24, initialCropRect.size + delta);
+          const allowedSize = Math.min(potentialSize, initialCropRect.x + initialCropRect.size, imgDims.h - initialCropRect.y);
+          newX = initialCropRect.x + initialCropRect.size - allowedSize;
+          newSize = allowedSize;
+        }
+
+        setCropRect({
+          x: Math.round(newX),
+          y: Math.round(newY),
+          size: Math.round(newSize),
+        });
+
+        // Update zoomLevel display according to size
+        const minDim = Math.min(imgDims.w, imgDims.h);
+        if (newSize > 0) {
+          setZoomLevel(parseFloat((minDim / newSize).toFixed(2)));
+        }
+      }
+    };
+
+    const handlePointerUp = () => {
+      setIsDragging(false);
+      setDragAction(null);
+      touchDistanceRef.current = null;
+    };
+
+    window.addEventListener("mousemove", handlePointerMove, { passive: false });
+    window.addEventListener("mouseup", handlePointerUp);
+    window.addEventListener("touchmove", handlePointerMove, { passive: false });
+    window.addEventListener("touchend", handlePointerUp);
+
+    return () => {
+      window.removeEventListener("mousemove", handlePointerMove);
+      window.removeEventListener("mouseup", handlePointerUp);
+      window.removeEventListener("touchmove", handlePointerMove);
+      window.removeEventListener("touchend", handlePointerUp);
+    };
+  }, [isDragging, dragAction, dragStart, initialCropRect, imgDims, zoomLevel]);
+
+  // ── Generate & download zip bundle ──────────────────────────────────────────
   const handleGenerate = async () => {
     if (!file) return;
     setIsProcessing(true);
@@ -251,13 +465,18 @@ export default function FaviconGeneratorTool() {
     setSuccessMessage(null);
 
     try {
-      const img = await loadImageFromFile(file);
+      let img = loadedImageObjRef.current;
+      if (!img) {
+        img = await loadImageFromFile(file);
+        loadedImageObjRef.current = img;
+      }
+
       const zip = new JSZip();
 
       // Generate all PNG sizes
       const pngMap = new Map<number, Blob>();
       for (const { size, name } of FAVICON_SIZES) {
-        const blob = await resizeToSquare(img, size);
+        const blob = await renderSquareBlob(img, size);
         pngMap.set(size, blob);
         zip.file(name, blob);
       }
@@ -273,7 +492,7 @@ export default function FaviconGeneratorTool() {
       // Download zip
       const zipBlob = await zip.generateAsync({ type: "blob" });
       downloadBlob(zipBlob, "favicon-bundle.zip");
-      setSuccessMessage("Favicon bundle downloaded!");
+      setSuccessMessage("Favicon bundle successfully generated and downloaded!");
     } catch (err: any) {
       setProcessError(err?.message || "Failed to generate favicons.");
     } finally {
@@ -288,7 +507,6 @@ export default function FaviconGeneratorTool() {
       setCopiedSnippet(true);
       setTimeout(() => setCopiedSnippet(false), 2000);
     } catch {
-      // Fallback
       const textarea = document.createElement("textarea");
       textarea.value = HEAD_SNIPPET;
       document.body.appendChild(textarea);
@@ -300,13 +518,19 @@ export default function FaviconGeneratorTool() {
     }
   };
 
+  // Crop Box percentage calculations for screen rendering
+  const cropLeftPct = imgDims.w ? (cropRect.x / imgDims.w) * 100 : 0;
+  const cropTopPct = imgDims.h ? (cropRect.y / imgDims.h) * 100 : 0;
+  const cropWidthPct = imgDims.w ? (cropRect.size / imgDims.w) * 100 : 100;
+  const cropHeightPct = imgDims.h ? (cropRect.size / imgDims.h) * 100 : 100;
+
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 max-w-5xl mx-auto">
       {/* Privacy Banner */}
       <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-[#18181B] dark:text-[#F4F4F5] flex items-center gap-2.5 text-sm font-medium">
         <ShieldCheck className="text-emerald-500 shrink-0" size={18} />
         <span>
-          🔒 <strong>100% client-side.</strong> Your images never leave your browser.
+          🔒 <strong>100% Client-Side Processing.</strong> Your images are cropped and rendered entirely in your browser.
         </span>
       </div>
 
@@ -315,11 +539,11 @@ export default function FaviconGeneratorTool() {
         <ImageDropzone
           multiple={false}
           onFilesSelected={handleFilesSelected}
-          description="Upload a high-res image (ideally 512×512 or larger)"
+          description="Upload any logo, icon, or photo (square, landscape, or portrait)"
         />
       ) : (
         <div className="space-y-6">
-          {/* File info */}
+          {/* File Info Bar */}
           <div className="p-4 rounded-2xl bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] flex items-center justify-between gap-4">
             <div className="flex items-center gap-3 min-w-0">
               {previewOrigUrl && (
@@ -336,7 +560,14 @@ export default function FaviconGeneratorTool() {
                 <div className="flex items-center gap-2 text-xs text-[#71717A] dark:text-[#A1A1AA] mt-0.5">
                   <span>{formatBytes(file.size)}</span>
                   <span>•</span>
-                  <span>{imgDims.w} × {imgDims.h}px</span>
+                  <span>
+                    {imgDims.w} × {imgDims.h}px
+                  </span>
+                  {isNonSquare && (
+                    <span className="px-1.5 py-0.5 rounded-md bg-violet-500/10 text-violet-500 text-[10px] font-bold">
+                      Non-Square
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
@@ -349,31 +580,279 @@ export default function FaviconGeneratorTool() {
             </button>
           </div>
 
-          {/* Warnings */}
+          {/* Small source warning */}
           {isSmallSource && (
-            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center gap-2.5 text-sm">
-              <AlertTriangle size={16} className="shrink-0" />
-              Source image is small ({imgDims.w}×{imgDims.h}). Larger sizes (192px, 512px) may appear blurry.
-            </div>
-          )}
-          {isNonSquare && (
-            <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 flex items-center gap-2.5 text-sm">
-              <AlertTriangle size={16} className="shrink-0" />
-              <span>
-                Source image is not square. It will be centered
-                {transparentBg
-                  ? " with transparent padding."
-                  : " — adjust the background color below."}
-              </span>
+            <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center gap-2.5 text-xs">
+              <AlertTriangle size={15} className="shrink-0" />
+              Source image is small ({imgDims.w}×{imgDims.h}px). Larger sizes (192px, 512px) may appear pixelated.
             </div>
           )}
 
-          {/* Options */}
+          {/* Mode Switcher Banner */}
+          <div className="p-4 rounded-2xl bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-[#71717A] block mb-1">
+                Cropping &amp; Framing Mode
+              </span>
+              <p className="text-xs text-[#52525B] dark:text-[#A1A1AA]">
+                {fitMode === "crop"
+                  ? "Drag and resize the square box or use the zoom slider to select the exact favicon area."
+                  : "Fits the entire image inside a square canvas with optional padding and background color."}
+              </p>
+            </div>
+            <div className="flex items-center gap-1.5 p-1 bg-[#FAFAF8] dark:bg-[#1E2338] rounded-xl border border-[#E4E0D8] dark:border-[#2A2F48] shrink-0">
+              <button
+                type="button"
+                onClick={() => setFitMode("crop")}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  fitMode === "crop"
+                    ? "bg-violet-600 text-white shadow-sm"
+                    : "text-[#71717A] hover:text-[#18181B] dark:hover:text-[#F4F4F5]"
+                }`}
+              >
+                <Crop size={13} />
+                <span>Manual 1:1 Crop</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setFitMode("fit")}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  fitMode === "fit"
+                    ? "bg-violet-600 text-white shadow-sm"
+                    : "text-[#71717A] hover:text-[#18181B] dark:hover:text-[#F4F4F5]"
+                }`}
+              >
+                <Maximize2 size={13} />
+                <span>Fit with Padding</span>
+              </button>
+            </div>
+          </div>
+
+          {/* ── INTERACTIVE 1:1 CROP WORKSPACE ───────────────────────────────── */}
+          {fitMode === "crop" && (
+            <div className="p-5 rounded-3xl bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] space-y-4">
+              <div className="flex items-center justify-between flex-wrap gap-3">
+                <div className="flex items-center gap-2">
+                  <h3 className="font-extrabold text-base text-[#18181B] dark:text-[#F4F4F5] flex items-center gap-2">
+                    <Crop size={16} className="text-violet-500" />
+                    Interactive 1:1 Square Crop &amp; Reposition
+                  </h3>
+                  <span className="px-2 py-0.5 rounded-full bg-violet-500/10 text-violet-600 dark:text-violet-400 text-[11px] font-bold">
+                    {Math.round(cropRect.size)} × {Math.round(cropRect.size)}px
+                  </span>
+                </div>
+
+                {/* Toolbar Buttons */}
+                <div className="flex items-center gap-2 flex-wrap">
+                  <button
+                    type="button"
+                    onClick={() => resetCropToCenter(imgDims.w, imgDims.h)}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-[#E4E0D8] dark:border-[#2A2F48] bg-[#FAFAF8] dark:bg-[#1E2338] text-xs font-semibold text-[#18181B] dark:text-[#F4F4F5] hover:bg-violet-500/10 hover:text-violet-500 transition-colors"
+                    title="Center and reset crop area"
+                  >
+                    <RotateCcw size={13} />
+                    <span>Reset Crop</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Crop Canvas Viewport */}
+              <div
+                ref={editorContainerRef}
+                className="relative rounded-2xl overflow-hidden bg-[#0C0F1E] border border-[#2A2F48] flex items-center justify-center select-none touch-none min-h-[300px] sm:min-h-[380px] max-h-[500px]"
+                style={{ cursor: isDragging ? "grabbing" : "default" }}
+              >
+                {previewOrigUrl && (
+                  <div className="relative inline-block max-w-full max-h-[480px]">
+                    {/* The Source Image */}
+                    <img
+                      ref={imageElementRef}
+                      src={previewOrigUrl}
+                      alt="Source for cropping"
+                      draggable={false}
+                      className="block max-w-full max-h-[460px] object-contain select-none pointer-events-none mx-auto"
+                    />
+
+                    {/* Darkened Mask Overlays Outside Crop Box */}
+                    {/* Top Mask */}
+                    <div
+                      className="absolute left-0 top-0 right-0 bg-black/60 backdrop-blur-[1px] pointer-events-none transition-[top,height]"
+                      style={{ height: `${cropTopPct}%` }}
+                    />
+                    {/* Bottom Mask */}
+                    <div
+                      className="absolute left-0 right-0 bottom-0 bg-black/60 backdrop-blur-[1px] pointer-events-none"
+                      style={{ top: `${cropTopPct + cropHeightPct}%` }}
+                    />
+                    {/* Left Mask */}
+                    <div
+                      className="absolute left-0 bg-black/60 backdrop-blur-[1px] pointer-events-none"
+                      style={{
+                        top: `${cropTopPct}%`,
+                        height: `${cropHeightPct}%`,
+                        width: `${cropLeftPct}%`,
+                      }}
+                    />
+                    {/* Right Mask */}
+                    <div
+                      className="absolute right-0 bg-black/60 backdrop-blur-[1px] pointer-events-none"
+                      style={{
+                        top: `${cropTopPct}%`,
+                        height: `${cropHeightPct}%`,
+                        left: `${cropLeftPct + cropWidthPct}%`,
+                      }}
+                    />
+
+                    {/* 1:1 Interactive Draggable Crop Box */}
+                    <div
+                      onMouseDown={(e) => handlePointerDown(e, "move")}
+                      onTouchStart={(e) => handlePointerDown(e, "move")}
+                      className="absolute border-2 border-violet-400 dark:border-violet-400 shadow-[0_0_0_1px_rgba(0,0,0,0.5),0_0_20px_rgba(139,92,246,0.35)] cursor-move group"
+                      style={{
+                        left: `${cropLeftPct}%`,
+                        top: `${cropTopPct}%`,
+                        width: `${cropWidthPct}%`,
+                        height: `${cropHeightPct}%`,
+                      }}
+                    >
+                      {/* Rule-of-Thirds Grid Lines */}
+                      <div className="absolute inset-0 pointer-events-none grid grid-cols-3 grid-rows-3">
+                        <div className="border-r border-b border-white/25" />
+                        <div className="border-r border-b border-white/25" />
+                        <div className="border-b border-white/25" />
+                        <div className="border-r border-b border-white/25" />
+                        <div className="border-r border-b border-white/25" />
+                        <div className="border-b border-white/25" />
+                        <div className="border-r border-white/25" />
+                        <div className="border-r border-white/25" />
+                        <div />
+                      </div>
+
+                      {/* Center Crosshair Indicator */}
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-40 group-hover:opacity-80 transition-opacity">
+                        <Move size={20} className="text-white drop-shadow" />
+                      </div>
+
+                      {/* 4 Corner Resize Handles */}
+                      {/* NW Handle */}
+                      <div
+                        onMouseDown={(e) => handlePointerDown(e, "nw")}
+                        onTouchStart={(e) => handlePointerDown(e, "nw")}
+                        className="absolute -top-2 -left-2 w-5 h-5 bg-white border-2 border-violet-600 rounded-sm shadow-md cursor-nwse-resize z-10"
+                      />
+                      {/* NE Handle */}
+                      <div
+                        onMouseDown={(e) => handlePointerDown(e, "ne")}
+                        onTouchStart={(e) => handlePointerDown(e, "ne")}
+                        className="absolute -top-2 -right-2 w-5 h-5 bg-white border-2 border-violet-600 rounded-sm shadow-md cursor-nesw-resize z-10"
+                      />
+                      {/* SW Handle */}
+                      <div
+                        onMouseDown={(e) => handlePointerDown(e, "sw")}
+                        onTouchStart={(e) => handlePointerDown(e, "sw")}
+                        className="absolute -bottom-2 -left-2 w-5 h-5 bg-white border-2 border-violet-600 rounded-sm shadow-md cursor-nesw-resize z-10"
+                      />
+                      {/* SE Handle */}
+                      <div
+                        onMouseDown={(e) => handlePointerDown(e, "se")}
+                        onTouchStart={(e) => handlePointerDown(e, "se")}
+                        className="absolute -bottom-2 -right-2 w-5 h-5 bg-white border-2 border-violet-600 rounded-sm shadow-md cursor-nwse-resize z-10"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Zoom & Scale Slider Control */}
+              <div className="p-3.5 rounded-2xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] flex flex-col sm:flex-row items-center gap-4">
+                <div className="flex items-center gap-2 shrink-0">
+                  <ZoomIn size={16} className="text-violet-500" />
+                  <span className="text-xs font-bold text-[#18181B] dark:text-[#F4F4F5]">
+                    Zoom / Crop Scale
+                  </span>
+                  <span className="text-xs font-mono font-bold text-violet-600 dark:text-violet-400 min-w-[36px]">
+                    {zoomLevel.toFixed(1)}×
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-3 flex-1 w-full">
+                  <button
+                    type="button"
+                    onClick={() => handleZoomChange(zoomLevel - 0.2)}
+                    disabled={zoomLevel <= 1}
+                    className="p-1.5 rounded-lg border border-[#E4E0D8] dark:border-[#2A2F48] hover:bg-white dark:hover:bg-[#2A2F48] text-[#71717A] disabled:opacity-40"
+                    title="Zoom out"
+                  >
+                    <Minus size={13} />
+                  </button>
+
+                  <input
+                    type="range"
+                    min={1}
+                    max={3}
+                    step={0.05}
+                    value={zoomLevel}
+                    onChange={(e) => handleZoomChange(parseFloat(e.target.value))}
+                    className="w-full accent-violet-600 cursor-pointer"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => handleZoomChange(zoomLevel + 0.2)}
+                    disabled={zoomLevel >= 3}
+                    className="p-1.5 rounded-lg border border-[#E4E0D8] dark:border-[#2A2F48] hover:bg-white dark:hover:bg-[#2A2F48] text-[#71717A] disabled:opacity-40"
+                    title="Zoom in"
+                  >
+                    <Plus size={13} />
+                  </button>
+                </div>
+
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => handleZoomChange(1)}
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold border ${
+                      zoomLevel === 1
+                        ? "bg-violet-500/10 border-violet-500/30 text-violet-600 dark:text-violet-400"
+                        : "border-[#E4E0D8] dark:border-[#2A2F48] text-[#71717A]"
+                    }`}
+                  >
+                    1.0×
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleZoomChange(1.5)}
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold border ${
+                      Math.abs(zoomLevel - 1.5) < 0.1
+                        ? "bg-violet-500/10 border-violet-500/30 text-violet-600 dark:text-violet-400"
+                        : "border-[#E4E0D8] dark:border-[#2A2F48] text-[#71717A]"
+                    }`}
+                  >
+                    1.5×
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleZoomChange(2.0)}
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold border ${
+                      Math.abs(zoomLevel - 2.0) < 0.1
+                        ? "bg-violet-500/10 border-violet-500/30 text-violet-600 dark:text-violet-400"
+                        : "border-[#E4E0D8] dark:border-[#2A2F48] text-[#71717A]"
+                    }`}
+                  >
+                    2.0×
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Options & Previews Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Background & Padding */}
-            <div className="p-5 rounded-2xl bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] space-y-4">
-              <h3 className="font-extrabold text-base text-[#18181B] dark:text-[#F4F4F5]">
-                Options
+            {/* Background & Padding Options */}
+            <div className="p-5 rounded-3xl bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] space-y-4">
+              <h3 className="font-extrabold text-base text-[#18181B] dark:text-[#F4F4F5] flex items-center gap-2">
+                <Sliders size={16} className="text-violet-500" />
+                Color &amp; Inset Settings
               </h3>
 
               <div>
@@ -384,18 +863,18 @@ export default function FaviconGeneratorTool() {
                     onChange={(e) => setTransparentBg(e.target.checked)}
                     className="w-4 h-4 rounded accent-violet-500 cursor-pointer"
                   />
-                  <span>No background (transparent PNG)</span>
+                  <span>Transparent background (PNG/ICO alpha channel)</span>
                 </label>
 
                 {transparentBg && (file?.type === "image/jpeg" || file?.type === "image/jpg") && (
                   <p className="text-[11px] text-amber-600 dark:text-amber-400 mb-2 leading-relaxed">
-                    JPEGs have no transparency — only the padding around your image will be transparent.
+                    JPEGs have no transparency — only inset margins will be transparent.
                   </p>
                 )}
 
                 <div className={`transition-opacity ${transparentBg ? "opacity-40 pointer-events-none" : ""}`}>
                   <label className="block text-xs font-semibold text-[#71717A] mb-1.5">
-                    Background Color
+                    Background Color Fill
                   </label>
                   <div className="flex items-center gap-2">
                     <input
@@ -403,7 +882,7 @@ export default function FaviconGeneratorTool() {
                       value={bgColor}
                       disabled={transparentBg}
                       onChange={(e) => setBgColor(e.target.value)}
-                      className="w-10 h-10 rounded-lg border border-[#E4E0D8] dark:border-[#2A2F48] cursor-pointer disabled:cursor-not-allowed"
+                      className="w-10 h-10 rounded-xl border border-[#E4E0D8] dark:border-[#2A2F48] cursor-pointer disabled:cursor-not-allowed"
                     />
                     <input
                       type="text"
@@ -417,16 +896,17 @@ export default function FaviconGeneratorTool() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#71717A] mb-1.5">
-                  Padding: {padding}%
-                </label>
+                <div className="flex items-center justify-between text-xs font-semibold text-[#71717A] mb-1.5">
+                  <span>Edge Inset Padding</span>
+                  <span className="font-mono text-violet-500">{padding}%</span>
+                </div>
                 <input
                   type="range"
                   min={0}
                   max={20}
                   value={padding}
                   onChange={(e) => setPadding(Number(e.target.value))}
-                  className="w-full accent-violet-500"
+                  className="w-full accent-violet-500 cursor-pointer"
                 />
               </div>
 
@@ -455,10 +935,11 @@ export default function FaviconGeneratorTool() {
               </div>
             </div>
 
-            {/* Preview: Authentic Browser tab, Homescreen & Asset Inspection */}
-            <div className="p-5 rounded-2xl bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] space-y-4">
+            {/* Live Preview: Browser tab, Homescreen & Asset Inspection */}
+            <div className="p-5 rounded-3xl bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] space-y-4">
               <div className="flex items-center justify-between gap-2 flex-wrap">
-                <h3 className="font-extrabold text-base text-[#18181B] dark:text-[#F4F4F5]">
+                <h3 className="font-extrabold text-base text-[#18181B] dark:text-[#F4F4F5] flex items-center gap-2">
+                  <Monitor size={16} className="text-violet-500" />
                   Live Preview
                 </h3>
 
@@ -506,7 +987,6 @@ export default function FaviconGeneratorTool() {
               {/* BROWSER TAB MOCKUP */}
               {previewTab === "browser" && (
                 <div className="space-y-2.5">
-                  {/* Theme Switcher for Browser */}
                   <div className="flex items-center justify-between text-xs text-[#71717A]">
                     <span className="font-semibold flex items-center gap-1.5">
                       <Monitor size={13} /> Chrome / Edge Tab View
@@ -539,7 +1019,6 @@ export default function FaviconGeneratorTool() {
                     </div>
                   </div>
 
-                  {/* Authentic Browser Window */}
                   <div
                     className={`rounded-2xl border overflow-hidden shadow-xl transition-colors duration-200 ${
                       browserTheme === "dark"
@@ -549,14 +1028,12 @@ export default function FaviconGeneratorTool() {
                   >
                     {/* Top Tab Bar */}
                     <div className="flex items-center gap-2 pt-2.5 px-3">
-                      {/* Window Controls */}
                       <div className="flex items-center gap-1.5 mr-1 shrink-0">
                         <div className="w-3 h-3 rounded-full bg-[#ff5f56] border border-[#e0443e]/40" />
                         <div className="w-3 h-3 rounded-full bg-[#ffbd2e] border border-[#dea123]/40" />
                         <div className="w-3 h-3 rounded-full bg-[#27c93f] border border-[#1aab29]/40" />
                       </div>
 
-                      {/* Active Tab */}
                       <div
                         className={`flex items-center gap-2 px-3 py-1.5 rounded-t-xl min-w-[140px] max-w-[220px] flex-1 text-xs font-medium relative transition-colors ${
                           browserTheme === "dark"
@@ -583,7 +1060,6 @@ export default function FaviconGeneratorTool() {
                         />
                       </div>
 
-                      {/* Inactive Tab Mockup */}
                       <div
                         className={`hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-t-xl text-[11px] opacity-60 select-none ${
                           browserTheme === "dark"
@@ -595,7 +1071,6 @@ export default function FaviconGeneratorTool() {
                         <span className="truncate max-w-[80px]">New Tab</span>
                       </div>
 
-                      {/* Add Tab Button */}
                       <div
                         className={`p-1 rounded-full opacity-60 hover:opacity-100 cursor-pointer transition-opacity ${
                           browserTheme === "dark" ? "hover:bg-[#35363a]" : "hover:bg-white/60"
@@ -605,7 +1080,7 @@ export default function FaviconGeneratorTool() {
                       </div>
                     </div>
 
-                    {/* Navigation & Address Bar Toolbar */}
+                    {/* Navigation Bar */}
                     <div
                       className={`flex items-center gap-2 px-3 py-2 border-t ${
                         browserTheme === "dark"
@@ -619,7 +1094,6 @@ export default function FaviconGeneratorTool() {
                         <RotateCw size={12} className="hover:opacity-100 cursor-pointer ml-0.5" />
                       </div>
 
-                      {/* Omnibox / URL bar */}
                       <div
                         className={`flex items-center gap-2 px-3 py-1 rounded-full flex-1 text-[11px] font-sans ${
                           browserTheme === "dark"
@@ -636,7 +1110,7 @@ export default function FaviconGeneratorTool() {
                       </div>
                     </div>
 
-                    {/* Mock Webpage Viewport */}
+                    {/* Mock Page Viewport */}
                     <div
                       className={`h-28 flex flex-col items-center justify-center p-4 text-center select-none ${
                         browserTheme === "dark" ? "bg-[#18191c]" : "bg-[#f8f9fa]"
@@ -678,7 +1152,7 @@ export default function FaviconGeneratorTool() {
                       </div>
 
                       <div className="flex items-center justify-around gap-4 pt-1">
-                        {/* iOS Touch Icon (180x180) */}
+                        {/* iOS Touch Icon */}
                         <div className="flex flex-col items-center gap-2">
                           <div
                             className="w-16 h-16 rounded-[22%] shadow-2xl p-1 flex items-center justify-center overflow-hidden border border-white/10"
@@ -718,7 +1192,7 @@ export default function FaviconGeneratorTool() {
                           <span className="text-[9px] text-[#71717A]">Adaptive</span>
                         </div>
 
-                        {/* 32px Web Shortcut */}
+                        {/* 32px Web Bookmark */}
                         <div className="flex flex-col items-center gap-2">
                           <div
                             className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 shadow-2xl flex items-center justify-center overflow-hidden"
@@ -852,7 +1326,7 @@ export default function FaviconGeneratorTool() {
             </pre>
           </div>
 
-          {/* Error / Success */}
+          {/* Error / Success Alerts */}
           {processError && (
             <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 flex items-center gap-2.5 text-sm font-medium">
               <AlertTriangle size={16} className="shrink-0" />
@@ -866,7 +1340,7 @@ export default function FaviconGeneratorTool() {
             </div>
           )}
 
-          {/* Generate button */}
+          {/* Generate & Download All Button */}
           <button
             onClick={handleGenerate}
             disabled={isProcessing}
@@ -880,7 +1354,7 @@ export default function FaviconGeneratorTool() {
             ) : (
               <>
                 <Archive size={20} />
-                Generate &amp; Download All
+                Generate &amp; Download All Favicons (.ZIP)
               </>
             )}
           </button>
