@@ -7,12 +7,14 @@ import QrStyleControls from "./qr/QrStyleControls";
 import QrPreviewExport from "./qr/QrPreviewExport";
 import QrBatchTool from "./qr/QrBatchTool";
 import QrHistoryManager from "./qr/QrHistoryManager";
+import QrMobilePreview from "./qr/QrMobilePreview";
 import {
   ContentType,
   QrStyleOptions,
   PresetTemplate,
   HistoryItem,
 } from "./qr/types";
+import { parsePayloadToFormData } from "./qr/qr-serializers";
 
 export default function QrCodeTool() {
   const [activeMode, setActiveMode] = useState<"single" | "batch">("single");
@@ -76,6 +78,9 @@ export default function QrCodeTool() {
   const handleRestoreHistory = useCallback((item: HistoryItem) => {
     setActiveType(item.type);
     setPayload(item.payload);
+    setIsFormValid(true);
+    const parsedData = parsePayloadToFormData(item.type, item.payload);
+    setInitialData(parsedData);
     if (item.style) {
       setStyleOptions(item.style);
     }
@@ -116,9 +121,8 @@ export default function QrCodeTool() {
       </div>
 
       {activeMode === "single" ? (
-        /* Single QR Generator View */
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* Main Controls (Left Column) */}
+          {/* Main Controls Column */}
           <div className="lg:col-span-7 space-y-6">
             <QrPayloadForm
               activeType={activeType}
@@ -135,6 +139,16 @@ export default function QrCodeTool() {
               onChange={updateStyle}
             />
 
+            {/* Mobile / Tablet Live Preview (shown right below Style & Appearance on < lg) */}
+            <div className="block lg:hidden">
+              <QrPreviewExport
+                payload={payload}
+                isFormValid={isFormValid}
+                styleOptions={styleOptions}
+                onStyleChange={updateStyle}
+              />
+            </div>
+
             <QrHistoryManager
               onSelectPreset={handleSelectPreset}
               onRestoreHistory={handleRestoreHistory}
@@ -144,8 +158,8 @@ export default function QrCodeTool() {
             />
           </div>
 
-          {/* Live Preview & Export (Right Sticky Column) */}
-          <div className="lg:col-span-5 lg:sticky lg:top-20 space-y-6">
+          {/* Desktop Live Preview & Export (Right Sticky Column) */}
+          <div className="hidden lg:block lg:col-span-5 lg:sticky lg:top-20 space-y-6">
             <QrPreviewExport
               payload={payload}
               isFormValid={isFormValid}
@@ -168,6 +182,17 @@ export default function QrCodeTool() {
           </div>
         </div>
       )}
+
+      {/* ── Mobile Floating Mini-Preview Button & Bottom Sheet (< 768px) ── */}
+      {activeMode === "single" && (
+        <QrMobilePreview
+          payload={payload}
+          isFormValid={isFormValid}
+          styleOptions={styleOptions}
+          onStyleChange={updateStyle}
+        />
+      )}
     </div>
   );
 }
+

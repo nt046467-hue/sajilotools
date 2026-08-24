@@ -98,17 +98,35 @@ export default function QrPayloadForm({
     description: initialData?.description || "",
   });
 
-  // Re-sync initialData if provided from presets
+  // Re-sync initialData if provided from presets or history restore
   useEffect(() => {
     if (initialData) {
-      if (initialData.url) setUrl(initialData.url);
-      if (initialData.text) setText(initialData.text);
+      if (initialData.url !== undefined) setUrl(initialData.url);
+      if (initialData.text !== undefined) setText(initialData.text);
+      if (initialData.phone !== undefined) setPhone(initialData.phone);
       if (initialData.ssid !== undefined) setWifi((prev) => ({ ...prev, ...initialData }));
-      if (initialData.firstName !== undefined || initialData.phone !== undefined) {
+      if (
+        initialData.firstName !== undefined ||
+        initialData.lastName !== undefined ||
+        initialData.email !== undefined ||
+        initialData.organization !== undefined
+      ) {
         setVcard((prev) => ({ ...prev, ...initialData }));
       }
+      if (initialData.to !== undefined || initialData.subject !== undefined) {
+        setEmail((prev) => ({ ...prev, ...initialData }));
+      }
+      if (initialData.message !== undefined || (initialData.phone !== undefined && activeType === "sms")) {
+        setSms((prev) => ({ ...prev, ...initialData }));
+      }
+      if (initialData.latitude !== undefined || initialData.rawInput !== undefined) {
+        setLocation((prev) => ({ ...prev, ...initialData }));
+      }
+      if (initialData.title !== undefined || initialData.startDate !== undefined) {
+        setEvent((prev) => ({ ...prev, ...initialData }));
+      }
     }
-  }, [initialData]);
+  }, [initialData, activeType]);
 
   // Compute current payload & validity
   useEffect(() => {

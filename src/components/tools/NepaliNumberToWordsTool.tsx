@@ -140,7 +140,7 @@ export default function NepaliNumberToWordsTool() {
     setTimeout(() => setCopiedEn(false), 1500);
   };
 
-  const presets = [1000, 5000, 25000, 50000, 100000, 500000, 1500000];
+  const presets = [1000, 5000, 25000, 50000, 100000, 145000, 500000, 1500000];
 
   return (
     <div className="space-y-6">
@@ -158,7 +158,7 @@ export default function NepaliNumberToWordsTool() {
             min={0}
             value={numAmount || ""}
             onChange={(e) => setNumAmount(Number(e.target.value))}
-            placeholder="e.g. 45678"
+            placeholder="e.g. 145000"
             className="w-full pl-9 pr-4 py-3 rounded-xl border border-[#E4E0D8] dark:border-[#1E2338] bg-[#FAFAF8] dark:bg-[#1E2338] text-[#18181B] dark:text-[#F4F4F5] font-extrabold text-xl focus:outline-none focus:ring-2 focus:ring-[#DC2626]/40"
           />
         </div>
@@ -170,9 +170,13 @@ export default function NepaliNumberToWordsTool() {
             <button
               key={p}
               onClick={() => setNumAmount(p)}
-              className="px-2.5 py-1 rounded-lg border border-[#E4E0D8] dark:border-[#1E2338] bg-[#FAFAF8] dark:bg-[#1E2338] text-xs font-semibold text-[#18181B] dark:text-[#F4F4F5] hover:border-[#DC2626] transition-colors"
+              className={`px-2.5 py-1 rounded-lg border text-xs font-semibold transition-colors ${
+                numAmount === p
+                  ? "border-[#DC2626] bg-[#DC2626]/10 text-[#DC2626] font-bold"
+                  : "border-[#E4E0D8] dark:border-[#1E2338] bg-[#FAFAF8] dark:bg-[#1E2338] text-[#18181B] dark:text-[#F4F4F5] hover:border-[#DC2626]"
+              }`}
             >
-              Rs. {p.toLocaleString("en-IN")}
+              Rs. {p.toLocaleString("en-IN")} {p === 145000 ? "(1.45L)" : ""}
             </button>
           ))}
         </div>
@@ -221,10 +225,40 @@ export default function NepaliNumberToWordsTool() {
         </div>
       </div>
 
-      <div className="p-3.5 rounded-xl bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] text-xs text-[#71717A] flex items-start gap-2">
+      {/* Nepali Numbering System Denominations Reference Table */}
+      <div className="p-4 rounded-xl bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] space-y-3">
+        <div className="text-xs font-bold text-[#18181B] dark:text-[#F4F4F5] flex items-center justify-between">
+          <span>Nepali Number Scale &amp; International Equivalents</span>
+          <span className="text-[10px] uppercase tracking-wider text-[#A1A1AA]">South Asian Grouping</span>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+          <div className="p-2.5 rounded-lg bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48]">
+            <div className="text-[11px] font-bold text-[#DC2626]">1 Hajar (हजार)</div>
+            <div className="font-mono text-xs font-semibold text-[#18181B] dark:text-[#F4F4F5]">1,000 (१,०००)</div>
+            <div className="text-[10px] text-[#71717A]">One Thousand</div>
+          </div>
+          <div className="p-2.5 rounded-lg bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48]">
+            <div className="text-[11px] font-bold text-[#DC2626]">1 Lakh (लाख)</div>
+            <div className="font-mono text-xs font-semibold text-[#18181B] dark:text-[#F4F4F5]">1,00,000 (१,००,०००)</div>
+            <div className="text-[10px] text-[#71717A]">100 Thousand</div>
+          </div>
+          <div className="p-2.5 rounded-lg bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48]">
+            <div className="text-[11px] font-bold text-[#DC2626]">1 Crore (करोड)</div>
+            <div className="font-mono text-xs font-semibold text-[#18181B] dark:text-[#F4F4F5]">1,00,00,000 (१,००,००,०००)</div>
+            <div className="text-[10px] text-[#71717A]">10 Million</div>
+          </div>
+          <div className="p-2.5 rounded-lg bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48]">
+            <div className="text-[11px] font-bold text-[#DC2626]">1 Arab (अरब)</div>
+            <div className="font-mono text-xs font-semibold text-[#18181B] dark:text-[#F4F4F5]">1,00,00,00,000</div>
+            <div className="text-[10px] text-[#71717A]">1 Billion (1,000M)</div>
+          </div>
+        </div>
+      </div>
+
+      <div className="p-3.5 rounded-xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] text-xs text-[#71717A] flex items-start gap-2">
         <Info size={16} className="text-[#DC2626] shrink-0 mt-0.5" />
         <span>
-          <strong>Ideal for Cheque Writing & Official Invoices:</strong> Uses standard Nepali Lakh/Crore words matching bank standards in Nepal.
+          <strong>Cheque &amp; Invoicing Standard:</strong> Standard banking format in Nepal uses Lakh/Crore naming with <em>"Rupees ... Only"</em> and <em>"रुपैयाँ मात्र"</em> suffixes.
         </span>
       </div>
     </div>

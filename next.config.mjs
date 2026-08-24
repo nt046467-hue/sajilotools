@@ -26,28 +26,6 @@ const nextConfig = {
     ];
 
     if (!isServer) {
-      // ── @imgly/background-removal + onnxruntime-web fixes ──────────────
-      config.module.rules.push({
-        test: /\.m?js$/,
-        include: /node_modules[\\/](@imgly[\\/]background-removal|onnxruntime-web)/,
-        type: "javascript/auto",
-        parser: {
-          url: false,
-        },
-      });
-
-      if (config.optimization?.minimizer) {
-        for (const plugin of config.optimization.minimizer) {
-          if (plugin.constructor?.name === "TerserPlugin") {
-            const prev = plugin.options.exclude;
-            plugin.options.exclude = prev
-              ? [].concat(prev, /ort.*\.min\.mjs$/, /ort-wasm.*\.mjs$/)
-              : [/ort.*\.min\.mjs$/, /ort-wasm.*\.mjs$/];
-          }
-        }
-      }
-
-      // Redirect the optional WebGPU entry-point to regular WASM build
       config.resolve.alias["onnxruntime-web/webgpu"] = "onnxruntime-web";
     }
 

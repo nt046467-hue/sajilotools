@@ -423,7 +423,7 @@ export const BLOG_POSTS: BlogPost[] = [
     readingTime: "7 min read",
     category: "Finance",
     toolSlugs: [
-      { slug: "vehicle-tax-calculator", categorySlug: "finance", label: "Vehicle Road Tax Calculator" },
+      { slug: "vehicle-tax-calculator", categorySlug: "nepal", label: "Vehicle Road Tax Calculator" },
     ],
     content: `
 <h2>Understanding Vehicle Tax in Nepal</h2>
@@ -468,6 +468,119 @@ export const BLOG_POSTS: BlogPost[] = [
 
 <h2>PAN vs VAT Registration Thresholds</h2>
 <p>Any business engaging in commercial activities must obtain a Permanent Account Number (PAN). Businesses dealing in taxable goods must register for VAT if annual turnover exceeds NPR 50 Lakhs (Goods) or NPR 20 Lakhs (Services & Consultancies).</p>
+    `,
+  },
+  {
+    slug: "nepali-number-system-lakh-crore-guide",
+    title: "Nepali Number System Explained: Lakh, Crore, Hajar & How to Convert to Words",
+    description:
+      "Learn how the Nepali South Asian numbering system works (Lakh, Crore, Arab), comma grouping vs international million/billion, and how to write numbers in English and Devanagari words for cheques.",
+    date: "2026-08-20",
+    readingTime: "6 min read",
+    category: "Guides",
+    toolSlugs: [
+      { slug: "nepali-number-words", categorySlug: "nepal", label: "Nepali Number to Words" },
+      { slug: "nepali-unicode", categorySlug: "nepal", label: "Nepali Unicode Typing" },
+    ],
+    content: `
+<div style="background-color: rgba(220, 38, 38, 0.08); border: 1px solid rgba(220, 38, 38, 0.25); padding: 16px 20px; border-radius: 14px; margin-bottom: 24px;">
+  <h3 style="margin-top: 0; margin-bottom: 8px; font-size: 1.1rem; color: #DC2626;">✍️ Convert Any Number to Words Instantly</h3>
+  <p style="margin-bottom: 12px; font-size: 0.9rem; color: #52525B;">Type any amount to generate formal English and Nepali Devanagari words for cheques and official invoices.</p>
+  <a href="/tools/nepal/nepali-number-words" style="display: inline-block; background-color: #DC2626; color: #ffffff; padding: 8px 16px; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 0.85rem;">Open Nepali Number to Words Converter →</a>
+</div>
+
+<h2>What is the Nepali Number System?</h2>
+<p>The Nepali numbering system belongs to the traditional South Asian numeral grouping system. Unlike the Western international standard that groups numbers by thousands (multiples of 1,000 like Thousands, Millions, Billions), the Nepali system groups the first three digits, then every two digits thereafter (Hajar, Lakh, Crore, Arab).</p>
+
+<h2>Nepali Number Scale &amp; International Equivalents</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Nepali Unit</th>
+      <th>Devanagari Digits</th>
+      <th>Standard Number</th>
+      <th>International Equivalent</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Ek (एक)</strong></td>
+      <td>१</td>
+      <td>1</td>
+      <td>One</td>
+    </tr>
+    <tr>
+      <td><strong>Dasa (दस)</strong></td>
+      <td>१०</td>
+      <td>10</td>
+      <td>Ten</td>
+    </tr>
+    <tr>
+      <td><strong>Saya (सय)</strong></td>
+      <td>१००</td>
+      <td>100</td>
+      <td>One Hundred</td>
+    </tr>
+    <tr>
+      <td><strong>Hajar (हजार)</strong></td>
+      <td>१,०००</td>
+      <td>1,000</td>
+      <td>One Thousand</td>
+    </tr>
+    <tr>
+      <td><strong>Dasa Hajar (१० हजार)</strong></td>
+      <td>१०,०००</td>
+      <td>10,000</td>
+      <td>Ten Thousand</td>
+    </tr>
+    <tr>
+      <td><strong>Lakh (लाख)</strong></td>
+      <td>१,००,०००</td>
+      <td>100,000</td>
+      <td>One Hundred Thousand</td>
+    </tr>
+    <tr>
+      <td><strong>Dasa Lakh (१० लाख)</strong></td>
+      <td>१०,००,०००</td>
+      <td>1,000,000</td>
+      <td>One Million</td>
+    </tr>
+    <tr>
+      <td><strong>Crore (करोड)</strong></td>
+      <td>१,००,००,०००</td>
+      <td>10,000,000</td>
+      <td>Ten Million</td>
+    </tr>
+    <tr>
+      <td><strong>Dasa Crore (१० करोड)</strong></td>
+      <td>१०,००,००,०००</td>
+      <td>100,000,000</td>
+      <td>One Hundred Million</td>
+    </tr>
+    <tr>
+      <td><strong>Arab (अरब)</strong></td>
+      <td>१,००,००,००,०००</td>
+      <td>1,000,000,000</td>
+      <td>One Billion</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>Comma Grouping: Nepali vs International Standard</h2>
+<p>One of the most common points of confusion is where to place commas:</p>
+<ul>
+  <li><strong>International grouping (3, 3, 3):</strong> <code>1,000,000</code> (One Million)</li>
+  <li><strong>Nepali grouping (3, 2, 2):</strong> <code>10,00,000</code> (Ten Lakh / १० लाख)</li>
+  <li><strong>1 Lakh 45 Hajar:</strong> Written as <code>1,45,000</code> (१,४५,०००) in Nepal, representing 145,000.</li>
+</ul>
+
+<h2>How to Write Cheques in Nepal (Format &amp; Rules)</h2>
+<p>When filling out bank cheques in Nepal, follow these official standards:</p>
+<ol>
+  <li><strong>Always specify Currency:</strong> In English start with <em>"Rupees"</em> or in Nepali start with <em>"रु"</em> or <em>"रुपैयाँ"</em>.</li>
+  <li><strong>Always end with "Only" / "मात्र":</strong> For example, <code>Rupees One Lakh Forty Five Thousand Only</code> or <code>एक लाख पैंतालीस हजार रुपैयाँ मात्र</code>. This prevents unauthorized additions to the text.</li>
+  <li><strong>Writing Paise / Decimal amounts:</strong> Fractions of a Rupee are written as Paisa (e.g. <em>"and 50 Paisa Only"</em> / <em>"५० पैसा मात्र"</em>).</li>
+</ol>
     `,
   },
 ];

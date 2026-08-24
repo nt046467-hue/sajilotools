@@ -471,10 +471,10 @@ Calculated via SajiloTools (${SITE_URL})`;
         <div>
           <h3 className="text-base font-bold text-[#18181B] dark:text-[#F4F4F5] flex items-center gap-2">
             <Calculator size={18} className="text-[#22C55E]" />
-            Nepal Income Tax Calculator
+            Nepal Salary Tax &amp; TDS Calculator (नेपाल तलब कर)
           </h3>
           <p className="text-xs text-[#71717A] mt-0.5">
-            Updated with latest IRD budget tax slabs and Social Security Fund (SSF) rules
+            Calculate monthly Salary TDS withholding, take-home pay, and annual income tax with latest IRD tax slabs
           </p>
         </div>
 

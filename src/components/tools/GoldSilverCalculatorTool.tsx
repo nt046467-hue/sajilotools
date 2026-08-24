@@ -234,6 +234,41 @@ export default function GoldSilverCalculatorTool() {
               </div>
             </div>
 
+            {/* Quick Conversion Presets (One-tap Aana, Lal, Tola) */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-xs font-bold text-[#71717A] uppercase tracking-wider">
+                  Quick Amount Presets (छिटो चयन)
+                </label>
+                <span className="text-[11px] text-[#22C55E] font-semibold">1 Tola = 16 Aana = 64 Lal</span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {[
+                  { label: "1 Aana (१ आना)", u: "aana" as const, w: 1 },
+                  { label: "1 Lal (१ लाल)", u: "lal" as const, w: 1 },
+                  { label: "1 Tola (१ तोला)", u: "tola" as const, w: 1 },
+                  { label: "8 Aana (आधा तोला)", u: "aana" as const, w: 8 },
+                  { label: "10 Grams (१० ग्राम)", u: "gram" as const, w: 10 },
+                ].map((preset) => (
+                  <button
+                    key={preset.label}
+                    type="button"
+                    onClick={() => {
+                      setUnit(preset.u);
+                      setWeight(preset.w);
+                    }}
+                    className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-colors border ${
+                      unit === preset.u && weight === preset.w
+                        ? "bg-[#22C55E] text-white border-[#22C55E]"
+                        : "bg-[#FAFAF8] dark:bg-[#1E2338] text-[#18181B] dark:text-[#F4F4F5] border-[#E4E0D8] dark:border-[#2A2F48] hover:border-[#22C55E]"
+                    }`}
+                  >
+                    {preset.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Unit & Weight Input */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
@@ -321,6 +356,36 @@ export default function GoldSilverCalculatorTool() {
                 <div className="p-2 rounded-lg bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] text-center">
                   <div className="text-[10px] text-[#71717A]">Lal</div>
                   <div className="text-xs font-bold">{(weightInTola * TOLA_IN_LAL).toFixed(1)}</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Answer Summary / Conversion Reference Card */}
+            <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 space-y-2 text-xs">
+              <div className="font-bold text-amber-800 dark:text-amber-300 flex items-center justify-between">
+                <span>Nepal Gold Weight Conversion Standard</span>
+                <span className="text-[11px] font-mono font-bold bg-amber-500/20 text-amber-900 dark:text-amber-200 px-2 py-0.5 rounded">FENEGOSIDA Standard</span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-[11px] font-medium text-[#18181B] dark:text-[#F4F4F5]">
+                <div className="p-2 rounded bg-white dark:bg-[#141829] border border-amber-500/20">
+                  <div className="text-[10px] text-[#71717A]">1 Tola (तोला)</div>
+                  <div className="font-bold text-amber-600 dark:text-amber-400">16 Aana / 64 Lal</div>
+                  <div className="text-[9px] text-[#A1A1AA]">11.6638 Grams</div>
+                </div>
+                <div className="p-2 rounded bg-white dark:bg-[#141829] border border-amber-500/20">
+                  <div className="text-[10px] text-[#71717A]">1 Aana (आना)</div>
+                  <div className="font-bold text-amber-600 dark:text-amber-400">4 Lal (लाल)</div>
+                  <div className="text-[9px] text-[#A1A1AA]">0.7290 Grams</div>
+                </div>
+                <div className="p-2 rounded bg-white dark:bg-[#141829] border border-amber-500/20">
+                  <div className="text-[10px] text-[#71717A]">1 Lal (लाल)</div>
+                  <div className="font-bold text-amber-600 dark:text-amber-400">0.25 Aana</div>
+                  <div className="text-[9px] text-[#A1A1AA]">0.1822 Grams</div>
+                </div>
+                <div className="p-2 rounded bg-white dark:bg-[#141829] border border-amber-500/20">
+                  <div className="text-[10px] text-[#71717A]">10 Grams (१० ग्राम)</div>
+                  <div className="font-bold text-amber-600 dark:text-amber-400">0.8573 Tola</div>
+                  <div className="text-[9px] text-[#A1A1AA]">13.718 Aana</div>
                 </div>
               </div>
             </div>

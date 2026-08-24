@@ -175,12 +175,45 @@ export default function BackgroundRemoverTool() {
     setItems((prev) => [...prev, ...newItems]);
   };
 
+  const loadImglyRemoveBackground = async (): Promise<(input: any, config?: any) => Promise<Blob>> => {
+    if (typeof window === "undefined") {
+      throw new Error("Background removal runs in the browser only.");
+    }
+    const win = window as any;
+    if (win.imgly?.removeBackground) {
+      return win.imgly.removeBackground;
+    }
+
+    await new Promise<void>((resolve, reject) => {
+      const existing = document.getElementById("imgly-bg-removal-script");
+      if (existing) {
+        if (win.imgly?.removeBackground) return resolve();
+        existing.addEventListener("load", () => resolve());
+        existing.addEventListener("error", () => reject(new Error("Failed to load AI engine")));
+        return;
+      }
+
+      const script = document.createElement("script");
+      script.id = "imgly-bg-removal-script";
+      script.src = "https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.7.0/dist/bundle.js";
+      script.async = true;
+      script.onload = () => resolve();
+      script.onerror = () => reject(new Error("Failed to load background removal engine from CDN"));
+      document.head.appendChild(script);
+    });
+
+    if (win.imgly?.removeBackground) {
+      return win.imgly.removeBackground;
+    }
+    throw new Error("Failed to initialize background removal engine");
+  };
+
   const processSingleItem = async (
     item: BatchItem,
     targetFormat: OutputFormat,
     onProgress: (msg: string, pct: number | null, status: "downloading" | "processing") => void
   ): Promise<Blob> => {
-    const { removeBackground: runRemoval } = await import("@imgly/background-removal");
+    const runRemoval = await loadImglyRemoveBackground();
     
     // Convert SVG to raster if needed
     const rasterInput = isSvg(item.file) ? await rasterizeSvg(item.file) : item.file;

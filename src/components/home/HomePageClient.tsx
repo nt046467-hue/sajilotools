@@ -31,88 +31,10 @@ function Badge({ label }: { label: string }) {
   );
 }
 
+import ToolCard from "@/components/tools/shared/ToolCard";
+
 export function ToolCardClient({ tool }: { tool: ToolDef }) {
-  const [favorited, setFavorited] = useState(false);
-  const Icon = ICON_MAP[tool.icon] || ShieldCheck;
-
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem("sajilo_favorites");
-      if (stored) {
-        const set = new Set(JSON.parse(stored));
-        setFavorited(set.has(tool.name));
-      }
-    } catch {}
-  }, [tool.name]);
-
-  const toggleFav = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    try {
-      const stored = localStorage.getItem("sajilo_favorites");
-      const list: string[] = stored ? JSON.parse(stored) : [];
-      let updated: string[];
-      if (list.includes(tool.name)) {
-        updated = list.filter((n) => n !== tool.name);
-        setFavorited(false);
-      } else {
-        updated = [...list, tool.name];
-        setFavorited(true);
-      }
-      localStorage.setItem("sajilo_favorites", JSON.stringify(updated));
-    } catch {}
-  };
-
-  return (
-    <Link
-      href={`/tools/${tool.categorySlug}/${tool.slug}`}
-      className="group relative block bg-white dark:bg-[#141829] rounded-2xl border border-[#E4E0D8] dark:border-[#1E2338] p-6 shadow-[0_1px_4px_rgba(0,0,0,0.05)] dark:shadow-none st-card-hover hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_8px_24px_rgba(0,0,0,0.35)]"
-    >
-      <div className="flex items-start justify-between mb-5">
-        <div
-          className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 tool-accent-bg tool-accent-text"
-          style={getToolAccentStyle(tool.color, tool.darkColor)}
-        >
-          <Icon size={20} strokeWidth={2} />
-        </div>
-        <button
-          onClick={toggleFav}
-          className={`p-1.5 rounded-lg transition-all duration-150 ${
-            favorited
-              ? "text-rose-500 bg-rose-50 dark:bg-rose-950/50"
-              : "text-[#D4D4D8] dark:text-[#374151] hover:text-[#A1A1AA] dark:hover:text-[#6B7280] hover:bg-[#F7F5F0] dark:hover:bg-[#1E2338]"
-          }`}
-          aria-label={favorited ? "Remove from favorites" : "Add to favorites"}
-        >
-          <Heart size={15} strokeWidth={2} fill={favorited ? "currentColor" : "none"} />
-        </button>
-      </div>
-
-      <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-        <h3
-          className="font-semibold text-[#18181B] dark:text-[#F4F4F5] text-sm leading-snug"
-          style={{ fontFamily: "'Sora', sans-serif" }}
-        >
-          {tool.name}
-        </h3>
-        <Badge label={tool.badge} />
-      </div>
-      <p className="text-[#71717A] dark:text-[#A1A1AA] text-xs leading-relaxed mb-5">
-        {tool.desc}
-      </p>
-
-      <div className="flex items-center justify-between">
-        <span className="text-[10px] font-semibold text-[#C4C0B8] dark:text-[#374151] uppercase tracking-wider">
-          {tool.category}
-        </span>
-        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
-          <span className="flex items-center gap-1 text-xs font-semibold text-[#1F2544] dark:text-[#F5A623]">
-            Open <ArrowRight size={11} strokeWidth={2} />
-          </span>
-        </div>
-      </div>
-    </Link>
-  );
+  return <ToolCard tool={tool} />;
 }
 
 export function NewsletterClient() {

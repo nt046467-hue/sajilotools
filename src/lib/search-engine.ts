@@ -179,8 +179,9 @@ export const SEARCH_INTENTS: Record<string, string[]> = {
     "bank interest calculation", "loan interest schedule"
   ],
   "tax-calculator": [
-    "income tax nepal", "salary tax calculator", "tds calculator nepal", "nepal tax slabs",
-    "salary deductions", "tax on salary", "income tax calculation"
+    "income tax nepal", "salary tax calculator", "salary tax calculator nepal", "tds calculator nepal",
+    "tds on salary nepal", "monthly salary tds", "nepal tax slabs", "income tax tds nepal",
+    "salary deductions", "tax on salary", "income tax calculation", "ssf tax deduction"
   ],
   "interest-calculator": [
     "interest calculator", "simple interest", "compound interest", "loan return", "interest rate calculator",
@@ -192,7 +193,9 @@ export const SEARCH_INTENTS: Record<string, string[]> = {
   ],
   "gold-silver-calculator": [
     "gold price nepal", "silver price nepal", "tola calculator", "gold tola to gram", "lal calculator",
-    "daily gold rate", "sun ko vau", "chandi price"
+    "aana gold price nepal", "1 aana gold rate today", "lal to aana gold", "tola to aana converter",
+    "ek aana gold price in nepal", "kati lal ko 1 aana huncha gold", "1 tola gold price",
+    "daily gold rate", "sun ko vau", "chandi price", "aana to gram gold"
   ],
   "sip-calculator": [
     "sip calculator", "mutual fund return", "monthly investment sip", "compounding investment",
@@ -226,7 +229,8 @@ export const SEARCH_INTENTS: Record<string, string[]> = {
   ],
   "nepali-number-words": [
     "number to words", "nepali number in words", "lakh crore converter", "cheque number to words",
-    "amount in words nepali", "rupees in words", "bank cheque writer"
+    "amount in words nepali", "rupees in words", "bank cheque writer", "lakh in nepali",
+    "1 lakh 45 hajar in english", "change in nepali", "nepali number system", "how to write lakh in nepali"
   ],
   "nepali-calendar": [
     "nepali calendar", "calendar", "calender", "nepali calender", "bikram sambat calendar",
@@ -240,7 +244,8 @@ export const SEARCH_INTENTS: Record<string, string[]> = {
   ],
   "vehicle-tax-calculator": [
     "vehicle tax nepal", "bluebook tax calculator", "bike tax nepal", "car tax renewal",
-    "bagmati province vehicle tax", "blue book renewal", "motorcycle tax"
+    "tax rate of bike in nepal", "bike tax rate", "motorcycle tax", "motorcycle blue book tax",
+    "bagmati province vehicle tax", "blue book renewal", "scooter road tax nepal"
   ],
   "ward-municipality-lookup": [
     "ward lookup", "municipality search", "gaupalika", "nagarpalika wards", "local government nepal",

@@ -8,6 +8,7 @@ import { NextAuthProvider } from "./providers";
 import PwaRegister from "@/components/PwaRegister";
 import CookieConsent from "@/components/CookieConsent";
 import AnalyticsTracker from "@/components/AnalyticsTracker";
+import RouteProgressBar from "@/components/RouteProgressBar";
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -182,6 +183,15 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${inter.variable} ${sora.variable} ${devanagari.variable}`}
     >
+      <head>
+        {adsenseClientId && (
+          <script
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClientId}`}
+            crossOrigin="anonymous"
+          />
+        )}
+      </head>
       <body className={inter.className}>
         <script
           type="application/ld+json"
@@ -189,6 +199,9 @@ export default function RootLayout({
         />
 
         <NextAuthProvider>
+          <Suspense fallback={null}>
+            <RouteProgressBar />
+          </Suspense>
           <Suspense fallback={null}>
             <AnalyticsTracker />
           </Suspense>

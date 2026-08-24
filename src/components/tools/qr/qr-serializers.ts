@@ -197,3 +197,135 @@ export function checkContrast(fgHex: string, bgHex: string, isTransparent: boole
 
   return { diff, isLowContrast, message };
 }
+
+/**
+ * Reverse parse a QR code payload back into form data fields
+ */
+export function parsePayloadToFormData(type: string, payload: string): any {
+  if (!payload) return {};
+
+  if (type === "url") {
+    return { url: payload };
+  }
+  if (type === "text") {
+    return { text: payload };
+  }
+  if (type === "phone") {
+    return { phone: payload.replace(/^tel:/i, "") };
+  }
+  if (type === "sms") {
+    const match = payload.match(/^SMSTO:([^:]+)(?::(.*))?$/i);
+    if (match) {
+      return { phone: match[1] || "", message: match[2] || "" };
+    }
+    return { phone: payload };
+  }
+  if (type === "email") {
+    const match = payload.match(/^mailto:([^?]+)(?:\?(.*))?$/i);
+    if (match) {
+      const to = match[1];
+      const params = new URLSearchParams(match[2] || "");
+      return {
+        to,
+        subject: params.get("subject") || "",
+        body: params.get("body") || "",
+      };
+    }
+    return { to: payload.replace(/^mailto:/i, "") };
+  }
+  if (type === "wifi") {
+    const ssidMatch = payload.match(/S:((?:\\;|[^;])+);/);
+    const passMatch = payload.match(/P:((?:\\;|[^;])+);/);
+    const typeMatch = payload.match(/T:([^;]+);/);
+    const hidMatch = payload.match(/H:([^;]+);/);
+    return {
+      ssid: ssidMatch ? ssidMatch[1].replace(/\\;/g, ";").replace(/\\:/g, ":") : "",
+      password: passMatch ? passMatch[1].replace(/\\;/g, ";").replace(/\\:/g, ":") : "",
+      encryption: (typeMatch ? typeMatch[1] : "WPA") as any,
+      hidden: hidMatch ? hidMatch[1] === "true" : false,
+    };
+  }
+  if (type === "vcard") {
+    const fnMatch = payload.match(/FN:(.*)/i);
+    const nMatch = payload.match(/N:([^;]*);([^;]*)/i);
+    const telMatch = payload.match(/TEL[^:]*:(.*)/i);
+    const emailMatch = payload.match(/EMAIL[^:]*:(.*)/i);
+    const orgMatch = payload.match(/ORG:(.*)/i);
+    const titleMatch = payload.match(/TITLE:(.*)/i);
+    const urlMatch = payload.match(/URL:(.*)/i);
+    const adrMatch = payload.match(/ADR[^:]*:;;([^;]*);([^;]*);;;([^;\n\r]*)/i);
+
+    let firstName = "";
+    let lastName = "";
+    if (nMatch) {
+      lastName = nMatch[1] || "";
+      firstName = nMatch[2] || "";
+    } else if (fnMatch) {
+      const parts = fnMatch[1].trim().split(" ");
+      firstName = parts[0] || "";
+      lastName = parts.slice(1).join(" ") || "";
+    }
+
+    return {
+      firstName,
+      lastName,
+      phone: telMatch ? telMatch[1].trim() : "",
+      email: emailMatch ? emailMatch[1].trim() : "",
+      organization: orgMatch ? orgMatch[1].trim() : "",
+      jobTitle: titleMatch ? titleMatch[1].trim() : "",
+      website: urlMatch ? urlMatch[1].trim() : "",
+      street: adrMatch ? adrMatch[1] || "" : "",
+      city: adrMatch ? adrMatch[2] || "" : "",
+      country: adrMatch ? adrMatch[3] || "" : "",
+    };
+  }
+  if (type === "location") {
+    const geoMatch = payload.match(/^geo:([-\d.]+),([-\d.]+)/i);
+    if (geoMatch) {
+      return {
+        latitude: geoMatch[1],
+        longitude: geoMatch[2],
+        rawInput: `${geoMatch[1]}, ${geoMatch[2]}`,
+      };
+    }
+    return { rawInput: payload };
+  }
+  if (type === "event") {
+    const sumMatch = payload.match(/SUMMARY:(.*)/i);
+    const locMatch = payload.match(/LOCATION:(.*)/i);
+    const descMatch = payload.match(/DESCRIPTION:(.*)/i);
+    const dtStartMatch = payload.match(/DTSTART:(\d{8})T(\d{4})/i);
+    const dtEndMatch = payload.match(/DTEND:(\d{8})T(\d{4})/i);
+
+    let startDate = "";
+    let startTime = "10:00";
+    if (dtStartMatch) {
+      const d = dtStartMatch[1];
+      startDate = `${d.slice(0, 4)}-${d.slice(4, 6)}-${d.slice(6, 8)}`;
+      const t = dtStartMatch[2];
+      startTime = `${t.slice(0, 2)}:${t.slice(2, 4)}`;
+    }
+
+    let endDate = "";
+    let endTime = "11:00";
+    if (dtEndMatch) {
+      const d = dtEndMatch[1];
+      endDate = `${d.slice(0, 4)}-${d.slice(4, 6)}-${d.slice(6, 8)}`;
+      const t = dtEndMatch[2];
+      endTime = `${t.slice(0, 2)}:${t.slice(2, 4)}`;
+    }
+
+    return {
+      title: sumMatch ? sumMatch[1].trim() : "",
+      location: locMatch ? locMatch[1].trim() : "",
+      description: descMatch ? descMatch[1].replace(/\\n/g, "\n").trim() : "",
+      startDate,
+      startTime,
+      endDate,
+      endTime,
+    };
+  }
+
+  return {};
+}
+

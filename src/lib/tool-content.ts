@@ -1798,46 +1798,62 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
   "tax-calculator": {
     slug: "tax-calculator",
     aboutParagraphs: [
-      "Nepal Income Tax & Salary TDS Calculator computes personal income tax liability and monthly Salary TDS according to the latest Inland Revenue Department (IRD) tax slabs.",
-      "Calculate single vs married tax bracket rates, 1% Social Security Tax, Employee Provident Fund (EPF / SSF) deductions, and Citizen Investment Trust (CIT) tax exemptions."
+      "Nepal Salary Tax & TDS Calculator computes exact monthly Salary TDS (Tax Deducted at Source) and annual personal income tax liability according to the latest Inland Revenue Department (IRD) Finance Act tax slabs for FY 2083/84 and FY 2082/83.",
+      "Supports Single vs Married assessment status, 1% Social Security Tax (SST), Social Security Fund (SSF), Employee Provident Fund (EPF), Citizen Investment Trust (CIT), Life & Health Insurance deductions, and 10% female tax rebate."
     ],
     useCases: [
-      "Calculating monthly Salary TDS withholding and net take-home salary for salaried employees in Nepal",
-      "Estimating tax savings from Employee Provident Fund (EPF), SSF, and Citizen Investment Trust (CIT) deductions",
-      "Calculating freelance contract TDS withholding (1.5% or 5%)"
+      "Calculating monthly Salary TDS withholding and net monthly take-home salary for employees in Nepal",
+      "Estimating annual payroll tax deductions for HR managers, accountants, and employers",
+      "Optimizing tax savings through SSF, EPF, CIT, and life insurance policy deductions",
+      "Calculating freelance consultancy and contract TDS withholding"
     ],
     howToSteps: [
-      "Select Assessment Status (Single or Married) and Fiscal Year.",
-      "Enter Annual Gross Salary or Monthly Basic Salary.",
-      "Input optional EPF, CIT, or insurance deductions to calculate net annual tax and monthly TDS."
+      "Select Assessment Status: Individual (Single) or Couple (Married), and choose the Fiscal Year (2083/84 or 2082/83).",
+      "Enter Gross Monthly Salary (Basic + Allowances) and Dashain / Festival Bonus months.",
+      "Select SSF enrollment or enter EPF / CIT retirement contributions and insurance premium deductions.",
+      "View instant breakdown of Annual Taxable Income, Progressive Tax Slabs, Annual Tax Liability, and exact Monthly TDS Withholding."
     ],
     examples: [
       {
-        title: "Monthly Salary TDS Calculation",
-        input: "Gross Monthly Salary: NPR 80,00, Married, EPF contribution: 10%",
-        output: "Taxable Salary calculated with 1% SST & 10% slab deductions"
+        title: "Monthly Salary TDS Withholding (Single, NPR 75,000/mo)",
+        input: "Monthly Salary: NPR 75,000 | Status: Single | SSF: Enrolled | Bonus: 1 Month",
+        output: "Annual Gross: NPR 9,75,000 | Taxable Income: NPR 6,72,750 | Monthly Salary TDS: NPR 1,856"
+      },
+      {
+        title: "Annual Salary Tax & TDS (Married, NPR 1,20,000/mo)",
+        input: "Monthly Salary: NPR 1,20,000 | Status: Married | SSF: Enrolled | Life Insurance: NPR 40,000",
+        output: "Taxable Income: NPR 11,04,000 | Annual Tax: NPR 81,200 | Monthly TDS: NPR 6,767"
       }
     ],
     limitations: [
-      "Reflects official Inland Revenue Department (IRD) Nepal income tax slabs"
+      "Reflects official Inland Revenue Department (IRD) Nepal income tax slabs and Budget FY 2083/84 guidelines",
+      "Special corporate allowances or non-cash perks should be evaluated under standard IRD fringe benefit guidelines"
     ],
     relatedToolSlugs: ["pf-calculator", "emi-calculator", "vat-calculator", "nrs-converter"],
     faqs: [
       {
+        question: "What is TDS on salary in Nepal and how is it deducted monthly?",
+        answer: "Salary TDS (Tax Deducted at Source) is the monthly income tax withheld by employers from an employee's salary and deposited directly to the Inland Revenue Department (IRD). The employer estimates your total annual tax liability across all slabs and divides it by 12 (or remaining months) to deduct monthly."
+      },
+      {
+        question: "How do I calculate salary tax in Nepal step by step?",
+        answer: "1) Calculate Annual Gross Salary (Monthly Salary × 12 + Festival Bonus). 2) Deduct SSF/EPF contributions (up to 1/3 of salary or Rs. 5 Lakh) and insurance deductions. 3) Apply progressive tax slabs (1% SST on first 5L single / 6L married; 10% on next 2L; 20% on next 3L; 30% on next 10L; 36% above 20L). 4) Deduct 10% female tax rebate if applicable. 5) Divide total annual tax by 12 to find monthly Salary TDS."
+      },
+      {
+        question: "What is the difference between Salary TDS and Annual Income Tax in Nepal?",
+        answer: "Annual Income Tax is the total tax owed on your entire yearly earnings. Salary TDS is the periodic monthly installment of that tax withheld by your employer from each monthly paycheck to fulfill that annual obligation."
+      },
+      {
         question: "What are the latest Nepal income tax slabs for salaried individuals?",
-        answer: "For single individuals: First Rs. 5 Lakh @ 1%, Next 2 Lakh @ 10%, Next 3 Lakh @ 20%, Next 10 Lakh @ 30%, Above 20 Lakh @ 36%."
+        answer: "For single individuals: First Rs. 5 Lakh @ 1%, Next 2 Lakh @ 10%, Next 3 Lakh @ 20%, Next 10 Lakh @ 30%, Above 20 Lakh @ 36%. For married individuals, the 1% band covers the first Rs. 6 Lakh."
       },
       {
         question: "How does the Married assessment status affect tax calculation?",
-        answer: "Married tax status increases the initial 1% tax bracket threshold to Rs. 6 Lakh, reducing total tax liability."
+        answer: "Married tax status increases the initial 1% tax bracket threshold from Rs. 5 Lakh to Rs. 6 Lakh, saving you Rs. 9,000 annually compared to single status."
       },
       {
         question: "Does it calculate EPF, CIT, and SSF tax deductions?",
-        answer: "Yes, contributions to EPF, CIT, and SSF are deducted from gross income up to statutory limits before calculating taxable income."
-      },
-      {
-        question: "Can freelancers calculate 1.5% or 5% TDS?",
-        answer: "Yes, switch to Freelance / Contract TDS mode to calculate withholding tax rates."
+        answer: "Yes, contributions to SSF (Social Security Fund), EPF, and CIT are deducted from gross income before applying tax brackets, subject to IRD statutory limits."
       }
     ]
   },
@@ -1939,34 +1955,63 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
   "gold-silver-calculator": {
     slug: "gold-silver-calculator",
     aboutParagraphs: [
-      "Nepal Gold & Silver Calculator computes accurate market prices for Fine Gold (छापावाल सुन), Tejabi Gold (तेजाबी सुन), and Silver (चाँदी) based on live FENEGOSIDA daily rates.",
-      "Calculate jewelry costs across traditional Nepalese weight units including Tola (तोला), Gram (ग्राम), Aana (आना), and Lal (लाल) with optional making charges (ज्याला/जर्ती)."
+      "Nepal Gold & Silver Calculator (Tola, Aana & Lal) computes accurate live market prices for 24K Fine Gold (छापावाल सुन), 22K Tejabi Gold (तेजाबी सुन), and Silver (चाँदी) based on official daily FENEGOSIDA rates.",
+      "Quickly calculate prices across traditional Nepalese weight units: Tola (तोला), Aana (आना), Lal (लाल), and Gram (ग्राम). In Nepal's jewelry market, 1 Tola = 16 Aana = 64 Lal = 11.6638 Grams, and 1 Aana = 4 Lal = 0.729 Grams. Estimate complete jewelry invoice totals including wastage (Jarti) and making charges (Jyala)."
     ],
     useCases: [
-      "Estimating jewelry cost before visiting a jeweler in Nepal",
-      "Tracking daily gold and silver rate changes for investment decisions",
-      "Calculating total invoice cost including making charges (Jyala/Jarti)"
+      "Calculating 1 Aana or 1 Lal gold price based on today's live FENEGOSIDA rate",
+      "Estimating jewelry cost (rings, chains, necklaces, bangles) before visiting a jeweler in Nepal",
+      "Converting gold weights between Tola, Aana, Lal, and Grams accurately",
+      "Calculating total jewelry invoice cost including making charges (Jyala) and wastage (Jarti)"
     ],
     howToSteps: [
-      "Select gold type (Fine or Tejabi) or silver.",
-      "Choose your unit — Tola, Gram, Aana, or Lal.",
-      "Enter quantity and optional making charges to see the total cost."
+      "Select metal type: Fine Gold 24K (छापावाल), Tejabi Gold 22K (तेजाबी), or Silver (चाँदी).",
+      "Choose your weight unit: Tola, Gram, Aana, or Lal, or click a quick one-tap preset (e.g. 1 Aana, 1 Lal, 1 Tola).",
+      "Enter weight quantity and optional making charges / Jyala (ज्याला).",
+      "View live calculated metal value, equivalent weight conversions, and total estimated price."
     ],
     examples: [
       {
-        title: "1 Tola Fine Gold",
-        input: "Quantity: 1 Tola, Rate: NPR 175,000/Tola",
-        output: "Total: NPR 175,000 (before making charges)"
+        title: "1 Aana 24K Fine Gold Price",
+        input: "Weight: 1 Aana (0.729g) | Live Rate: NPR 180,000 / Tola",
+        output: "Gold Value: NPR 11,250 (1 Tola ÷ 16 Aana)"
+      },
+      {
+        title: "1 Lal Fine Gold Price",
+        input: "Weight: 1 Lal (0.1822g) | Live Rate: NPR 180,000 / Tola",
+        output: "Gold Value: NPR 2,812.50 (1 Tola ÷ 64 Lal)"
+      },
+      {
+        title: "1 Tola Fine Gold with Making Charges",
+        input: "Quantity: 1 Tola | Rate: NPR 180,000 / Tola | Jyala: NPR 2,500",
+        output: "Total Estimated Price: NPR 182,500"
       }
     ],
     limitations: [
-      "Rates are sourced from FENEGOSIDA and may lag slightly behind real-time market movement",
-      "Actual jeweler prices can vary based on purity certification and local premiums"
+      "Rates are sourced from FENEGOSIDA and updated daily; jeweler retail rates may include minor local store premiums",
+      "Hallmark certification fees and stone weights should be evaluated separately"
     ],
+    relatedToolSlugs: ["traditional-unit-converter", "land-converter", "tax-calculator", "vat-calculator"],
     faqs: [
       {
+        question: "What is 1 Aana gold price today in Nepal?",
+        answer: "To find the 1 Aana gold price in Nepal, divide today's official FENEGOSIDA rate per Tola by 16 (since 1 Tola = 16 Aana). For example, if 1 Tola Fine Gold is NPR 176,000, then 1 Aana is exactly NPR 11,000. Our calculator automatically computes this in real-time."
+      },
+      {
+        question: "How much is 1 Lal of gold in Nepal?",
+        answer: "To calculate 1 Lal of gold, divide the Tola gold rate by 64 (since 1 Tola = 64 Lal, and 1 Aana = 4 Lal). If gold is NPR 176,000 per Tola, 1 Lal is NPR 2,750."
+      },
+      {
+        question: "How many Lal are in 1 Aana of gold?",
+        answer: "In the Nepalese jewelry measurement system, 1 Aana = 4 Lal = 0.7289875 Grams. 16 Aana make 1 full Tola (64 Lal)."
+      },
+      {
         question: "How many Aana and Lal are in one Tola?",
-        answer: "In the Nepalese jewelry market, 1 Tola = 16 Aana = 64 Lal = 11.6638 Grams."
+        answer: "In the Nepalese gold and silver market, 1 Tola = 16 Aana = 64 Lal = 11.6638 Grams."
+      },
+      {
+        question: "How to convert 1 Aana of gold to grams in Nepal?",
+        answer: "1 Aana of gold is equal to approximately 0.7289875 Grams (0.729g), which is calculated by dividing 11.6638 Grams (1 Tola) by 16."
       },
       {
         question: "Are daily gold rates updated automatically?",
@@ -1978,7 +2023,7 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       },
       {
         question: "Does it calculate jewelry making charges (Jyala / Jarti)?",
-        answer: "Yes, add fixed making charges or wastage percentages (Jarti) to calculate total final invoice cost."
+        answer: "Yes, add fixed making charges or wastage percentages (Jarti) to calculate the total final invoice cost."
       }
     ]
   },
@@ -2151,7 +2196,7 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
     limitations: [
       "Calculates standard official land conversion ratios (1 Ropani = 5,476 sq ft; 1 Bigha = 72,900 sq ft)"
     ],
-    relatedToolSlugs: ["traditional-unit-converter", "unit-converter", "tax-calculator", "nepali-number-words"],
+    relatedToolSlugs: ["gold-silver-calculator", "traditional-unit-converter", "unit-converter", "tax-calculator", "nepali-number-words"],
     faqs: [
       {
         question: "What is 1 Ropani in Square Feet?",
@@ -2341,46 +2386,56 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
   "nepali-number-words": {
     slug: "nepali-number-words",
     aboutParagraphs: [
-      "Nepali Number to Words Converter converts numerical amounts into formal Nepali Lakh/Crore words in both English and Devanagari script.",
-      "Ideal for writing bank cheques, financial contracts, tax receipts, and official agreements in Nepal."
+      "Nepali Number to Words Converter converts numerical amounts into formal Nepali Lakh/Crore words in both English and Devanagari script (नेपाली अक्षरमा).",
+      "Ideal for writing bank cheques, financial contracts, tax receipts, official agreements, and understanding how the South Asian numeral grouping (Lakh, Crore, Arab) works compared to the international million/billion system."
     ],
     useCases: [
       "Writing out exact currency wording for bank cheque filling (e.g. Rupees Five Lakh Only / ५ लाख रुपैयाँ मात्र)",
-      "Formatting numbers for legal real estate contracts and land transactions",
-      "Converting figures for accounting receipts and IRD tax invoices"
+      "Formatting numbers for legal real estate contracts, land transactions, and registry deeds",
+      "Converting figures for accounting receipts and IRD tax invoices in Nepal",
+      "Looking up how numbers like 1 Lakh, 1.45 Lakh, or 1 Crore are pronounced and written in Nepali"
     ],
     howToSteps: [
-      "Type any number or currency figure in the input field.",
-      "View instant formal wording in both English (Lakhs/Crores) and Devanagari.",
-      "Click 'Copy' to use in your cheque or document."
+      "Type any number or currency figure in the input field (e.g. 145000).",
+      "View instant formal wording in both English (Lakhs/Crores) and Nepali Devanagari.",
+      "Click 'Copy' to paste directly into your cheque, invoice, or legal document."
     ],
     examples: [
       {
-        title: "Bank Cheque Formatting",
+        title: "1 Lakh 45 Hajar Conversion (1,45,000)",
+        input: "145000",
+        output: "English: One Lakh Forty Five Thousand Rupees Only | Nepali: एक लाख पैंतालीस हजार रुपैयाँ मात्र"
+      },
+      {
+        title: "Bank Cheque Formatting (5,50,000)",
         input: "550000",
         output: "English: Five Lakh Fifty Thousand Rupees Only | Nepali: पाँच लाख पचास हजार रुपैयाँ मात्र"
       }
     ],
     limitations: [
-      "Uses the South Asian Lakh (100,000) and Crore (10,000,000) numbering system standard in Nepal"
+      "Uses the South Asian Lakh (100,000 = १,००,०००) and Crore (10,000,000 = १,००,००,०००) numbering system standard in Nepal"
     ],
     relatedToolSlugs: ["vat-calculator", "tax-calculator", "land-converter", "nepali-unicode"],
     faqs: [
       {
-        question: "Does it convert figures into Lakhs and Crores?",
-        answer: "Yes, it uses the South Asian numbering system (Lakhs and Crores) standard in Nepal."
+        question: "What is 1 Lakh in Nepali and how is it written?",
+        answer: "1 Lakh (१ लाख) in Nepali is equal to 100,000 (one hundred thousand or १०० हजार). In Nepali Devanagari, it is written as १,००,००० (एक लाख रुपैयाँ मात्र)."
       },
       {
-        question: "Does it generate text in both Nepali Devanagari and English?",
-        answer: "Yes, it outputs formal wording in both English (e.g. Five Lakh Fifty Thousand) and Nepali Devanagari (पाँच लाख पचास हजार)."
+        question: "How do I write 1,45,000 (1 Lakh 45 Hajar) in English words and Nepali?",
+        answer: "In English words using the Nepali/South Asian system: 'One Lakh Forty Five Thousand Rupees Only'. In Nepali Devanagari: 'एक लाख पैंतालीस हजार रुपैयाँ मात्र'."
+      },
+      {
+        question: "How is the Nepali numbering system different from the international system?",
+        answer: "The international system groups digits by threes (Thousands, Millions, Billions, e.g. 1,000,000 = 1 Million). The Nepali/South Asian system groups the first three digits, then every two digits thereafter: Hajar (1,000), Lakh (1,00,000 = 100 Thousand), Crore (1,00,00,000 = 10 Million), Arab (1,00,00,00,000 = 1 Billion)."
+      },
+      {
+        question: "How do I write change or currency amounts in Nepali words?",
+        answer: "Rupee figures end with 'रुपैयाँ मात्र' (Rupees ... Only), and decimal change values are written as Paisa (e.g. ५० पैसा / 50 Paisa)."
       },
       {
         question: "Does it format currency amounts for bank cheques?",
-        answer: "Yes, it includes optional 'Rupees ... Only' and 'पैयाँ मात्र' suffixes ideal for cheque writing."
-      },
-      {
-        question: "How does it handle decimal paisa amounts?",
-        answer: "Decimal values are formatted automatically as Paisa (e.g. 50 Paisa / ५० पैसा)."
+        answer: "Yes, it automatically adds formal 'Rupees ... Only' and 'रुपैयाँ मात्र' suffixes standard for banking institutions across Nepal."
       }
     ]
   },
@@ -2458,6 +2513,7 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       "Traditional unit values can vary slightly by region within Nepal",
       "Conversions use standardized modern equivalents, not historical regional variants"
     ],
+    relatedToolSlugs: ["gold-silver-calculator", "land-converter", "unit-converter", "nepali-number-words"],
     faqs: [
       {
         question: "How many Kilograms is 1 Dharni?",
@@ -2481,25 +2537,64 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
   "vehicle-tax-calculator": {
     slug: "vehicle-tax-calculator",
     aboutParagraphs: [
-      "Vehicle Blue Book Tax Calculator estimates annual road tax, registration renewal fees, and penalty fines for motorcycles, private cars, electric vehicles (EVs), and commercial transport across all 7 provinces of Nepal.",
-      "Select your province (Bagmati, Gandaki, Lumbini, etc.) and engine capacity (CC / kW) to view exact annual tax breakdowns prior to visiting the Transport Management Office (Yatayat)."
+      "Nepal Vehicle Road Tax & Blue Book Calculator estimates official annual road taxes (सवारी कर), renewal fees, and overdue penalty fines for motorcycles/bikes, scooters, private cars, electric vehicles (EVs), and commercial transport across all 7 provinces of Nepal.",
+      "Select your registered province (Bagmati, Gandaki, Koshi, Lumbini, Madhesh, Karnali, Sudurpashchim) and engine displacement (CC / kW) to check exact bike tax rates before visiting Yatayat (Transport Management Office)."
     ],
+    useCases: [
+      "Estimating annual bike & motorcycle tax (e.g. 125cc, 150cc, 200cc, 250cc, 400cc) before Blue Book renewal",
+      "Checking overdue blue book penalty fines before visiting the Transport Management Office (Yatayat)",
+      "Calculating annual road taxes for private cars, SUVs, and commercial vehicles",
+      "Comparing Electric Vehicle (EV) vs petrol motorcycle/car road tax in Bagmati Province"
+    ],
+    howToSteps: [
+      "Select your registered Province (e.g. Bagmati, Gandaki, Lumbini, Koshi).",
+      "Choose Vehicle Category: Two-Wheeler (Motorcycle/Scooter), Car/Jeep/Van, Electric Vehicle (EV), or Commercial.",
+      "Select your engine displacement CC slab or electric motor kilowatt (kW) capacity.",
+      "Toggle overdue status if your Blue Book renewal is delayed beyond the statutory deadline to include late fines.",
+      "View the exact itemized breakdown of Annual Road Tax, renewal fees, and total payable amount."
+    ],
+    examples: [
+      {
+        title: "125cc Motorcycle (Bagmati Province)",
+        input: "Vehicle: Two Wheeler | Capacity: Up to 125 CC | Province: Bagmati",
+        output: "Annual Road Tax: NPR 3,000 | Blue Book Renewal: NPR 300 | Total: NPR 3,300"
+      },
+      {
+        title: "150cc–160cc Bike Tax (Bagmati Province)",
+        input: "Vehicle: Two Wheeler | Capacity: 126 CC – 160 CC | Province: Bagmati",
+        output: "Annual Road Tax: NPR 4,500 | Blue Book Renewal: NPR 300 | Total: NPR 4,800"
+      },
+      {
+        title: "200cc–250cc Motorcycle Road Tax (Bagmati Province)",
+        input: "Vehicle: Two Wheeler | Capacity: 161 CC – 250 CC | Province: Bagmati",
+        output: "Annual Road Tax: NPR 6,000 | Blue Book Renewal: NPR 300 | Total: NPR 6,300"
+      }
+    ],
+    limitations: [
+      "Tax rates reflect the latest Provincial Finance Acts (आर्थिक ऐन) and may vary slightly between provinces",
+      "Does not include third-party insurance premiums or vehicle fitness test fees for commercial vehicles"
+    ],
+    relatedToolSlugs: ["tax-calculator", "land-converter", "nrs-converter", "emi-calculator"],
     faqs: [
       {
-        question: "Does road tax vary across different provinces in Nepal?",
-        answer: "Yes, provincial governments set individual annual vehicle tax rates; select your registered province for accurate rates."
+        question: "What is the bike tax rate in Nepal?",
+        answer: "In Bagmati Province and most regions of Nepal, annual bike (motorcycle/scooter) tax rates are: Up to 125cc: NPR 3,000; 126cc–160cc: NPR 4,500; 161cc–250cc: NPR 6,000; 251cc–400cc: NPR 11,500; Above 400cc: NPR 22,000."
       },
       {
-        question: "How is motorcycle tax calculated?",
-        answer: "Motorcycle tax is determined by engine displacement categories (Up to 125cc, 126-160cc, 161-250cc, 251-400cc, Above 400cc)."
+        question: "How is motorcycle road tax calculated across different provinces in Nepal?",
+        answer: "Each of the 7 provincial governments (Bagmati, Gandaki, Koshi, Lumbini, Madhesh, Karnali, Sudurpashchim) publishes annual rates in its Provincial Finance Act based on engine CC tiers."
       },
       {
-        question: "Does it calculate Electric Vehicle (EV) annual tax?",
-        answer: "Yes, EV tax rates are calculated based on motor power output ranges in kilowatts (kW)."
+        question: "What are the penalty fines for overdue blue book renewal in Nepal?",
+        answer: "Fines start after the renewal expiry deadline: 5% within the first 30 days, 10% for the next 45 days, 20% by the end of the fiscal year, and up to 100% compound penalties for multi-year overdue renewals."
       },
       {
-        question: "Does it include overdue renewal penalty fines?",
-        answer: "Yes, select overdue fiscal years to calculate late renewal penalty percentages (32%, 50%, 100% fine brackets)."
+        question: "Does an electric bike or electric scooter have road tax in Nepal?",
+        answer: "Yes, electric two-wheelers and EV cars are taxed according to motor kilowatt (kW) capacity tiers under provincial vehicle regulations."
+      },
+      {
+        question: "Where do I pay my vehicle road tax and renew my Blue Book?",
+        answer: "Road tax can be paid at your provincial Transport Management Office (Yatayat Karyalaya), designated Nagarik App services, or connected banking/digital wallet portals in supported provinces."
       }
     ]
   },

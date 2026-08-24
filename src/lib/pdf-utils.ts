@@ -414,9 +414,96 @@ export async function addImageWatermark(
 
 // ─── JPG ↔ PDF CONVERTER ──────────────────────────────────────────────────────
 
+/**
+ * Safely decodes and embeds an image file (JPEG, PNG, WebP, SVG, GIF, AVIF, HEIC, etc.) into a pdf-lib PDFDocument
+ */
+async function embedImageInPdfDoc(doc: PDFDocument, imgFile: File) {
+  const isPng = imgFile.type === "image/png" || imgFile.name.toLowerCase().endsWith(".png");
+  const isJpg = imgFile.type === "image/jpeg" || imgFile.type === "image/jpg" || /\.(jpe?g)$/i.test(imgFile.name);
+
+  if (isPng) {
+    try {
+      const bytes = await imgFile.arrayBuffer();
+      return await doc.embedPng(bytes);
+    } catch {
+      // Direct embedding failed, will convert with canvas below
+    }
+  } else if (isJpg) {
+    try {
+      const bytes = await imgFile.arrayBuffer();
+      return await doc.embedJpg(bytes);
+    } catch {
+      // Direct embedding failed (e.g. CMYK or progressive JPEG), will convert with canvas below
+    }
+  }
+
+  // Convert image to JPEG using Canvas for maximum format compatibility (WebP, SVG, GIF, AVIF, HEIC, etc.)
+  return new Promise<any>((resolve, reject) => {
+    const url = URL.createObjectURL(imgFile);
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = async () => {
+      try {
+        const width = img.naturalWidth || img.width;
+        const height = img.naturalHeight || img.height;
+        if (!width || !height) {
+          URL.revokeObjectURL(url);
+          throw new Error(`Invalid image dimensions for "${imgFile.name}"`);
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          URL.revokeObjectURL(url);
+          throw new Error("Unable to create canvas context");
+        }
+
+        // Fill white background for transparent images
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, width, height);
+        ctx.drawImage(img, 0, 0, width, height);
+        URL.revokeObjectURL(url);
+
+        canvas.toBlob(
+          async (blob) => {
+            if (!blob) {
+              reject(new Error(`Failed to process image "${imgFile.name}"`));
+              return;
+            }
+            try {
+              const buffer = await blob.arrayBuffer();
+              const embedded = await doc.embedJpg(buffer);
+              resolve(embedded);
+            } catch (err) {
+              reject(err);
+            }
+          },
+          "image/jpeg",
+          0.92
+        );
+      } catch (err) {
+        URL.revokeObjectURL(url);
+        reject(err);
+      }
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error(`Could not decode image file "${imgFile.name}". Please ensure it is a valid image.`));
+    };
+    img.src = url;
+  });
+}
+
+export type PdfPageOrientation = "fit" | "a4" | "a4-portrait" | "a4-landscape" | "a4-auto";
+export type PdfMargin = "none" | "small" | "normal";
+
 export async function imagesToPdf(
   images: File[],
-  mode: "fit" | "a4"
+  mode: PdfPageOrientation = "fit",
+  margin: PdfMargin = "none",
+  onProgress?: (current: number, total: number) => void
 ): Promise<Blob> {
   if (images.length === 0) {
     throw new Error("At least one image is required.");
@@ -424,23 +511,52 @@ export async function imagesToPdf(
 
   const doc = await PDFDocument.create();
 
-  for (const imgFile of images) {
-    const bytes = await imgFile.arrayBuffer();
-    const isPng =
-      imgFile.type === "image/png" || imgFile.name.toLowerCase().endsWith(".png");
-    const img = isPng ? await doc.embedPng(bytes) : await doc.embedJpg(bytes);
+  for (let i = 0; i < images.length; i++) {
+    const imgFile = images[i];
+    if (onProgress) {
+      onProgress(i + 1, images.length);
+    }
+
+    const img = await embedImageInPdfDoc(doc, imgFile);
 
     if (mode === "fit") {
       const page = doc.addPage([img.width, img.height]);
       page.drawImage(img, { x: 0, y: 0, width: img.width, height: img.height });
     } else {
-      // A4 dimensions in points: 595.28 x 841.89
-      const a4Width = 595.28;
-      const a4Height = 841.89;
+      // Standard A4 dimensions in points: 595.28 x 841.89
+      const standardA4Width = 595.28;
+      const standardA4Height = 841.89;
+
+      let a4Width = standardA4Width;
+      let a4Height = standardA4Height;
+
+      if (mode === "a4-landscape") {
+        a4Width = standardA4Height;
+        a4Height = standardA4Width;
+      } else if (mode === "a4-auto") {
+        if (img.width > img.height) {
+          a4Width = standardA4Height;
+          a4Height = standardA4Width;
+        } else {
+          a4Width = standardA4Width;
+          a4Height = standardA4Height;
+        }
+      }
+
+      // Margins in points
+      let marginPoints = 0;
+      if (margin === "small") marginPoints = 20;
+      else if (margin === "normal") marginPoints = 36;
+      else if (mode === "a4") marginPoints = 20;
+
+      const availWidth = Math.max(10, a4Width - marginPoints * 2);
+      const availHeight = Math.max(10, a4Height - marginPoints * 2);
+
       const page = doc.addPage([a4Width, a4Height]);
-      const scale = Math.min(a4Width / img.width, a4Height / img.height) * 0.9;
+      const scale = Math.min(availWidth / img.width, availHeight / img.height);
       const w = img.width * scale;
       const h = img.height * scale;
+
       page.drawImage(img, {
         x: (a4Width - w) / 2,
         y: (a4Height - h) / 2,
