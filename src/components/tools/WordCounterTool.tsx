@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Download, Copy, Check, Trash2 } from "lucide-react";
+import { Download, Copy, Check } from "lucide-react";
+import AnimatedTrashIcon, { AnimatedTrashButton } from "@/components/shared/AnimatedTrashIcon";
 
 // Common abbreviations that should NOT trigger sentence boundaries
 const ABBREVIATIONS = new Set([
@@ -202,13 +203,14 @@ export default function WordCounterTool() {
 
       {/* Actions Toolbar */}
       <div className="flex flex-wrap items-center gap-2">
-        <button
-          onClick={() => setText("")}
+        <AnimatedTrashButton
+          onDelete={() => setText("")}
           disabled={!text}
           className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-white dark:bg-[#1E2338] text-[#71717A] text-xs font-semibold border border-[#E4E0D8] dark:border-[#2A2F48] hover:bg-[#F0EDE8] dark:hover:bg-[#252A42] transition-colors disabled:opacity-40"
+          iconSize={14}
         >
-          <Trash2 size={14} /> Clear
-        </button>
+          Clear
+        </AnimatedTrashButton>
 
         <button
           onClick={copyText}

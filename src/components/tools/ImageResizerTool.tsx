@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import {
   Download,
-  Trash2,
   Loader2,
   Archive,
   Sliders,
@@ -14,6 +13,7 @@ import {
   Maximize2,
   Eye,
 } from "lucide-react";
+import AnimatedTrashIcon, { AnimatedTrashButton } from "@/components/shared/AnimatedTrashIcon";
 import JSZip from "jszip";
 import ImageDropzone from "./shared/ImageDropzone";
 
@@ -849,12 +849,11 @@ export default function ImageResizerTool() {
                         <Download size={14} /> Download
                       </button>
                     )}
-                    <button
-                      onClick={() => removeItem(item.id)}
+                    <AnimatedTrashButton
+                      onDelete={() => removeItem(item.id)}
                       className="p-2 rounded-xl border border-[#E4E0D8] dark:border-[#1E2338] text-[#71717A] hover:text-rose-500 hover:border-rose-300 transition-colors"
-                    >
-                      <Trash2 size={14} />
-                    </button>
+                      iconSize={14}
+                    />
                   </div>
                 </div>
               </div>

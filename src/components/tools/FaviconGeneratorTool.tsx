@@ -3,7 +3,6 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import {
   Download,
-  Trash2,
   Loader2,
   ShieldCheck,
   Copy,
@@ -31,6 +30,7 @@ import {
   Maximize2,
   Sliders,
 } from "lucide-react";
+import AnimatedTrashIcon, { AnimatedTrashButton } from "@/components/shared/AnimatedTrashIcon";
 import JSZip from "jszip";
 import ImageDropzone from "./shared/ImageDropzone";
 import {
@@ -158,6 +158,7 @@ export default function FaviconGeneratorTool() {
   const [preview16Url, setPreview16Url] = useState<string | null>(null);
   const [preview32Url, setPreview32Url] = useState<string | null>(null);
   const [preview180Url, setPreview180Url] = useState<string | null>(null);
+  const [preview512Url, setPreview512Url] = useState<string | null>(null);
   const [previewOrigUrl, setPreviewOrigUrl] = useState<string | null>(null);
 
   // DOM Refs
@@ -215,12 +216,14 @@ export default function FaviconGeneratorTool() {
     if (preview16Url) URL.revokeObjectURL(preview16Url);
     if (preview32Url) URL.revokeObjectURL(preview32Url);
     if (preview180Url) URL.revokeObjectURL(preview180Url);
+    if (preview512Url) URL.revokeObjectURL(preview512Url);
     setFile(null);
     setImgDims({ w: 0, h: 0 });
     setPreviewOrigUrl(null);
     setPreview16Url(null);
     setPreview32Url(null);
     setPreview180Url(null);
+    setPreview512Url(null);
     setProcessError(null);
     setSuccessMessage(null);
     setCropRect({ x: 0, y: 0, size: 0 });
@@ -228,11 +231,11 @@ export default function FaviconGeneratorTool() {
     loadedImageObjRef.current = null;
   };
 
-  // ── Render 1:1 square canvas at target size ──────────────────────────────────
+  // ── Render 1:1 square canvas at target size with multi-step downsampling ───
   const renderSquareBlob = useCallback(
     async (img: HTMLImageElement, targetSize: number): Promise<Blob> => {
       const padFraction = padding / 100;
-      const innerSize = Math.round(targetSize * (1 - padFraction * 2));
+      const innerSize = Math.max(1, Math.round(targetSize * (1 - padFraction * 2)));
       const innerOffset = Math.round(targetSize * padFraction);
       const { canvas, ctx } = createCanvas(targetSize, targetSize);
 
@@ -245,9 +248,58 @@ export default function FaviconGeneratorTool() {
         ctx.fillRect(0, 0, targetSize, targetSize);
       }
 
+      // Step-down helper for high-quality, razor-sharp downscaling
+      const drawSharp = (
+        sourceImg: HTMLImageElement,
+        sx: number,
+        sy: number,
+        sw: number,
+        sh: number,
+        dx: number,
+        dy: number,
+        dw: number,
+        dh: number
+      ) => {
+        let curW = sw;
+        let curH = sh;
+
+        // Create temporary canvas for step-down
+        let curCanvas = document.createElement("canvas");
+        curCanvas.width = curW;
+        curCanvas.height = curH;
+        let curCtx = curCanvas.getContext("2d");
+        if (!curCtx) {
+          ctx.drawImage(sourceImg, sx, sy, sw, sh, dx, dy, dw, dh);
+          return;
+        }
+        curCtx.imageSmoothingEnabled = true;
+        curCtx.imageSmoothingQuality = "high";
+        curCtx.drawImage(sourceImg, sx, sy, sw, sh, 0, 0, curW, curH);
+
+        // Step-down halve dimensions if more than 2x target size to avoid aliasing and blur
+        while (curW > dw * 2 && curH > dh * 2) {
+          const nextW = Math.max(Math.floor(curW / 2), dw);
+          const nextH = Math.max(Math.floor(curH / 2), dh);
+          const nextCanvas = document.createElement("canvas");
+          nextCanvas.width = nextW;
+          nextCanvas.height = nextH;
+          const nextCtx = nextCanvas.getContext("2d");
+          if (!nextCtx) break;
+          nextCtx.imageSmoothingEnabled = true;
+          nextCtx.imageSmoothingQuality = "high";
+          nextCtx.drawImage(curCanvas, 0, 0, curW, curH, 0, 0, nextW, nextH);
+
+          curCanvas = nextCanvas;
+          curW = nextW;
+          curH = nextH;
+        }
+
+        ctx.drawImage(curCanvas, 0, 0, curW, curH, dx, dy, dw, dh);
+      };
+
       if (fitMode === "crop" && cropRect.size > 0) {
         // Draw cropped 1:1 sub-rectangle
-        ctx.drawImage(
+        drawSharp(
           img,
           cropRect.x,
           cropRect.y,
@@ -263,12 +315,12 @@ export default function FaviconGeneratorTool() {
         const srcW = img.naturalWidth;
         const srcH = img.naturalHeight;
         const scale = Math.min(innerSize / srcW, innerSize / srcH);
-        const drawW = Math.round(srcW * scale);
-        const drawH = Math.round(srcH * scale);
+        const drawW = Math.max(1, Math.round(srcW * scale));
+        const drawH = Math.max(1, Math.round(srcH * scale));
         const drawX = Math.round((targetSize - drawW) / 2);
         const drawY = Math.round((targetSize - drawH) / 2);
 
-        ctx.drawImage(img, drawX, drawY, drawW, drawH);
+        drawSharp(img, 0, 0, srcW, srcH, drawX, drawY, drawW, drawH);
       }
 
       return canvasToBlob(canvas, "image/png", 1);
@@ -286,23 +338,26 @@ export default function FaviconGeneratorTool() {
         loadedImageObjRef.current = img;
       }
 
-      const [blob16, blob32, blob180] = await Promise.all([
+      const [blob16, blob32, blob180, blob512] = await Promise.all([
         renderSquareBlob(img, 16),
         renderSquareBlob(img, 32),
         renderSquareBlob(img, 180),
+        renderSquareBlob(img, 512),
       ]);
 
       if (preview16Url) URL.revokeObjectURL(preview16Url);
       if (preview32Url) URL.revokeObjectURL(preview32Url);
       if (preview180Url) URL.revokeObjectURL(preview180Url);
+      if (preview512Url) URL.revokeObjectURL(preview512Url);
 
       setPreview16Url(URL.createObjectURL(blob16));
       setPreview32Url(URL.createObjectURL(blob32));
       setPreview180Url(URL.createObjectURL(blob180));
+      setPreview512Url(URL.createObjectURL(blob512));
     } catch (e) {
       console.warn("Preview gen error:", e);
     }
-  }, [file, preview16Url, preview32Url, preview180Url, renderSquareBlob]);
+  }, [file, preview16Url, preview32Url, preview180Url, preview512Url, renderSquareBlob]);
 
   useEffect(() => {
     const timer = setTimeout(() => generatePreviews(), 120);
@@ -571,13 +626,12 @@ export default function FaviconGeneratorTool() {
                 </div>
               </div>
             </div>
-            <button
-              onClick={handleClear}
+            <AnimatedTrashButton
+              onDelete={handleClear}
               className="p-2 rounded-xl text-[#71717A] hover:bg-rose-500/10 hover:text-rose-500 transition-colors shrink-0"
               title="Remove file"
-            >
-              <Trash2 size={16} />
-            </button>
+              iconSize={16}
+            />
           </div>
 
           {/* Small source warning */}
@@ -1041,12 +1095,11 @@ export default function FaviconGeneratorTool() {
                             : "bg-[#ffffff] text-[#202124] shadow-sm"
                         }`}
                       >
-                        {preview16Url ? (
+                        {preview512Url || preview180Url || previewOrigUrl ? (
                           <img
-                            src={preview16Url}
+                            src={preview512Url || preview180Url || previewOrigUrl || ""}
                             alt="Favicon"
-                            className="w-4 h-4 shrink-0 object-contain"
-                            style={{ imageRendering: "pixelated" }}
+                            className="w-4 h-4 shrink-0 object-cover rounded-xs"
                           />
                         ) : (
                           <div className="w-4 h-4 rounded-sm bg-violet-500/20 shrink-0" />
@@ -1117,11 +1170,11 @@ export default function FaviconGeneratorTool() {
                       }`}
                     >
                       <div className="w-8 h-8 rounded-xl bg-violet-500/10 flex items-center justify-center mb-2">
-                        {preview32Url ? (
+                        {preview512Url || preview180Url || previewOrigUrl ? (
                           <img
-                            src={preview32Url}
+                            src={preview512Url || preview180Url || previewOrigUrl || ""}
                             alt="Logo"
-                            className="w-5 h-5 object-contain"
+                            className="w-6 h-6 object-cover rounded-md"
                           />
                         ) : (
                           <Monitor size={16} className="text-violet-500" />
@@ -1158,13 +1211,13 @@ export default function FaviconGeneratorTool() {
                             className="w-16 h-16 rounded-[22%] shadow-2xl p-1 flex items-center justify-center overflow-hidden border border-white/10"
                             style={subtleCheckerboard}
                           >
-                            {preview180Url && (
+                            {preview512Url || preview180Url ? (
                               <img
-                                src={preview180Url}
+                                src={preview512Url || preview180Url || ""}
                                 alt="Apple Touch Icon"
-                                className="w-full h-full object-contain"
+                                className="w-full h-full object-cover"
                               />
-                            )}
+                            ) : null}
                           </div>
                           <span className="text-[11px] font-medium text-white/90 truncate max-w-[70px]">
                             iOS App
@@ -1178,13 +1231,13 @@ export default function FaviconGeneratorTool() {
                             className="w-16 h-16 rounded-full shadow-2xl p-2 flex items-center justify-center overflow-hidden border border-white/10"
                             style={subtleCheckerboard}
                           >
-                            {preview180Url && (
+                            {preview512Url || preview180Url ? (
                               <img
-                                src={preview180Url}
+                                src={preview512Url || preview180Url || ""}
                                 alt="Android Icon"
-                                className="w-full h-full object-contain"
+                                className="w-full h-full object-cover"
                               />
-                            )}
+                            ) : null}
                           </div>
                           <span className="text-[11px] font-medium text-white/90 truncate max-w-[70px]">
                             Android
@@ -1198,13 +1251,13 @@ export default function FaviconGeneratorTool() {
                             className="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 shadow-2xl flex items-center justify-center overflow-hidden"
                             style={subtleCheckerboard}
                           >
-                            {preview32Url && (
+                            {preview512Url || preview180Url || preview32Url ? (
                               <img
-                                src={preview32Url}
+                                src={preview512Url || preview180Url || preview32Url || ""}
                                 alt="Favicon 32px"
-                                className="w-8 h-8 object-contain"
+                                className="w-8 h-8 object-cover rounded-sm"
                               />
-                            )}
+                            ) : null}
                           </div>
                           <span className="text-[11px] font-medium text-white/90 truncate max-w-[70px]">
                             Bookmark
@@ -1282,8 +1335,7 @@ export default function FaviconGeneratorTool() {
                           <img
                             src={preview16Url}
                             alt="16px"
-                            className="w-4 h-4 shrink-0"
-                            style={{ imageRendering: "pixelated" }}
+                            className="w-4 h-4 shrink-0 object-contain"
                           />
                         )}
                       </div>

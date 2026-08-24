@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Keyboard, Copy, Check, Download, Trash2, Info, ArrowRightLeft, FileText } from "lucide-react";
+import { Keyboard, Copy, Check, Download, Info, ArrowRightLeft, FileText } from "lucide-react";
+import AnimatedTrashIcon, { AnimatedTrashButton } from "@/components/shared/AnimatedTrashIcon";
 
 // ── ROMANIZED PHONETIC TRANSLITERATION ENGINE ──────────────────────────────────
 
@@ -465,13 +466,12 @@ export default function NepaliUnicodeTool() {
               {q.label}
             </button>
           ))}
-          <button
-            onClick={() => setInputText("")}
+          <AnimatedTrashButton
+            onDelete={() => setInputText("")}
             className="p-1.5 rounded-lg text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
             title="Clear Input"
-          >
-            <Trash2 size={14} />
-          </button>
+            iconSize={14}
+          />
         </div>
       </div>
 

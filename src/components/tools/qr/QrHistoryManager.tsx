@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { History, Palette, Trash2, ArrowUpRight, RotateCcw } from "lucide-react";
+import { History, Palette, ArrowUpRight, RotateCcw } from "lucide-react";
+import AnimatedTrashIcon, { AnimatedTrashButton } from "@/components/shared/AnimatedTrashIcon";
 import { HistoryItem, PresetTemplate, QrStyleOptions, ContentType } from "./types";
 import { PRESET_TEMPLATES } from "./QrPresets";
 
@@ -109,13 +110,13 @@ export default function QrHistoryManager({
               <History size={14} className="text-[#F5A623]" />
               Local History (Last {history.length})
             </span>
-            <button
-              type="button"
-              onClick={clearHistory}
+            <AnimatedTrashButton
+              onDelete={clearHistory}
               className="text-[11px] text-[#71717A] hover:text-red-500 transition-colors flex items-center gap-1"
+              iconSize={12}
             >
-              <Trash2 size={12} /> Clear History
-            </button>
+              Clear History
+            </AnimatedTrashButton>
           </div>
 
           <div className="divide-y divide-[#E4E0D8] dark:divide-[#2A2F48] rounded-xl border border-[#E4E0D8] dark:border-[#1E2338] bg-white dark:bg-[#141829] overflow-hidden">

@@ -13,11 +13,11 @@ import {
   GripVertical,
   X,
   Plus,
-  Trash2,
   ArrowLeft,
   ArrowRight,
   RotateCcw,
 } from "lucide-react";
+import AnimatedTrashIcon, { AnimatedTrashButton } from "@/components/shared/AnimatedTrashIcon";
 import PdfDropzone from "./shared/PdfDropzone";
 import ImageDropzone from "./shared/ImageDropzone";
 import { trackError } from "@/lib/analytics";
@@ -380,15 +380,14 @@ export default function JpgPdfConverterTool() {
                     <span>Add More</span>
                   </button>
 
-                  <button
-                    type="button"
-                    onClick={clearImages}
+                  <AnimatedTrashButton
+                    onDelete={clearImages}
                     disabled={isProcessing}
                     className="px-3 py-2 rounded-xl text-xs font-bold text-rose-500 hover:bg-rose-500/10 transition-colors flex items-center gap-1.5"
+                    iconSize={14}
                   >
-                    <Trash2 size={14} />
                     <span className="hidden sm:inline">Clear All</span>
-                  </button>
+                  </AnimatedTrashButton>
                 </div>
               </div>
 

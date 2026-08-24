@@ -31,6 +31,8 @@ import {
 } from "lucide-react";
 import SearchBar from "@/components/SearchBar";
 import { TOOLS as REGISTERED_TOOLS } from "@/lib/tools-registry";
+import { CategoryAnimatedIcon, CategoryAnimatedIconHandle } from "@/components/layout/CategoryAnimatedIcon";
+import DeveloperSuiteIcon from "@/components/shared/DeveloperSuiteIcon";
 
 const TOOL_CATEGORIES = [
   {
@@ -53,7 +55,7 @@ const TOOL_CATEGORIES = [
     name: "Developer Suite",
     href: "/tools/developer",
     desc: "JSON Formatter, Base64, JWT, Hash",
-    icon: Braces,
+    icon: DeveloperSuiteIcon,
     badge: "Dev",
     color: "text-indigo-500 bg-indigo-50 dark:bg-indigo-950/40",
   },
@@ -82,6 +84,48 @@ const TOOL_CATEGORIES = [
     color: "text-teal-600 bg-teal-50 dark:bg-teal-950/40",
   },
 ];
+
+function HeaderCategoryDropdownItem({
+  cat,
+  onSelect,
+}: {
+  cat: (typeof TOOL_CATEGORIES)[0];
+  onSelect: () => void;
+}) {
+  const iconRef = useRef<CategoryAnimatedIconHandle>(null);
+
+  return (
+    <Link
+      href={cat.href}
+      onClick={onSelect}
+      onPointerEnter={(e) => {
+        if (e.pointerType === "mouse") {
+          iconRef.current?.trigger();
+        }
+      }}
+      className="flex items-center justify-between p-2.5 rounded-xl hover:bg-black/[0.03] dark:hover:bg-white/[0.05] transition-colors group"
+    >
+      <div className="flex items-center gap-3">
+        <div className={`p-2 rounded-lg ${cat.color} shrink-0 flex items-center justify-center`}>
+          <CategoryAnimatedIcon ref={iconRef} categoryName={cat.name} size={18} />
+        </div>
+        <div>
+          <div className="text-xs font-semibold text-[#18181B] dark:text-[#F4F4F5] group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+            {cat.name}
+          </div>
+          <div className="text-[11px] text-[#71717A] dark:text-[#8E95A8] truncate">
+            {cat.desc}
+          </div>
+        </div>
+      </div>
+      {cat.badge && (
+        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300">
+          {cat.badge}
+        </span>
+      )}
+    </Link>
+  );
+}
 
 export default function SiteHeader() {
   const { theme, setTheme } = useTheme();
@@ -319,36 +363,13 @@ export default function SiteHeader() {
                         Categories
                       </div>
                       <div className="space-y-1">
-                        {TOOL_CATEGORIES.map((cat) => {
-                          const Icon = cat.icon;
-                          return (
-                            <Link
-                              key={cat.name}
-                              href={cat.href}
-                              onClick={() => setToolsDropdownOpen(false)}
-                              className="flex items-center justify-between p-2.5 rounded-xl hover:bg-black/[0.03] dark:hover:bg-white/[0.05] transition-colors group"
-                            >
-                              <div className="flex items-center gap-3">
-                                <div className={`p-2 rounded-lg ${cat.color} shrink-0`}>
-                                  <Icon size={16} />
-                                </div>
-                                <div>
-                                  <div className="text-xs font-semibold text-[#18181B] dark:text-[#F4F4F5] group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
-                                    {cat.name}
-                                  </div>
-                                  <div className="text-[11px] text-[#71717A] dark:text-[#8E95A8] truncate">
-                                    {cat.desc}
-                                  </div>
-                                </div>
-                              </div>
-                              {cat.badge && (
-                                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300">
-                                  {cat.badge}
-                                </span>
-                              )}
-                            </Link>
-                          );
-                        })}
+                        {TOOL_CATEGORIES.map((cat) => (
+                          <HeaderCategoryDropdownItem
+                            key={cat.name}
+                            cat={cat}
+                            onSelect={() => setToolsDropdownOpen(false)}
+                          />
+                        ))}
                       </div>
 
                       <div className="mt-2 pt-2 border-t border-[#E4E0D8] dark:border-[#1E2338] px-2.5 py-1 flex items-center justify-between">

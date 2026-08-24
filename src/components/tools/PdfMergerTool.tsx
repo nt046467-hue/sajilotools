@@ -3,7 +3,6 @@
 import { useState } from "react";
 import {
   FileText,
-  Trash2,
   ArrowUp,
   ArrowDown,
   Lock,
@@ -14,6 +13,7 @@ import {
   PlusCircle,
   FileStack,
 } from "lucide-react";
+import AnimatedTrashIcon, { AnimatedTrashButton } from "@/components/shared/AnimatedTrashIcon";
 import PdfDropzone from "./shared/PdfDropzone";
 import { trackError } from "@/lib/analytics";
 import {
@@ -225,13 +225,12 @@ export default function PdfMergerTool() {
                   >
                     <ArrowDown size={16} />
                   </button>
-                  <button
-                    onClick={() => removeItem(item.id)}
+                  <AnimatedTrashButton
+                    onDelete={() => removeItem(item.id)}
                     className="p-2 rounded-xl text-rose-500 hover:bg-rose-500/10 transition-colors"
                     title="Remove file"
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                    iconSize={16}
+                  />
                 </div>
               </div>
             ))}

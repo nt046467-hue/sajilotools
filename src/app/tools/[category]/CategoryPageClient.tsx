@@ -58,8 +58,11 @@ import {
 import type { ToolDef, CategoryDef } from "@/lib/tools-registry";
 import { getToolAccentStyle } from "@/lib/theme-utils";
 
+import DeveloperSuiteIcon from "@/components/shared/DeveloperSuiteIcon";
+
 const ICON_MAP: Record<string, any> = {
-  Braces,
+  Braces: DeveloperSuiteIcon,
+  Developer: DeveloperSuiteIcon,
   AlignLeft,
   FileText,
   Image: ImageIcon,
@@ -109,7 +112,8 @@ const ICON_MAP: Record<string, any> = {
 };
 
 function getIcon(name: string) {
-  return ICON_MAP[name] ?? Braces;
+  if (name === "Braces" || name === "Developer") return DeveloperSuiteIcon;
+  return ICON_MAP[name] ?? DeveloperSuiteIcon;
 }
 
 export default function CategoryPageClient({

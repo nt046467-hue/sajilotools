@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { ArrowLeftRight, Clock, Plus, Trash2, Globe, Calendar } from "lucide-react";
+import { ArrowLeftRight, Clock, Plus, Globe, Calendar } from "lucide-react";
+import AnimatedTrashIcon, { AnimatedTrashButton } from "@/components/shared/AnimatedTrashIcon";
 
 // List of major world IANA timezones grouped by region
 const TIMEZONES = [
@@ -364,13 +365,12 @@ export default function TimeZoneConverterTool() {
                   key={tz}
                   className="p-4 rounded-2xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F4A] space-y-2 relative group"
                 >
-                  <button
-                    onClick={() => removeExtraZone(tz)}
+                  <AnimatedTrashButton
+                    onDelete={() => removeExtraZone(tz)}
                     className="absolute top-3 right-3 text-[#71717A] hover:text-red-500 transition-colors opacity-70 group-hover:opacity-100"
                     title="Remove timezone"
-                  >
-                    <Trash2 size={14} />
-                  </button>
+                    iconSize={14}
+                  />
 
                   <div className="text-xs font-bold text-[#71717A] dark:text-[#A1A1AA] pr-6 truncate">
                     {label}

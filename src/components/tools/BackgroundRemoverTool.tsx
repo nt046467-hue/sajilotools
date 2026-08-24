@@ -11,10 +11,10 @@ import {
   ShieldCheck,
   Layers,
   Wand2,
-  Trash2,
   Archive,
   Cpu,
 } from "lucide-react";
+import AnimatedTrashIcon, { AnimatedTrashButton } from "@/components/shared/AnimatedTrashIcon";
 import JSZip from "jszip";
 import ImageDropzone from "./shared/ImageDropzone";
 
@@ -522,14 +522,13 @@ export default function BackgroundRemoverTool() {
                 </button>
               )}
 
-              <button
-                onClick={clearAll}
+              <AnimatedTrashButton
+                onDelete={clearAll}
                 disabled={isProcessing}
                 className="px-3.5 py-2.5 rounded-xl border border-[#E4E0D8] dark:border-[#2A2F48] bg-white dark:bg-[#1E2338] text-[#71717A] dark:text-[#A1A1AA] hover:text-rose-600 text-xs font-semibold transition-colors disabled:opacity-50"
                 title="Clear all images"
-              >
-                <Trash2 size={15} />
-              </button>
+                iconSize={15}
+              />
             </div>
           </div>
 
@@ -582,14 +581,13 @@ export default function BackgroundRemoverTool() {
                     <Download size={13} /> Save
                   </button>
                 )}
-                <button
-                  onClick={() => removeItem(item.id)}
+                <AnimatedTrashButton
+                  onDelete={() => removeItem(item.id)}
                   disabled={isProcessing && currentIndex === idx}
                   className="p-1.5 text-[#71717A] hover:text-rose-600 rounded-lg transition-colors disabled:opacity-40"
                   title="Remove image"
-                >
-                  <Trash2 size={15} />
-                </button>
+                  iconSize={15}
+                />
               </div>
             </div>
 

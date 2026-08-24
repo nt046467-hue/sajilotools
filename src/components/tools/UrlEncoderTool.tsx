@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Copy, Check, RefreshCw, Trash2, ArrowUpDown } from "lucide-react";
+import { Copy, Check, RefreshCw, ArrowUpDown } from "lucide-react";
+import AnimatedTrashIcon, { AnimatedTrashButton } from "@/components/shared/AnimatedTrashIcon";
 
 export default function UrlEncoderTool() {
   const [input, setInput] = useState("");
@@ -98,13 +99,12 @@ export default function UrlEncoderTool() {
             <ArrowUpDown size={14} /> Swap
           </button>
 
-          <button
-            onClick={clear}
+          <AnimatedTrashButton
+            onDelete={clear}
             className="p-2 rounded-xl bg-[#FAFAF8] dark:bg-[#1E2338] text-[#71717A] hover:text-red-500 text-xs font-semibold border border-[#E4E0D8] dark:border-[#2A2F48] transition-colors"
             title="Clear all"
-          >
-            <Trash2 size={14} />
-          </button>
+            iconSize={14}
+          />
         </div>
       </div>
 

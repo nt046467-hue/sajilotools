@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import {
   Download,
-  Trash2,
   Loader2,
   Archive,
   Sliders,
@@ -15,6 +14,7 @@ import {
   RefreshCw,
   FileCode,
 } from "lucide-react";
+import AnimatedTrashIcon, { AnimatedTrashButton } from "@/components/shared/AnimatedTrashIcon";
 import JSZip from "jszip";
 import ImageDropzone from "./shared/ImageDropzone";
 
@@ -509,14 +509,14 @@ export default function ImageConverterTool() {
             </div>
 
             <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={clearAll}
+              <AnimatedTrashButton
+                onDelete={clearAll}
                 disabled={isProcessing}
                 className="px-3.5 py-2 rounded-xl text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 transition-colors flex items-center gap-1.5 disabled:opacity-50"
+                iconSize={14}
               >
-                <Trash2 size={14} /> Clear All
-              </button>
+                Clear All
+              </AnimatedTrashButton>
 
               {isAnyConverted && (
                 <button
@@ -621,15 +621,13 @@ export default function ImageConverterTool() {
                       </button>
                     )}
 
-                    <button
-                      type="button"
-                      onClick={() => removeItem(item.id)}
+                    <AnimatedTrashButton
+                      onDelete={() => removeItem(item.id)}
                       disabled={isProcessing}
                       className="p-2 rounded-xl text-[#71717A] hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-500/10 transition-colors disabled:opacity-50"
                       title="Remove image"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                      iconSize={16}
+                    />
                   </div>
                 </div>
               );

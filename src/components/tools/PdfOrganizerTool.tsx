@@ -9,12 +9,12 @@ import {
   AlertTriangle,
   CheckCircle2,
   RotateCw,
-  Trash2,
   Undo2,
   GripVertical,
   X,
   LayoutGrid,
 } from "lucide-react";
+import AnimatedTrashIcon, { AnimatedTrashButton } from "@/components/shared/AnimatedTrashIcon";
 import PdfDropzone from "./shared/PdfDropzone";
 import {
   loadPdfFile,
@@ -347,27 +347,25 @@ export default function PdfOrganizerTool() {
                     <span>Rotate</span>
                   </button>
 
-                  <button
-                    onClick={() => handleToggleDelete(idx)}
-                    className={`py-1.5 px-2 rounded-xl text-xs font-semibold transition-colors flex items-center justify-center gap-1 ${
-                      page.deleted
-                        ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20"
-                        : "bg-rose-500/10 text-rose-600 dark:text-rose-400 hover:bg-rose-500/20"
-                    }`}
-                    title={page.deleted ? "Undo delete" : "Delete page"}
-                  >
-                    {page.deleted ? (
-                      <>
-                        <Undo2 size={13} />
-                        <span>Undo</span>
-                      </>
-                    ) : (
-                      <>
-                        <Trash2 size={13} />
-                        <span>Delete</span>
-                      </>
-                    )}
-                  </button>
+                  {page.deleted ? (
+                    <button
+                      onClick={() => handleToggleDelete(idx)}
+                      className="flex-1 py-1.5 px-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1 transition-colors bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20"
+                      title="Undo delete"
+                    >
+                      <Undo2 size={13} />
+                      <span>Undo</span>
+                    </button>
+                  ) : (
+                    <AnimatedTrashButton
+                      onDelete={() => handleToggleDelete(idx)}
+                      className="flex-1 py-1.5 px-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1 transition-colors bg-rose-500/10 text-rose-600 dark:text-rose-400 hover:bg-rose-500/20"
+                      title="Delete page"
+                      iconSize={13}
+                    >
+                      <span>Delete</span>
+                    </AnimatedTrashButton>
+                  )}
                 </div>
               </div>
             ))}

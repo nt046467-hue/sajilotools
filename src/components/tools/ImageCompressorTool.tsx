@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import {
   Download,
-  Trash2,
   Loader2,
   RefreshCw,
   Archive,
@@ -17,6 +16,7 @@ import {
   ArrowRight,
   ShieldCheck,
 } from "lucide-react";
+import AnimatedTrashIcon, { AnimatedTrashButton } from "@/components/shared/AnimatedTrashIcon";
 import JSZip from "jszip";
 import imageCompression from "browser-image-compression";
 import ImageDropzone from "./shared/ImageDropzone";
@@ -577,14 +577,13 @@ export default function ImageCompressorTool() {
                       </button>
                     )}
 
-                    <button
-                      onClick={() => removeItem(item.id)}
+                    <AnimatedTrashButton
+                      onDelete={() => removeItem(item.id)}
                       disabled={isProcessing}
                       className="p-2 rounded-xl text-[#71717A] hover:text-rose-500 hover:bg-rose-500/10 transition-colors disabled:opacity-40"
                       title="Remove image"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                      iconSize={16}
+                    />
                   </div>
                 </div>
               </div>

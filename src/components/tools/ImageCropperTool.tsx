@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import {
   Download,
-  Trash2,
   Loader2,
   ShieldCheck,
   Crop,
@@ -15,6 +14,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import AnimatedTrashIcon, { AnimatedTrashButton } from "@/components/shared/AnimatedTrashIcon";
 import JSZip from "jszip";
 import ImageDropzone from "./shared/ImageDropzone";
 
@@ -522,13 +522,12 @@ export default function ImageCropperTool() {
                     e.target.value = "";
                   }}
                 />
-                <button
-                  onClick={handleClear}
+                <AnimatedTrashButton
+                  onDelete={handleClear}
                   className="p-1.5 rounded-lg text-[#71717A] hover:bg-rose-500/10 hover:text-rose-500 transition-colors"
                   title="Clear all"
-                >
-                  <Trash2 size={14} />
-                </button>
+                  iconSize={14}
+                />
               </div>
             </div>
           )}
@@ -750,12 +749,13 @@ export default function ImageCropperTool() {
 
             <div className="flex items-center gap-2 w-full sm:w-auto justify-end flex-wrap">
               {!isBatch && (
-                <button
-                  onClick={handleClear}
+                <AnimatedTrashButton
+                  onDelete={handleClear}
                   className="px-4 py-2.5 rounded-xl border border-[#E4E0D8] dark:border-[#1E2338] text-rose-600 dark:text-rose-400 text-xs font-semibold hover:bg-rose-500/10 transition-colors flex items-center gap-1.5"
+                  iconSize={14}
                 >
-                  <Trash2 size={14} /> Remove
-                </button>
+                  Remove
+                </AnimatedTrashButton>
               )}
 
               {isDone && croppedUrl ? (

@@ -26,9 +26,15 @@ export default function QrMobilePreview({
   const [copied, setCopied] = useState(false);
   const [hasQr, setHasQr] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
+  const [isDismissed, setIsDismissed] = useState(false);
+  const [isDismissing, setIsDismissing] = useState(false);
+  const [isHoveringDismiss, setIsHoveringDismiss] = useState(false);
 
-  // Draggable floating button state
-  const [position, setPosition] = useState<{ x: number; y: number } | null>(null);
+  // Draggable floating button refs & state
+  const floatingBtnRef = useRef<HTMLDivElement | null>(null);
+  const dismissCircleRef = useRef<HTMLDivElement | null>(null);
+  const dismissLabelRef = useRef<HTMLSpanElement | null>(null);
+  const currentPosRef = useRef<{ x: number; y: number } | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const dragStartRef = useRef<{
     startX: number;
@@ -37,55 +43,125 @@ export default function QrMobilePreview({
     initialY: number;
   } | null>(null);
   const dragMovedRef = useRef(false);
+  const isHoveringDismissRef = useRef(false);
 
-  // Initialize position on mount (bottom-right default)
+  // Position initialized on mount via GPU transform
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const defaultX = window.innerWidth - 74;
-      const defaultY = window.innerHeight - 90;
-      setPosition({ x: defaultX, y: defaultY });
+      const screenW = window.innerWidth || document.documentElement.clientWidth;
+      const screenH = window.innerHeight || document.documentElement.clientHeight;
+      const defaultX = screenW - 72;
+      const defaultY = screenH - 105;
+      currentPosRef.current = { x: defaultX, y: defaultY };
+      if (floatingBtnRef.current) {
+        floatingBtnRef.current.style.transform = `translate3d(${defaultX}px, ${defaultY}px, 0)`;
+      }
     }
   }, []);
 
+  // Automatically restore floating button if user starts typing a new QR payload
+  useEffect(() => {
+    if (payload && isDismissed) {
+      setIsDismissed(false);
+      setTimeout(() => {
+        if (floatingBtnRef.current && currentPosRef.current) {
+          floatingBtnRef.current.style.opacity = "1";
+          floatingBtnRef.current.style.transform = `translate3d(${currentPosRef.current.x}px, ${currentPosRef.current.y}px, 0) scale(1)`;
+        }
+      }, 50);
+    }
+  }, [payload, isDismissed]);
+
   const handlePointerDown = (e: React.PointerEvent) => {
-    if (isExpanded) return;
+    if (isExpanded || isDismissed || isDismissing) return;
     dragMovedRef.current = false;
-    const currentX = position?.x ?? (window.innerWidth - 74);
-    const currentY = position?.y ?? (window.innerHeight - 90);
+    isHoveringDismissRef.current = false;
+    setIsHoveringDismiss(false);
+
+    const screenW = window.innerWidth || document.documentElement.clientWidth;
+    const screenH = window.innerHeight || document.documentElement.clientHeight;
+
+    // Fallback current pos
+    if (!currentPosRef.current) {
+      currentPosRef.current = { x: screenW - 72, y: screenH - 105 };
+    }
 
     dragStartRef.current = {
       startX: e.clientX,
       startY: e.clientY,
-      initialX: currentX,
-      initialY: currentY,
+      initialX: currentPosRef.current.x,
+      initialY: currentPosRef.current.y,
     };
+
+    if (floatingBtnRef.current) {
+      floatingBtnRef.current.style.transition = "none";
+    }
+
     try {
       (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
     } catch {}
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
-    if (!dragStartRef.current) return;
+    if (!dragStartRef.current || isDismissed || isDismissing) return;
     const dx = e.clientX - dragStartRef.current.startX;
     const dy = e.clientY - dragStartRef.current.startY;
-    const dist = Math.sqrt(dx * dx + dy * dy);
+    const dist = Math.hypot(dx, dy);
 
-    if (!dragMovedRef.current && dist > 8) {
+    if (!dragMovedRef.current && dist > 5) {
       dragMovedRef.current = true;
       setIsDragging(true);
     }
 
     if (dragMovedRef.current) {
       const btnSize = 56;
-      const newX = Math.max(10, Math.min(window.innerWidth - btnSize - 10, dragStartRef.current.initialX + dx));
-      const newY = Math.max(70, Math.min(window.innerHeight - btnSize - 15, dragStartRef.current.initialY + dy));
-      setPosition({ x: newX, y: newY });
+      const screenW = window.innerWidth || document.documentElement.clientWidth;
+      const screenH = window.innerHeight || document.documentElement.clientHeight;
+
+      const newX = Math.max(8, Math.min(screenW - btnSize - 8, dragStartRef.current.initialX + dx));
+      const newY = Math.max(50, Math.min(screenH - btnSize - 15, dragStartRef.current.initialY + dy));
+      currentPosRef.current = { x: newX, y: newY };
+
+      // Check if button is dragged near bottom center (dismiss target)
+      const bubbleCenterX = newX + btnSize / 2;
+      const bubbleCenterY = newY + btnSize / 2;
+      const targetCenterX = screenW / 2;
+      const targetCenterY = screenH - 64;
+
+      const distToDismiss = Math.hypot(bubbleCenterX - targetCenterX, bubbleCenterY - targetCenterY);
+      const isNearDismiss = distToDismiss < 90 || (bubbleCenterY > screenH - 130 && Math.abs(bubbleCenterX - targetCenterX) < 80);
+
+      if (isNearDismiss !== isHoveringDismissRef.current) {
+        isHoveringDismissRef.current = isNearDismiss;
+        setIsHoveringDismiss(isNearDismiss);
+
+        // Immediate 0ms visual feedback on bottom target
+        if (dismissCircleRef.current) {
+          if (isNearDismiss) {
+            dismissCircleRef.current.className = "w-16 h-16 rounded-full flex items-center justify-center transition-all duration-200 backdrop-blur-xl border bg-red-600 text-white border-red-300 scale-125 shadow-[0_0_40px_rgba(239,68,68,0.95)] ring-4 ring-red-500/50 rotate-90";
+          } else {
+            dismissCircleRef.current.className = "w-16 h-16 rounded-full flex items-center justify-center transition-all duration-200 backdrop-blur-xl border bg-black/75 dark:bg-[#151A2E]/95 text-white border-white/30 scale-100 shadow-[0_10px_30px_rgba(0,0,0,0.6)]";
+          }
+        }
+        if (dismissLabelRef.current) {
+          dismissLabelRef.current.textContent = isNearDismiss ? "Release to remove" : "Drag here to remove";
+          if (isNearDismiss) {
+            dismissLabelRef.current.className = "text-[10px] font-extrabold tracking-wider uppercase px-3.5 py-1 rounded-full backdrop-blur-md transition-all duration-200 shadow-md bg-red-600 text-white scale-110 shadow-red-500/50";
+          } else {
+            dismissLabelRef.current.className = "text-[10px] font-extrabold tracking-wider uppercase px-3.5 py-1 rounded-full backdrop-blur-md transition-all duration-200 shadow-md bg-black/75 text-white/90 border border-white/15";
+          }
+        }
+      }
+
+      // 60-120fps Zero-Lag Direct GPU Transform update
+      if (floatingBtnRef.current) {
+        floatingBtnRef.current.style.transform = `translate3d(${newX}px, ${newY}px, 0) scale(${isNearDismiss ? 0.85 : 1.1})`;
+      }
     }
   };
 
   const handlePointerUp = (e: React.PointerEvent) => {
     if (!dragStartRef.current) return;
-    const { initialX, initialY } = dragStartRef.current;
     try {
       (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
     } catch {}
@@ -93,18 +169,52 @@ export default function QrMobilePreview({
     dragStartRef.current = null;
 
     if (dragMovedRef.current) {
+      if (isHoveringDismissRef.current) {
+        // Dropped inside dismiss zone -> Pop animation into center of cross
+        const screenW = window.innerWidth || document.documentElement.clientWidth;
+        const screenH = window.innerHeight || document.documentElement.clientHeight;
+        const targetCenterX = screenW / 2 - 28;
+        const targetCenterY = screenH - 92;
+
+        if (floatingBtnRef.current) {
+          floatingBtnRef.current.style.transition = "transform 0.28s cubic-bezier(0.4, 0, 1, 1), opacity 0.28s ease";
+          floatingBtnRef.current.style.transform = `translate3d(${targetCenterX}px, ${targetCenterY}px, 0) scale(0) rotate(-45deg)`;
+          floatingBtnRef.current.style.opacity = "0";
+        }
+
+        setIsDismissing(true);
+        setIsDragging(false);
+        setTimeout(() => {
+          setIsDismissed(true);
+          setIsDismissing(false);
+          setIsHoveringDismiss(false);
+          isHoveringDismissRef.current = false;
+        }, 300);
+        return;
+      }
+
       // Drag ended -> snap smoothly to nearest left or right edge
       const btnSize = 56;
-      const currentX = position?.x ?? initialX;
-      const currentY = position?.y ?? initialY;
-      const snapToLeft = currentX + btnSize / 2 < window.innerWidth / 2;
-      const targetX = snapToLeft ? 16 : window.innerWidth - btnSize - 16;
-      const targetY = Math.max(70, Math.min(window.innerHeight - btnSize - 20, currentY));
-      setPosition({ x: targetX, y: targetY });
+      const screenW = window.innerWidth || document.documentElement.clientWidth;
+      const screenH = window.innerHeight || document.documentElement.clientHeight;
+      const currentX = currentPosRef.current?.x ?? (screenW - 72);
+      const currentY = currentPosRef.current?.y ?? (screenH - 105);
+      const snapToLeft = currentX + btnSize / 2 < screenW / 2;
+      const targetX = snapToLeft ? 16 : screenW - btnSize - 16;
+      const targetY = Math.max(60, Math.min(screenH - btnSize - 25, currentY));
+      currentPosRef.current = { x: targetX, y: targetY };
+
+      if (floatingBtnRef.current) {
+        floatingBtnRef.current.style.transition = "transform 0.32s cubic-bezier(0.18, 0.9, 0.3, 1.2)";
+        floatingBtnRef.current.style.transform = `translate3d(${targetX}px, ${targetY}px, 0) scale(1)`;
+      }
     }
 
+    setIsHoveringDismiss(false);
+    isHoveringDismissRef.current = false;
+    setIsDragging(false);
+
     setTimeout(() => {
-      setIsDragging(false);
       dragMovedRef.current = false;
     }, 50);
   };
@@ -112,7 +222,7 @@ export default function QrMobilePreview({
   const handleButtonClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!dragMovedRef.current && !isDragging) {
+    if (!dragMovedRef.current && !isDragging && !isDismissed && !isDismissing) {
       setIsExpanded(true);
     }
   };
@@ -408,92 +518,139 @@ export default function QrMobilePreview({
   const sizes = [256, 512, 1024, 2048];
 
   return (
-    <>
-      {/* ─── Draggable Floating Mini-Preview (56x56px) ─── */}
-      <div
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerUp}
-        onClick={handleButtonClick}
-        role="button"
-        tabIndex={0}
-        aria-label="Open QR preview (draggable to any corner)"
-        style={{
-          position: 'fixed',
-          left: position ? `${position.x}px` : undefined,
-          top: position ? `${position.y}px` : undefined,
-          right: position ? undefined : 18,
-          bottom: position ? undefined : 24,
-          zIndex: 35,
-          touchAction: 'none',
-          cursor: isDragging ? 'grabbing' : 'grab',
-          userSelect: 'none',
-          WebkitUserSelect: 'none',
-          WebkitTapHighlightColor: 'transparent',
-          transition: isDragging
-            ? 'none'
-            : 'left 0.32s cubic-bezier(0.18, 0.9, 0.3, 1.2), top 0.32s cubic-bezier(0.18, 0.9, 0.3, 1.2), transform 0.2s ease',
-          transform: isDragging ? 'scale(1.1)' : 'scale(1)',
-        }}
-      >
-        {hasQr ? (
-          /* ── QR Ready: Sleek Compact 56x56 Thumbnail ── */
+    <div className="lg:hidden">
+      {/* ─── Messenger-style Bottom Dismiss Drop Zone (Active during Drag) ─── */}
+      {isDragging && !isDismissed && (
+        <>
+          {/* Bottom subtle vignette backdrop */}
           <div
-            className={`relative bg-white/95 dark:bg-[#151A2E]/95 backdrop-blur-md border border-[#E4E0D8] dark:border-[#2A2F48] ${
-              isDragging
-                ? 'shadow-[0_16px_36px_rgba(0,0,0,0.3)] ring-2 ring-[#F5A623]'
-                : 'shadow-[0_8px_24px_rgba(0,0,0,0.18)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.45)]'
-            }`}
+            className="fixed inset-x-0 bottom-0 h-44 bg-gradient-to-t from-black/70 via-black/30 to-transparent pointer-events-none z-40"
             style={{
-              width: 56,
-              height: 56,
-              borderRadius: 16,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: 4,
+              animation: "qrSheetOverlayIn 0.2s ease-out forwards",
+            }}
+          />
+
+          {/* Centered circular dismiss drop target */}
+          <div
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none flex flex-col items-center gap-2 transition-all duration-300"
+            style={{
+              animation: "qrDismissZoneIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards",
             }}
           >
-            {/* Live QR mini canvas */}
             <div
-              ref={setMiniContainerRef}
-              className="qr-mini-canvas flex items-center justify-center rounded-lg overflow-hidden"
-              style={{ width: 44, height: 44, pointerEvents: 'none' }}
-            />
-
-            {/* Tiny sleek "LIVE" badge with breathing glow */}
-            <span
-              className="absolute -top-1.5 -right-1.5 flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[8px] font-extrabold uppercase tracking-wider text-white bg-emerald-500 ring-2 ring-white dark:ring-[#151A2E] pointer-events-none qr-live-badge-glow"
+              ref={dismissCircleRef}
+              className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-200 backdrop-blur-xl border ${
+                isHoveringDismiss
+                  ? "bg-red-600 text-white border-red-300 scale-125 shadow-[0_0_40px_rgba(239,68,68,0.95)] ring-4 ring-red-500/50 rotate-90"
+                  : "bg-black/75 dark:bg-[#151A2E]/95 text-white border-white/30 scale-100 shadow-[0_10px_30px_rgba(0,0,0,0.6)]"
+              }`}
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-white qr-live-dot-pulse" />
-              LIVE
+              <X
+                size={isHoveringDismiss ? 28 : 24}
+                className="transition-transform duration-200"
+              />
+            </div>
+            <span
+              ref={dismissLabelRef}
+              className={`text-[10px] font-extrabold tracking-wider uppercase px-3.5 py-1 rounded-full backdrop-blur-md transition-all duration-200 shadow-md ${
+                isHoveringDismiss
+                  ? "bg-red-600 text-white scale-110 shadow-red-500/50"
+                  : "bg-black/75 text-white/90 border border-white/15"
+              }`}
+            >
+              {isHoveringDismiss ? "Release to remove" : "Drag here to remove"}
             </span>
           </div>
-        ) : (
-          /* ── No QR: Compact Minimal Floating Action Button ── */
-          <div
-            className={`relative bg-white/95 dark:bg-[#151A2E]/95 backdrop-blur-md border border-[#E4E0D8] dark:border-[#2A2F48] ${
-              isDragging
-                ? 'shadow-[0_16px_36px_rgba(0,0,0,0.3)] ring-2 ring-[#F5A623]'
-                : 'shadow-[0_8px_24px_rgba(0,0,0,0.15)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.4)]'
-            }`}
-            style={{
-              width: 52,
-              height: 52,
-              borderRadius: 14,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <QrCode size={22} className="text-[#F5A623] pointer-events-none" />
-            <span
-              className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#F5A623] ring-2 ring-white dark:ring-[#151A2E] pointer-events-none qr-amber-dot-glow"
-            />
-          </div>
-        )}
-      </div>
+        </>
+      )}
+
+      {/* ─── Draggable Floating Mini-Preview (56x56px) ─── */}
+      {!isDismissed && (
+        <div
+          ref={floatingBtnRef}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={handlePointerUp}
+          onClick={handleButtonClick}
+          role="button"
+          tabIndex={0}
+          aria-label="Open QR preview (draggable to any corner or bottom center to remove)"
+          style={{
+            position: "fixed",
+            left: 0,
+            top: 0,
+            zIndex: 50,
+            touchAction: "none",
+            cursor: isDragging ? "grabbing" : "grab",
+            userSelect: "none",
+            WebkitUserSelect: "none",
+            WebkitTapHighlightColor: "transparent",
+            willChange: "transform",
+          }}
+        >
+          {hasQr ? (
+            /* ── QR Ready: Sleek Compact 56x56 Thumbnail ── */
+            <div
+              className={`relative bg-white/95 dark:bg-[#151A2E]/95 backdrop-blur-md border ${
+                isHoveringDismiss
+                  ? "border-rose-500 ring-2 ring-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.5)]"
+                  : isDragging
+                  ? "border-[#F5A623] shadow-[0_16px_36px_rgba(0,0,0,0.3)] ring-2 ring-[#F5A623]"
+                  : "border-[#E4E0D8] dark:border-[#2A2F48] shadow-[0_8px_24px_rgba(0,0,0,0.18)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.45)]"
+              }`}
+              style={{
+                width: 56,
+                height: 56,
+                borderRadius: 16,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: 4,
+              }}
+            >
+              {/* Live QR mini canvas */}
+              <div
+                ref={setMiniContainerRef}
+                className="qr-mini-canvas flex items-center justify-center rounded-lg overflow-hidden"
+                style={{ width: 44, height: 44, pointerEvents: "none" }}
+              />
+
+              {/* Tiny sleek "LIVE" badge with breathing glow */}
+              <span
+                className="absolute -top-1.5 -right-1.5 flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[8px] font-extrabold uppercase tracking-wider text-white bg-emerald-500 ring-2 ring-white dark:ring-[#151A2E] pointer-events-none qr-live-badge-glow"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-white qr-live-dot-pulse" />
+                LIVE
+              </span>
+            </div>
+          ) : (
+            /* ── No QR: Compact Minimal Floating Action Button ── */
+            <div
+              className={`relative bg-white/95 dark:bg-[#151A2E]/95 backdrop-blur-md border ${
+                isHoveringDismiss
+                  ? "border-rose-500 ring-2 ring-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.5)]"
+                  : isDragging
+                  ? "border-[#F5A623] shadow-[0_16px_36px_rgba(0,0,0,0.3)] ring-2 ring-[#F5A623]"
+                  : "border-[#E4E0D8] dark:border-[#2A2F48] shadow-[0_8px_24px_rgba(0,0,0,0.15)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.4)]"
+              }`}
+              style={{
+                width: 52,
+                height: 52,
+                borderRadius: 14,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <QrCode size={22} className="text-[#F5A623] pointer-events-none" />
+              <span
+                className="absolute -top-1 -right-1 w-2.5 h-2.5 rounded-full bg-[#F5A623] ring-2 ring-white dark:ring-[#151A2E] pointer-events-none qr-amber-dot-glow"
+              />
+            </div>
+          )}
+        </div>
+      )}
 
       {/* ─── Expanded Bottom-Sheet Modal ─── */}
       {isExpanded && (
@@ -782,6 +939,16 @@ export default function QrMobilePreview({
             transform: scale(1.03);
           }
         }
+        @keyframes qrDismissZoneIn {
+          from {
+            opacity: 0;
+            transform: translate(-50%, 20px) scale(0.85);
+          }
+          to {
+            opacity: 1;
+            transform: translate(-50%, 0) scale(1);
+          }
+        }
         @keyframes qrAmberDotGlow {
           0%, 100% {
             box-shadow: 0 0 0 0 rgba(245, 166, 35, 0.7), 0 0 4px rgba(245, 166, 35, 0.4);
@@ -815,7 +982,7 @@ export default function QrMobilePreview({
           border-radius: 4px;
         }
       ` }} />
-    </>
+    </div>
   );
 }
 

@@ -15,12 +15,12 @@ import {
   Volume2,
   VolumeX,
   History,
-  Trash2,
   Clock,
   ArrowRight,
   Download,
   BookOpen,
 } from "lucide-react";
+import AnimatedTrashIcon, { AnimatedTrashButton } from "@/components/shared/AnimatedTrashIcon";
 
 type HistoryEntry = {
   sourceText: string;
@@ -331,17 +331,18 @@ export default function NepaliTranslatorTool() {
                 {sourceText.trim() ? sourceText.trim().split(/\s+/).length : 0} words • {sourceText.length} chars
               </span>
               {sourceText && (
-                <button
-                  onClick={() => {
+                <AnimatedTrashButton
+                  onDelete={() => {
                     setSourceText("");
                     setTranslatedText("");
                     setErrorMsg("");
                     setSuggestionMsg(null);
                   }}
                   className="text-xs text-[#DC2626] font-semibold hover:underline flex items-center gap-1"
+                  iconSize={12}
                 >
-                  <Trash2 size={12} /> Clear
-                </button>
+                  Clear
+                </AnimatedTrashButton>
               )}
             </div>
           </div>
@@ -515,12 +516,13 @@ export default function NepaliTranslatorTool() {
               <span>Recent Translations (Last 5)</span>
             </div>
             <div className="flex items-center gap-3">
-              <button
-                onClick={clearHistory}
+              <AnimatedTrashButton
+                onDelete={clearHistory}
                 className="text-[11px] font-semibold text-rose-500 hover:underline flex items-center gap-1"
+                iconSize={12}
               >
-                <Trash2 size={12} /> Clear history
-              </button>
+                Clear history
+              </AnimatedTrashButton>
             </div>
           </div>
 

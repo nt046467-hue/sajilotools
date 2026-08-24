@@ -183,14 +183,16 @@ export default function QrCodeTool() {
         </div>
       )}
 
-      {/* ── Mobile Floating Mini-Preview Button & Bottom Sheet (< 768px) ── */}
+      {/* ── Mobile Floating Mini-Preview Button & Bottom Sheet (< lg / 1024px) ── */}
       {activeMode === "single" && (
-        <QrMobilePreview
-          payload={payload}
-          isFormValid={isFormValid}
-          styleOptions={styleOptions}
-          onStyleChange={updateStyle}
-        />
+        <div className="lg:hidden">
+          <QrMobilePreview
+            payload={payload}
+            isFormValid={isFormValid}
+            styleOptions={styleOptions}
+            onStyleChange={updateStyle}
+          />
+        </div>
       )}
     </div>
   );

@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from "react";
 import {
   Download,
-  Trash2,
   Loader2,
   ShieldCheck,
   RotateCcw,
@@ -16,6 +15,7 @@ import {
   CopyCheck,
   Check,
 } from "lucide-react";
+import AnimatedTrashIcon, { AnimatedTrashButton } from "@/components/shared/AnimatedTrashIcon";
 import JSZip from "jszip";
 import ImageDropzone from "./shared/ImageDropzone";
 import {
@@ -352,13 +352,12 @@ export default function ImageRotateFlipTool() {
                   e.target.value = "";
                 }}
               />
-              <button
-                onClick={handleClear}
+              <AnimatedTrashButton
+                onDelete={handleClear}
                 className="p-2 rounded-xl text-[#71717A] hover:bg-rose-500/10 hover:text-rose-500 transition-colors shrink-0"
                 title="Remove all"
-              >
-                <Trash2 size={16} />
-              </button>
+                iconSize={16}
+              />
             </div>
           </div>
 

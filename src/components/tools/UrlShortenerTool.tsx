@@ -9,7 +9,6 @@ import {
   Check,
   ExternalLink,
   QrCode,
-  Trash2,
   Clock,
   BarChart3,
   AlertTriangle,
@@ -22,6 +21,7 @@ import {
   Globe,
   RefreshCw,
 } from "lucide-react";
+import AnimatedTrashIcon, { AnimatedTrashButton } from "@/components/shared/AnimatedTrashIcon";
 
 export type ShortLinkItem = {
   slug: string;
@@ -587,13 +587,12 @@ export default function UrlShortenerTool() {
                       >
                         <QrCode size={14} />
                       </button>
-                      <button
-                        onClick={() => handleRemoveLink(item.slug)}
+                      <AnimatedTrashButton
+                        onDelete={() => handleRemoveLink(item.slug)}
                         className="p-2 rounded-xl border border-[#E4E0D8] dark:border-[#1E2338] bg-[#FAFAF8] dark:bg-[#1E2338] text-[#71717A] dark:text-[#A1A1AA] hover:text-red-600 hover:border-red-300 dark:hover:border-red-900 transition-colors"
                         title="Remove from history"
-                      >
-                        <Trash2 size={14} />
-                      </button>
+                        iconSize={14}
+                      />
                     </div>
                   </div>
                 );

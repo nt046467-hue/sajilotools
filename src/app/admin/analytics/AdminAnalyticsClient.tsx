@@ -23,7 +23,6 @@ import {
   ThumbsDown,
   Mail,
   Send,
-  Trash2,
   Copy,
   Check,
   Zap,
@@ -34,6 +33,7 @@ import {
   AlertCircle,
   Rocket,
 } from "lucide-react";
+import AnimatedTrashIcon, { AnimatedTrashButton } from "@/components/shared/AnimatedTrashIcon";
 import Image from "next/image";
 import Link from "next/link";
 import type { AnalyticsSummary } from "@/lib/analytics-db";
@@ -925,20 +925,18 @@ export default function AdminAnalyticsClient() {
                           )}
                         </button>
 
-                        {/* Delete/Unsubscribe */}
-                        <button
-                          type="button"
-                          onClick={() => handleDeleteSubscriber(sub.email)}
-                          disabled={deletingEmail === sub.email}
-                          className="p-1.5 rounded-lg text-rose-400/70 hover:text-rose-300 hover:bg-rose-500/10 transition-colors disabled:opacity-50"
-                          title="Remove subscriber"
-                        >
-                          {deletingEmail === sub.email ? (
+                        {deletingEmail === sub.email ? (
+                          <div className="p-1.5 rounded-lg text-rose-400">
                             <RefreshCw size={12} className="animate-spin text-rose-400" />
-                          ) : (
-                            <Trash2 size={12} />
-                          )}
-                        </button>
+                          </div>
+                        ) : (
+                          <AnimatedTrashButton
+                            onDelete={() => handleDeleteSubscriber(sub.email)}
+                            className="p-1.5 rounded-lg text-rose-400/70 hover:text-rose-300 hover:bg-rose-500/10 transition-colors disabled:opacity-50"
+                            title="Remove subscriber"
+                            iconSize={12}
+                          />
+                        )}
                       </div>
                     </div>
                   ))
