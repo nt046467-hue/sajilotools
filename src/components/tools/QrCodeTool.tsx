@@ -89,33 +89,35 @@ export default function QrCodeTool() {
   return (
     <div className="space-y-6">
       {/* Top Mode Header Switcher: Single vs Batch */}
-      <div className="flex flex-wrap items-center justify-between gap-4 p-2 rounded-2xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48]">
-        <div className="flex items-center gap-1.5">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-2 rounded-2xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48]">
+        <div className="grid grid-cols-2 sm:flex items-center gap-1.5 w-full sm:w-auto">
           <button
             onClick={() => setActiveMode("single")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+            className={`flex items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
               activeMode === "single"
                 ? "bg-[#1F2544] text-white dark:bg-[#F5A623] dark:text-[#0C0F1E] shadow-sm"
                 : "text-[#71717A] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-[#F4F4F5]"
             }`}
           >
-            <QrCode size={15} /> Single QR Generator
+            <QrCode size={15} className="shrink-0" />
+            <span className="truncate">Single QR</span>
           </button>
 
           <button
             onClick={() => setActiveMode("batch")}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
+            className={`flex items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs font-semibold transition-all ${
               activeMode === "batch"
                 ? "bg-[#1F2544] text-white dark:bg-[#F5A623] dark:text-[#0C0F1E] shadow-sm"
                 : "text-[#71717A] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-[#F4F4F5]"
             }`}
           >
-            <Layers size={15} /> Batch Generator (ZIP)
+            <Layers size={15} className="shrink-0" />
+            <span className="truncate">Batch (ZIP)</span>
           </button>
         </div>
 
-        <div className="flex items-center gap-1.5 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/50">
-          <Shield size={13} />
+        <div className="flex items-center justify-center sm:justify-start gap-1.5 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/50 self-center sm:self-auto">
+          <Shield size={13} className="shrink-0" />
           <span>100% Client-Side Privacy</span>
         </div>
       </div>

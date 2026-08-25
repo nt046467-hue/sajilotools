@@ -41,15 +41,25 @@ import {
   Activity,
   Tag,
   ArrowLeftRight,
+  BookOpen,
 } from "lucide-react";
-import { getToolBySlug, getCategoryBySlug, getToolsByCategory } from "@/lib/tools-registry";
+import { TOOLS, getToolBySlug, getCategoryBySlug, getToolsByCategory } from "@/lib/tools-registry";
 import { getToolAccentStyle } from "@/lib/theme-utils";
 import { getToolContent } from "@/lib/tool-content";
+import { getClusterByToolSlug } from "@/lib/seo-topic-clusters";
+import { getBlogPost } from "@/lib/blog-data";
 import ToolPageClient from "@/components/ToolPageClient";
 import AdUnit from "@/components/AdUnit";
 import ToolFaqAccordion from "@/components/ToolFaqAccordion";
 
 import DeveloperSuiteIcon from "@/components/shared/DeveloperSuiteIcon";
+
+export async function generateStaticParams() {
+  return TOOLS.map((tool) => ({
+    category: tool.categorySlug,
+    slug: tool.slug,
+  }));
+}
 
 const ICON_MAP: Record<string, any> = {
   Braces: DeveloperSuiteIcon,
@@ -168,6 +178,8 @@ export default function ToolPage({
 
   const Icon = getIcon(tool.icon);
   const toolContent = getToolContent(tool.slug, tool.name);
+  const topicCluster = getClusterByToolSlug(tool.slug);
+  const clusterGuide = topicCluster ? getBlogPost(topicCluster.guideSlug) : undefined;
 
   // Compute related tools: prefer explicit cross-category relatedToolSlugs, then fill from category
   const mappedExplicit = (toolContent.relatedToolSlugs || [])
@@ -440,6 +452,30 @@ export default function ToolPage({
                     </li>
                   ))}
                 </ul>
+              </div>
+            )}
+
+            {/* Authoritative Related Guide Link */}
+            {clusterGuide && (
+              <div className="pt-4 border-t border-[#E4E0D8] dark:border-[#1E2338]">
+                <div className="p-4 rounded-xl bg-gradient-to-r from-red-50 to-amber-50 dark:from-[#1E2338] dark:to-[#1A1F36] border border-[#DC2626]/20 dark:border-[#DC2626]/30">
+                  <div className="flex items-center gap-2 text-xs font-bold text-[#DC2626] uppercase tracking-wide mb-1">
+                    <BookOpen size={15} /> In-Depth Topic Guide
+                  </div>
+                  <h4 className="text-sm sm:text-base font-bold text-[#18181B] dark:text-[#F4F4F5] mb-1">
+                    {clusterGuide.title}
+                  </h4>
+                  <p className="text-xs text-[#52525B] dark:text-[#A1A1AA] mb-3 leading-relaxed">
+                    {topicCluster?.guideDescription || clusterGuide.description}
+                  </p>
+                  <Link
+                    href={`/blog/${clusterGuide.slug}`}
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-[#DC2626] hover:underline"
+                  >
+                    <span>{topicCluster?.guideAnchorText || "Read Complete Guide"}</span>
+                    <ArrowRight size={14} />
+                  </Link>
+                </div>
               </div>
             )}
 

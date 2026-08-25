@@ -1,8 +1,14 @@
 import type { Metadata } from "next";
-import { getCategoryBySlug, getToolsByCategory } from "@/lib/tools-registry";
+import { CATEGORIES, getCategoryBySlug, getToolsByCategory } from "@/lib/tools-registry";
 import CategoryClient from "@/components/CategoryClient";
 
 import { SITE_CONFIG, SITE_URL, getCanonicalUrl } from "@/lib/site-config";
+
+export async function generateStaticParams() {
+  return CATEGORIES.map((cat) => ({
+    category: cat.slug,
+  }));
+}
 
 export async function generateMetadata({
   params,

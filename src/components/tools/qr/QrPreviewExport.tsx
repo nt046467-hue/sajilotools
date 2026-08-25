@@ -46,7 +46,7 @@ export default function QrPreviewExport({
         height: 280,
         type: "canvas",
         data: payload,
-        margin: 10,
+        margin: 16,
         qrOptions: {
           errorCorrectionLevel: styleOptions.errorCorrectionLevel,
         },
@@ -220,10 +220,10 @@ export default function QrPreviewExport({
       </div>
 
       {/* Render Box */}
-      <div className="relative flex items-center justify-center p-6 rounded-2xl border border-[#E4E0D8] dark:border-[#2A2F48] bg-[#FAFAF8] dark:bg-[#1E2338] min-h-[300px] w-full max-w-[320px] shadow-inner overflow-hidden">
+      <div className="relative flex items-center justify-center p-3 sm:p-6 rounded-2xl border border-[#E4E0D8] dark:border-[#2A2F48] bg-[#FAFAF8] dark:bg-[#1E2338] min-h-[260px] sm:min-h-[300px] w-full max-w-[320px] shadow-inner overflow-hidden">
         <div
           ref={containerRef}
-          className={`transition-all duration-300 flex items-center justify-center ${
+          className={`transition-all duration-300 flex items-center justify-center max-w-full [&>canvas]:max-w-full [&>canvas]:h-auto [&>canvas]:aspect-square [&>canvas]:rounded-xl [&>canvas]:block [&>svg]:max-w-full [&>svg]:h-auto [&>svg]:aspect-square ${
             hasQr ? "opacity-100 scale-100" : "opacity-0 scale-95 hidden"
           }`}
         />

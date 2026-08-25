@@ -252,7 +252,7 @@ export default function QrMobilePreview({
         height: size,
         type: "canvas",
         data: debouncedPayload,
-        margin: Math.max(2, Math.round(size * 0.04)),
+        margin: Math.max(4, Math.round(size * 0.06)),
         qrOptions: {
           errorCorrectionLevel: debouncedStyle.errorCorrectionLevel,
         },
@@ -524,7 +524,7 @@ export default function QrMobilePreview({
         <>
           {/* Bottom subtle vignette backdrop */}
           <div
-            className="fixed inset-x-0 bottom-0 h-44 bg-gradient-to-t from-black/70 via-black/30 to-transparent pointer-events-none z-40"
+            className="fixed inset-x-0 bottom-0 h-44 bg-gradient-to-t from-black/70 via-black/30 to-transparent pointer-events-none z-20"
             style={{
               animation: "qrSheetOverlayIn 0.2s ease-out forwards",
             }}
@@ -532,7 +532,7 @@ export default function QrMobilePreview({
 
           {/* Centered circular dismiss drop target */}
           <div
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none flex flex-col items-center gap-2 transition-all duration-300"
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-30 pointer-events-none flex flex-col items-center gap-2 transition-all duration-300"
             style={{
               animation: "qrDismissZoneIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards",
             }}
@@ -580,7 +580,7 @@ export default function QrMobilePreview({
             position: "fixed",
             left: 0,
             top: 0,
-            zIndex: 50,
+            zIndex: 30,
             touchAction: "none",
             cursor: isDragging ? "grabbing" : "grab",
             userSelect: "none",
@@ -772,6 +772,7 @@ export default function QrMobilePreview({
               {hasQr ? (
                 <div
                   ref={setExpandedContainerRef}
+                  className="max-w-full [&>canvas]:max-w-full [&>canvas]:h-auto [&>canvas]:aspect-square [&>canvas]:rounded-xl [&>svg]:max-w-full [&>svg]:h-auto [&>svg]:aspect-square"
                   style={{
                     display: 'flex',
                     alignItems: 'center',

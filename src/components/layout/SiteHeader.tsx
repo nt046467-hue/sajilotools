@@ -33,6 +33,7 @@ import SearchBar from "@/components/SearchBar";
 import { TOOLS as REGISTERED_TOOLS } from "@/lib/tools-registry";
 import { CategoryAnimatedIcon, CategoryAnimatedIconHandle } from "@/components/layout/CategoryAnimatedIcon";
 import DeveloperSuiteIcon from "@/components/shared/DeveloperSuiteIcon";
+import { AnimatedTrashButton } from "@/components/shared/AnimatedTrashIcon";
 
 const TOOL_CATEGORIES = [
   {
@@ -463,7 +464,7 @@ export default function SiteHeader() {
 
       {/* ── MOBILE DRAWER ── */}
       <div
-        className={`lg:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-xs transition-opacity duration-300 ${
+        className={`lg:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-xs transition-opacity duration-300 ${
           mobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         onClick={() => setMobileOpen(false)}
@@ -641,12 +642,13 @@ export default function SiteHeader() {
 
             <div className="flex items-center justify-between pt-2 border-t border-[#E4E0D8] dark:border-[#1E2338]">
               {recentTools.length > 0 ? (
-                <button
-                  onClick={clearHistory}
-                  className="text-xs font-medium text-rose-500 hover:underline cursor-pointer"
+                <AnimatedTrashButton
+                  onDelete={clearHistory}
+                  iconSize={13}
+                  className="text-xs font-medium text-rose-500 hover:text-rose-600 transition-colors flex items-center gap-1.5 cursor-pointer py-1 px-1.5 rounded-lg hover:bg-rose-50 dark:hover:bg-rose-950/30"
                 >
-                  Clear History
-                </button>
+                  <span>Clear History</span>
+                </AnimatedTrashButton>
               ) : (
                 <span />
               )}

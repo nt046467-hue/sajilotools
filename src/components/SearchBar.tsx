@@ -64,9 +64,11 @@ import { searchTools, getPopularSuggestions } from "@/lib/search-engine";
 import { TOOLS as ALL_TOOLS, ToolDef } from "@/lib/tools-registry";
 import { getToolAccentStyle } from "@/lib/theme-utils";
 import { trackSearch } from "@/lib/analytics";
+import DeveloperSuiteIcon from "@/components/shared/DeveloperSuiteIcon";
 
 const ICON_MAP: Record<string, React.ElementType> = {
-  Braces,
+  Braces: DeveloperSuiteIcon,
+  Developer: DeveloperSuiteIcon,
   AlignLeft,
   FileText,
   Image: ImageIcon,

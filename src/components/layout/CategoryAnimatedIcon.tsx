@@ -535,25 +535,82 @@ const EverydayAnimatedIcon = forwardRef<CategoryAnimatedIconHandle, { size: numb
 );
 EverydayAnimatedIcon.displayName = "EverydayAnimatedIcon";
 
+// 7. Nepal Tools Animated Icon
+const NepalAnimatedIcon = forwardRef<CategoryAnimatedIconHandle, { size: number }>(
+  ({ size }, ref) => {
+    const pinControls = useAnimation();
+    const dotControls = useAnimation();
+    const [isAnimating, setIsAnimating] = useState(false);
+
+    useImperativeHandle(ref, () => ({
+      trigger: async () => {
+        if (isAnimating) return;
+        setIsAnimating(true);
+
+        pinControls.set({ pathLength: 0, opacity: 0 });
+        dotControls.set({ scale: 0, opacity: 0 });
+
+        pinControls.start({
+          pathLength: 1,
+          opacity: 1,
+          transition: { pathLength: { duration: 0.45, ease: "easeOut" }, opacity: { duration: 0.01 } },
+        });
+
+        await dotControls.start({
+          scale: 1,
+          opacity: 1,
+          transition: { duration: 0.28, ease: "backOut", delay: 0.3 },
+        });
+
+        setIsAnimating(false);
+      },
+    }));
+
+    return (
+      <motion.svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        shapeRendering="geometricPrecision"
+        style={{ transform: "translateZ(0)", backfaceVisibility: "hidden" }}
+        className="transition-transform duration-200 group-hover:scale-105"
+      >
+        <motion.path
+          d="M 20 10 c 0 4.993 -5.539 10.193 -7.399 11.799 a 1 1 0 0 1 -1.202 0 C 9.539 20.193 4 14.993 4 10 a 8 8 0 0 1 16 0"
+          initial={{ pathLength: 1, opacity: 1 }}
+          animate={pinControls}
+        />
+        <motion.circle
+          cx="12"
+          cy="10"
+          r="3"
+          initial={{ scale: 1, opacity: 1 }}
+          animate={dotControls}
+        />
+      </motion.svg>
+    );
+  }
+);
+NepalAnimatedIcon.displayName = "NepalAnimatedIcon";
+
 // Main Dispatcher Component
 export const CategoryAnimatedIcon = forwardRef<CategoryAnimatedIconHandle, CategoryAnimatedIconProps>(
   ({ categoryName, size = 18 }, ref) => {
-    switch (categoryName) {
-      case "PDF Tools":
-        return <PdfAnimatedIcon ref={ref} size={size} />;
-      case "Image Processing":
-        return <ImageAnimatedIcon ref={ref} size={size} />;
-      case "Developer Suite":
-        return <DevAnimatedIcon ref={ref} size={size} />;
-      case "Finance & Tax":
-        return <FinanceAnimatedIcon ref={ref} size={size} />;
-      case "Text & Writing":
-        return <TextAnimatedIcon ref={ref} size={size} />;
-      case "Everyday Utilities":
-        return <EverydayAnimatedIcon ref={ref} size={size} />;
-      default:
-        return null;
-    }
+    const norm = (categoryName || "").toLowerCase().trim();
+    if (norm.includes("pdf")) return <PdfAnimatedIcon ref={ref} size={size} />;
+    if (norm.includes("image")) return <ImageAnimatedIcon ref={ref} size={size} />;
+    if (norm.includes("dev")) return <DevAnimatedIcon ref={ref} size={size} />;
+    if (norm.includes("finance") || norm.includes("tax")) return <FinanceAnimatedIcon ref={ref} size={size} />;
+    if (norm.includes("text") || norm.includes("writing")) return <TextAnimatedIcon ref={ref} size={size} />;
+    if (norm.includes("nepal")) return <NepalAnimatedIcon ref={ref} size={size} />;
+    if (norm.includes("everyday") || norm.includes("util")) return <EverydayAnimatedIcon ref={ref} size={size} />;
+    return null;
   }
 );
 CategoryAnimatedIcon.displayName = "CategoryAnimatedIcon";

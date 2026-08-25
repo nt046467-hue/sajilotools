@@ -2169,50 +2169,69 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
     ]
   },
 
-  // ── Nepal Tools ─────────────────────────────────────────────────────────
   "land-converter": {
     slug: "land-converter",
     aboutParagraphs: [
-      "Nepal Land Unit Converter converts traditional Nepalese land measurement units across both Ropani-Aana-Paisa-Daam (Hilly region) and Bigha-Kattha-Dhur (Terai region) systems, into Square Feet and Square Meters.",
-      "Essential for real estate buyers, landowners, surveyors, and legal documentation in Nepal."
+      "Nepal Land Unit Converter converts traditional Nepalese land measurement units across both the Ropani-Aana-Paisa-Daam (Hilly region / Kathmandu Valley) and Bigha-Kattha-Dhur (Terai region / Plains) systems into Square Feet and Square Meters instantly.",
+      "Essential for real estate buyers, property sellers, landowners, civil engineers, surveyors, and legal deed (Lalpurja) verification across all districts of Nepal."
     ],
     useCases: [
-      "Converting Kathmandu valley land units (Ropani-Aana-Paisa-Daam) into Square Feet for architectural plot plans",
-      "Converting Terai land units (Bigha-Kattha-Dhur) into Ropani or Square Meters",
-      "Verifying official Lalpurja land deed square meter measurements"
+      "Converting Kathmandu Valley land units (Ropani, Aana, Paisa, Daam) into Square Feet for municipal architectural building approvals",
+      "Converting Terai land units (Bigha, Kattha, Dhur) into Ropani or Square Meters for agricultural and commercial property appraisal",
+      "Verifying official Lalpurja (लालपुर्जा) land deed square meter measurements against traditional units",
+      "Calculating exact land division proportions for inheritance, plot valuation, and land tax assessments"
     ],
     howToSteps: [
-      "Select your source region system (Ropani System or Bigha System) or Sq Ft/Sq M.",
-      "Type land values (e.g. 1 Ropani 4 Aana).",
-      "View instant side-by-side converted values across all Nepalese and metric units."
+      "Select your measurement system: Ropani System (Hills), Bigha System (Terai), or Metric (Sq Feet / Sq Meters).",
+      "Enter your land unit quantities (e.g. 1 Ropani, 4 Aana or 2 Bigha, 5 Kattha).",
+      "View instant synchronized conversions across all traditional Nepali units, Square Feet, and Square Meters."
     ],
     examples: [
       {
-        title: "1 Ropani to Sq Ft & Aana",
+        title: "1 Ropani to Square Feet & Aana",
         input: "1 Ropani 0 Aana 0 Paisa 0 Daam",
         output: "5,476 Sq Ft | 508.74 Sq M | 16 Aana | 0.0751 Bigha"
+      },
+      {
+        title: "1 Bigha to Kattha & Square Feet",
+        input: "1 Bigha 0 Kattha 0 Dhur",
+        output: "72,900 Sq Ft | 6,772.63 Sq M | 20 Kattha | 400 Dhur | 13.31 Ropani"
+      },
+      {
+        title: "4 Aana Kathmandu Plot to Square Feet",
+        input: "0 Ropani 4 Aana 0 Paisa 0 Daam",
+        output: "1,369 Sq Ft | 127.18 Sq M | 16 Paisa | 64 Daam"
       }
     ],
     limitations: [
-      "Calculates standard official land conversion ratios (1 Ropani = 5,476 sq ft; 1 Bigha = 72,900 sq ft)"
+      "Calculates standard official Nepal survey conversion factors (1 Ropani = 5,476 sq ft; 1 Bigha = 72,900 sq ft; 1 Kattha = 3,645 sq ft)",
+      "Local boundary surveying may vary slightly; consult a licensed cadastral surveyor for formal legal boundary demarcations"
     ],
     relatedToolSlugs: ["gold-silver-calculator", "traditional-unit-converter", "unit-converter", "tax-calculator", "nepali-number-words"],
     faqs: [
       {
-        question: "What is 1 Ropani in Square Feet?",
-        answer: "1 Ropani is equal to 5,476 square feet (16 Aana = 64 Paisa = 256 Daam)."
+        question: "What is 1 Ropani in Square Feet and Aana?",
+        answer: "1 Ropani is equal to 5,476 square feet (508.74 sq. meters). It is subdivided into 16 Aana (1 Aana = 342.25 sq ft = 4 Paisa = 16 Daam)."
       },
       {
-        question: "What is 1 Bigha in Kattha and Dhur?",
-        answer: "1 Bigha is equal to 20 Kattha (400 Dhur = 72,900 square feet)."
+        question: "How many Kattha and Dhur are in 1 Bigha?",
+        answer: "1 Bigha is equal to 20 Kattha (400 Dhur = 72,900 square feet = 6,772.63 sq. meters). 1 Kattha equals 20 Dhur (3,645 sq ft)."
       },
       {
-        question: "Can I convert Ropani directly to Bigha?",
-        answer: "Yes, selecting Ropani automatically converts the exact equivalent in Bigha, Square Feet, and Square Meters."
+        question: "How do you convert Ropani to Bigha in Nepal?",
+        answer: "1 Bigha equals approximately 13.31 Ropani (72,900 ÷ 5,476 sq ft). Conversely, 1 Ropani is approximately 0.0751 Bigha (around 1.5 Kattha)."
       },
       {
-        question: "Which land system is used in Kathmandu Valley?",
-        answer: "Kathmandu Valley and hilly districts use the Ropani-Aana-Paisa-Daam system, while Terai districts use Bigha-Kattha-Dhur."
+        question: "Which land measurement system is used in Kathmandu Valley?",
+        answer: "Kathmandu Valley and all hilly/mountain districts use the Ropani-Aana-Paisa-Daam system, while the Terai/plains districts use the Bigha-Kattha-Dhur system."
+      },
+      {
+        question: "How many Square Feet is 1 Kattha of land?",
+        answer: "1 Kattha is equal to 3,645 square feet (338.63 square meters = 20 Dhur). 20 Kattha make 1 full Bigha."
+      },
+      {
+        question: "How do I convert Lalpurja square meters into Ropani or Bigha?",
+        answer: "Enter your land area in Square Meters in the calculator; it will automatically convert into both Ropani-Aana-Paisa-Daam and Bigha-Kattha-Dhur equivalents."
       }
     ]
   },
@@ -2591,6 +2610,10 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       {
         question: "Does an electric bike or electric scooter have road tax in Nepal?",
         answer: "Yes, electric two-wheelers and EV cars are taxed according to motor kilowatt (kW) capacity tiers under provincial vehicle regulations."
+      },
+      {
+        question: "What is the road tax for 150cc–160cc and 200cc–250cc bikes in Nepal?",
+        answer: "In Bagmati Province, 150cc to 160cc motorcycles (such as FZ, Pulsar 150, Apache 160) incur an annual road tax of NPR 4,500 (+ NPR 300 renewal = NPR 4,800). For 200cc to 250cc bikes (such as Duke 200/250, Pulsar NS200), annual road tax is NPR 6,000 (+ NPR 300 renewal = NPR 6,300)."
       },
       {
         question: "Where do I pay my vehicle road tax and renew my Blue Book?",

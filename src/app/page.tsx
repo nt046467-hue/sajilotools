@@ -21,7 +21,7 @@ import {
   type ToolDef,
 } from "@/lib/tools-registry";
 import { ICON_MAP } from "@/components/home/home-constants";
-import { ToolCardClient, NewsletterClient } from "@/components/home/HomePageClient";
+import { ToolCardClient, NewsletterClient, HomeCategoryCard } from "@/components/home/HomePageClient";
 
 import { SITE_CONFIG, SITE_URL } from "@/lib/site-config";
 
@@ -49,11 +49,6 @@ export const metadata: Metadata = {
 const FEATURED_TOOLS = REGISTERED_TOOLS.filter((t) => t.featured);
 const TRENDING_TOOLS = REGISTERED_TOOLS.filter((t) => t.trending);
 const LATEST_TOOLS = REGISTERED_TOOLS.filter((t) => t.isLatest);
-
-const CATEGORIES = REGISTERED_CATEGORIES.map((cat) => ({
-  ...cat,
-  Icon: ICON_MAP[cat.icon] || FileText,
-}));
 
 const STATS = [
   { value: `${REGISTERED_TOOLS.length}+`, label: "Free Tools" },
@@ -211,38 +206,17 @@ export default function HomePage() {
               </p>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4">
-              {CATEGORIES.map((cat) => {
-                const Icon = cat.Icon;
+              {REGISTERED_CATEGORIES.map((cat) => {
                 const realCount = REGISTERED_TOOLS.filter(
                   (t) => t.categorySlug === cat.slug
                 ).length;
 
                 return (
-                  <Link
+                  <HomeCategoryCard
                     key={cat.slug}
-                    href={`/tools/${cat.slug}`}
-                    className="group flex flex-col items-center gap-3 p-5 bg-white dark:bg-[#141829] rounded-2xl border border-[#E4E0D8] dark:border-[#1E2338] shadow-[0_1px_4px_rgba(0,0,0,0.04)] dark:shadow-none st-card-hover hover:shadow-[0_6px_20px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_6px_20px_rgba(0,0,0,0.3)] text-center block"
-                  >
-                    <div
-                      className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-transform duration-200 group-hover:scale-[1.06] ${cat.bgClass}`}
-                    >
-                      <Icon
-                        size={24}
-                        strokeWidth={2}
-                        className="tool-accent-text"
-                        style={getToolAccentStyle(cat.color, cat.darkColor)}
-                      />
-                    </div>
-                    <div>
-                      <div
-                        className="font-semibold text-[#18181B] dark:text-[#F4F4F5] text-sm mb-0.5"
-                        style={{ fontFamily: "'Sora', sans-serif" }}
-                      >
-                        {cat.name}
-                      </div>
-                      <div className="text-[11px] text-[#A1A1AA]">{realCount} tools</div>
-                    </div>
-                  </Link>
+                    cat={cat}
+                    toolCount={realCount}
+                  />
                 );
               })}
             </div>

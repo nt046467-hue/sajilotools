@@ -3,8 +3,8 @@ import { TOOLS, CATEGORIES } from "@/lib/tools-registry";
 import { BLOG_POSTS } from "@/lib/blog-data";
 import { SITE_URL } from "@/lib/site-config";
 
-// Stable base date representing the latest major platform update
-const PLATFORM_LASTMOD = new Date("2026-08-15");
+// Stable base date representing the latest major platform update (Sprint 4)
+const PLATFORM_LASTMOD = new Date("2026-08-24");
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const staticPages: MetadataRoute.Sitemap = [

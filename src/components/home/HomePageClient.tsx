@@ -32,9 +32,57 @@ function Badge({ label }: { label: string }) {
 }
 
 import ToolCard from "@/components/tools/shared/ToolCard";
+import { CategoryAnimatedIcon, CategoryAnimatedIconHandle } from "@/components/layout/CategoryAnimatedIcon";
+import { useRef } from "react";
+import type { CategoryDef } from "@/lib/tools-registry";
 
 export function ToolCardClient({ tool }: { tool: ToolDef }) {
   return <ToolCard tool={tool} />;
+}
+
+export function HomeCategoryCard({
+  cat,
+  toolCount,
+}: {
+  cat: CategoryDef;
+  toolCount: number;
+}) {
+  const iconRef = useRef<CategoryAnimatedIconHandle>(null);
+
+  return (
+    <Link
+      href={`/tools/${cat.slug}`}
+      onPointerEnter={(e) => {
+        if (e.pointerType === "mouse") {
+          iconRef.current?.trigger();
+        }
+      }}
+      onTouchStart={() => {
+        iconRef.current?.trigger();
+      }}
+      className="group flex flex-col items-center gap-3 p-5 bg-white dark:bg-[#141829] rounded-2xl border border-[#E4E0D8] dark:border-[#1E2338] shadow-[0_1px_4px_rgba(0,0,0,0.04)] dark:shadow-none st-card-hover hover:shadow-[0_6px_20px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_6px_20px_rgba(0,0,0,0.3)] text-center block transition-all"
+    >
+      <div
+        className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-transform duration-200 group-hover:scale-[1.08] ${cat.bgClass}`}
+      >
+        <div
+          className="tool-accent-text flex items-center justify-center"
+          style={getToolAccentStyle(cat.color, cat.darkColor)}
+        >
+          <CategoryAnimatedIcon ref={iconRef} categoryName={cat.name} size={24} />
+        </div>
+      </div>
+      <div>
+        <div
+          className="font-semibold text-[#18181B] dark:text-[#F4F4F5] text-sm mb-0.5 group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors"
+          style={{ fontFamily: "'Sora', sans-serif" }}
+        >
+          {cat.name}
+        </div>
+        <div className="text-[11px] text-[#A1A1AA]">{toolCount} tools</div>
+      </div>
+    </Link>
+  );
 }
 
 export function NewsletterClient() {

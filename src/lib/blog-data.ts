@@ -217,7 +217,7 @@ export const BLOG_POSTS: BlogPost[] = [
     readingTime: "9 min read",
     category: "Finance",
     toolSlugs: [
-      { slug: "tax-calculator", categorySlug: "finance", label: "Income Tax Calculator" },
+      { slug: "tax-calculator", categorySlug: "finance", label: "Nepal Salary Tax & TDS Calculator" },
       { slug: "pf-calculator", categorySlug: "finance", label: "Provident Fund (SSF/EPF) Calculator" },
     ],
     content: `
@@ -231,10 +231,13 @@ export const BLOG_POSTS: BlogPost[] = [
   <h3 style="margin-top: 0; margin-bottom: 8px; font-size: 1.1rem; color: #1F2544;">🧮 Calculate Your Exact Tax & Take-Home Pay Instantly</h3>
   <p style="margin-bottom: 12px; font-size: 0.9rem; color: #52525B;">Use our free, instant <strong>Nepal Income Tax & Salary TDS Calculator</strong> to calculate your exact monthly TDS, deductions (EPF/CIT/SSF), and net take-home salary.</p>
   <div style="display: flex; flex-wrap: wrap; gap: 12px;">
-    <a href="/tools/finance/tax-calculator" style="display: inline-block; background-color: #1F2544; color: #ffffff; padding: 8px 16px; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 0.85rem;">Open Nepal Tax Calculator →</a>
-    <a href="/tools/finance/emi-calculator" style="display: inline-block; background-color: #FAFAF8; border: 1px solid #E4E0D8; color: #18181B; padding: 8px 16px; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 0.85rem;">Open EMI Calculator →</a>
+    <a href="/tools/finance/tax-calculator" style="display: inline-block; background-color: #1F2544; color: #ffffff; padding: 8px 16px; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 0.85rem;">Calculate Salary Tax & TDS Instantly →</a>
+    <a href="/tools/finance/pf-calculator" style="display: inline-block; background-color: #FAFAF8; border: 1px solid #E4E0D8; color: #18181B; padding: 8px 16px; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 0.85rem;">Open EPF / SSF Calculator →</a>
   </div>
 </div>
+
+<h2>What is Salary TDS & Personal Income Tax in Nepal?</h2>
+<p>In Nepal, Tax Deducted at Source (Salary TDS) is the monthly portion of personal income tax that employers withhold from an employee's gross monthly earnings and submit directly to the Inland Revenue Department (IRD). The tax is calculated progressively based on annual taxable income after accounting for statutory deductions such as SSF, EPF, CIT, and life insurance.</p>
 
 <h2>What Changed in FY 2083/84 Income Tax Rates?</h2>
 <p>Nepal's fiscal year rolled over to <strong>2083/84</strong> on 1 Shrawan 2083. The government introduced three major structural changes to personal income tax (TDS):</p>
@@ -256,8 +259,17 @@ export const BLOG_POSTS: BlogPost[] = [
 </tbody>
 </table>
 
-<h2>Social Security Fund (SSF) Tax Relief</h2>
-<p>If your employer is registered with SSF, the employee's 11% contribution is tax-deductible before slab application, and the 1% Social Security Tax on the first NPR 10,00,000 slab is <strong>fully exempt (0%)</strong>.</p>
+<h2>Social Security Fund (SSF) Tax Relief & Deductions</h2>
+<p>Under the Social Security Act, if an employee and employer contribute to the Social Security Fund (SSF):</p>
+<ul>
+  <li>The employee's 11% contribution is deducted from gross income before applying tax brackets.</li>
+  <li>The 1% Social Security Tax on the first NPR 10,00,000 bracket is <strong>fully waived (0% tax)</strong>.</li>
+  <li>Other approved deductions include Citizen Investment Trust (CIT, up to Rs. 3 Lakh), Employee Provident Fund (EPF), and Life Insurance premiums (up to Rs. 40,000).</li>
+  <li>Female resident individuals filing independently are entitled to an additional <strong>10% female tax rebate</strong> on their total tax liability.</li>
+</ul>
+
+<h2>Step-by-Step Salary Tax Calculation Example</h2>
+<p>Suppose an employee earns a monthly gross salary of NPR 75,000 plus one month's Dashain bonus (Annual Gross = NPR 9,75,000). If enrolled in SSF (11% contribution = NPR 99,000 deducted), Taxable Income becomes NPR 8,76,000. Because this falls under the first NPR 10,00,000 threshold and the employee is in SSF, the 1% SST is waived, resulting in NPR 0 annual salary tax. You can compute exact figures using our interactive <a href="/tools/finance/tax-calculator">Nepal Salary Tax & TDS Calculator</a>.</p>
     `,
   },
   {
@@ -269,17 +281,24 @@ export const BLOG_POSTS: BlogPost[] = [
     readingTime: "6 min read",
     category: "Nepal",
     toolSlugs: [
-      { slug: "land-converter", categorySlug: "nepal", label: "Land Unit Converter" },
+      { slug: "land-converter", categorySlug: "nepal", label: "Nepali Land Unit Converter (Ropani, Aana, Bigha, Kattha)" },
     ],
     content: `
+<div style="background-color: rgba(220, 38, 38, 0.08); border: 1px solid rgba(220, 38, 38, 0.25); padding: 16px 20px; border-radius: 14px; margin-bottom: 24px;">
+  <h3 style="margin-top: 0; margin-bottom: 8px; font-size: 1.1rem; color: #DC2626;">📐 Need Instant Land Unit Conversion?</h3>
+  <p style="margin-bottom: 12px; font-size: 0.9rem; color: #52525B;">Convert between Ropani, Aana, Paisa, Daam (Kathmandu/Hills) and Bigha, Kattha, Dhur (Terai), Square Feet, and Square Meters instantly.</p>
+  <a href="/tools/nepal/land-converter" style="display: inline-block; background-color: #DC2626; color: #ffffff; padding: 8px 16px; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 0.85rem;">Open Land Unit Converter →</a>
+</div>
+
 <h2>Two Systems, One Country</h2>
-<p>Nepal uses <strong>two completely different land measurement systems</strong> depending on geography:</p>
+<p>Nepal uses <strong>two completely different land measurement systems</strong> depending on geographical topography and administrative history:</p>
 <ul>
-<li><strong>Ropani-Aana-Paisa-Dam</strong> — used in the hills and mountains (Kathmandu, Pokhara, etc.)</li>
-<li><strong>Bigha-Kattha-Dhur</strong> — used in the Terai/plains (Birgunj, Janakpur, Biratnagar, Chitwan, etc.)</li>
+<li><strong>Ropani-Aana-Paisa-Dam</strong> — used throughout the Kathmandu Valley and hilly/mountainous districts.</li>
+<li><strong>Bigha-Kattha-Dhur</strong> — used across the Terai/plains (Birgunj, Biratnagar, Chitwan, Janakpur, Butwal, Nepalgunj, Jhapa, etc.).</li>
 </ul>
 
 <h2>Hill System: Ropani-Aana-Paisa-Dam</h2>
+<p>In Kathmandu and the hills, land is bought and sold primarily in <strong>Aana</strong> (e.g. 3 Aana, 4 Aana residential plots) and <strong>Ropani</strong>:</p>
 <table>
 <thead><tr><th>Unit</th><th>Subdivision</th><th>Sq. Feet</th><th>Sq. Meters</th></tr></thead>
 <tbody>
@@ -291,6 +310,7 @@ export const BLOG_POSTS: BlogPost[] = [
 </table>
 
 <h2>Terai System: Bigha-Kattha-Dhur</h2>
+<p>In the Terai, land sizes are significantly larger and measured in <strong>Kattha</strong> and <strong>Bigha</strong>:</p>
 <table>
 <thead><tr><th>Unit</th><th>Subdivision</th><th>Sq. Feet</th><th>Sq. Meters</th></tr></thead>
 <tbody>
@@ -300,9 +320,16 @@ export const BLOG_POSTS: BlogPost[] = [
 </tbody>
 </table>
 
-<h2>Cross-System Conversion</h2>
-<p>1 Bigha = 72,900 sq ft ÷ 5,476 sq ft/ropani ≈ <strong>13.31 Ropani</strong></p>
-<p>Conversely, 1 Ropani ≈ <strong>0.0751 Bigha</strong> (1.5 Kattha approx.)</p>
+<h2>Cross-System Conversion: Ropani ↔ Bigha</h2>
+<p>To convert between the two regional systems, use Square Feet as the common bridge:</p>
+<ul>
+  <li><strong>1 Bigha</strong> = 72,900 sq ft ÷ 5,476 sq ft/ropani ≈ <strong>13.31 Ropani</strong> (13 Ropani, 5 Aana approx.)</li>
+  <li><strong>1 Ropani</strong> ≈ <strong>0.0751 Bigha</strong> (approximately 1.5 Kattha or 30 Dhur)</li>
+  <li><strong>1 Kattha</strong> = 3,645 sq ft ≈ <strong>10.65 Aana</strong></li>
+</ul>
+
+<h2>Lalpurja (Deed) Measurements & Square Meters</h2>
+<p>Official Nepal Land Revenue Offices (Malpot Karyalaya) and cadastral maps now record land areas in <strong>Square Meters (Sq. M)</strong> on modern digital Lalpurjas. To quickly convert your Lalpurja square meters into Ropani, Aana, or Kattha, use our free <a href="/tools/nepal/land-converter">Nepal Land Unit Converter</a>.</p>
     `,
   },
   {
@@ -350,30 +377,37 @@ export const BLOG_POSTS: BlogPost[] = [
     readingTime: "6 min read",
     category: "Finance",
     toolSlugs: [
-      { slug: "gold-silver-calculator", categorySlug: "finance", label: "Gold & Silver Calculator" },
+      { slug: "gold-silver-calculator", categorySlug: "finance", label: "Gold & Silver (Tola / Aana / Lal) Calculator" },
     ],
     content: `
 <div style="background-color: rgba(34, 197, 94, 0.08); border: 1px solid rgba(34, 197, 94, 0.25); padding: 16px 20px; border-radius: 14px; margin-bottom: 24px;">
   <h3 style="margin-top: 0; margin-bottom: 8px; font-size: 1.1rem; color: #22C55E;">👑 Calculate Real Gold & Silver Prices</h3>
-  <p style="margin-bottom: 12px; font-size: 0.9rem; color: #52525B;">Calculate total jewellery cost including Tola weight, Lal, Jarti (wastage), and Jyala (making charge) instantly.</p>
-  <a href="/tools/finance/gold-silver-calculator" style="display: inline-block; background-color: #22C55E; color: #ffffff; padding: 8px 16px; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 0.85rem;">Open Gold & Silver Calculator →</a>
+  <p style="margin-bottom: 12px; font-size: 0.9rem; color: #52525B;">Calculate total jewelry cost including Tola weight, Aana, Lal, Jarti (wastage), and Jyala (making charge) instantly based on live FENEGOSIDA rates.</p>
+  <a href="/tools/finance/gold-silver-calculator" style="display: inline-block; background-color: #22C55E; color: #ffffff; padding: 8px 16px; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 0.85rem;">Calculate Gold Price in Tola & Aana →</a>
 </div>
 
 <h2>Understanding Nepali Gold Weight Units</h2>
+<p>The Federation of Nepal Gold and Silver Dealers' Association (FENEGOSIDA) publishes official daily rates per <strong>Tola (तोला)</strong> and 10 Grams. In the Nepali retail market:</p>
 <ul>
-  <li><strong>1 Tola (तोला) = 11.6638 grams</strong> = 100 Lal (लाल)</li>
-  <li><strong>1 Lal (लाल) = 0.1166 gram</strong> (1/100th of a tola)</li>
-  <li><strong>1 Aana (Gold) = 6.25 Lal</strong> = 0.729 gram</li>
-  <li><strong>10 Grams = 0.857 Tola</strong></li>
+  <li><strong>1 Tola (तोला) = 11.6638 Grams</strong> = 16 Aana (आना) = 64 Lal (लाल)</li>
+  <li><strong>1 Aana (आना) = 4 Lal</strong> = 0.7289875 Grams (approx 0.729g)</li>
+  <li><strong>1 Lal (लाल) = 0.1822 Grams</strong> (1/64th of a Tola)</li>
+  <li><strong>10 Grams = 0.85735 Tola</strong></li>
 </ul>
+
+<h2>How 1 Aana Gold Price is Calculated</h2>
+<p>To calculate the price of 1 Aana of gold in Nepal, take today's 24K Fine Gold rate per Tola and divide by 16:</p>
+<p style="background: #F7F5F0; padding: 10px 14px; border-left: 4px solid #22C55E; font-family: monospace;">1 Aana Gold Price = Today's 1 Tola Rate ÷ 16</p>
+<p>For example, if 1 Tola Fine Gold is NPR 176,000, then 1 Aana equals exactly NPR 11,000 (before making charges and wastage).</p>
 
 <h2>The 4 Components of Jewellery Billing</h2>
 <ol>
-  <li><strong>Base Gold Value:</strong> Weight (in Tola or Grams) × Today's FENEGOSIDA Hallmark 24K / Tejabi 22K rate.</li>
-  <li><strong>Jarti (Wastage / जर्ती):</strong> Gold lost during melting and soldering (typically 3% to 12% depending on intricacy).</li>
-  <li><strong>Jyala (Making Charge / ज्याला):</strong> Artisan labour fee per piece or per tola.</li>
-  <li><strong>Stone / Gem Weight:</strong> Must always be weighed separately and deducted from net gold weight.</li>
+  <li><strong>Base Metal Value:</strong> Net Gold Weight (in Tola, Aana, or Grams) × Today's FENEGOSIDA Hallmark 24K (छापावाल) or Tejabi 22K (तेजाबी) rate.</li>
+  <li><strong>Jarti (Wastage / जर्ती):</strong> Percentage of gold lost during melting, cutting, and soldering (typically 3% to 10% depending on design intricacy).</li>
+  <li><strong>Jyala (Making Charge / ज्याला):</strong> Artisan craftsmanship fee per piece or per tola.</li>
+  <li><strong>Stone / Gem Deduction:</strong> Any decorative stones or gems must be weighed separately and deducted from gross weight before pricing.</li>
 </ol>
+<p>To compute total invoice figures with custom Jyala and Jarti, use our <a href="/tools/finance/gold-silver-calculator">Gold & Silver Calculator</a>.</p>
     `,
   },
   {
@@ -423,26 +457,50 @@ export const BLOG_POSTS: BlogPost[] = [
     readingTime: "7 min read",
     category: "Finance",
     toolSlugs: [
-      { slug: "vehicle-tax-calculator", categorySlug: "nepal", label: "Vehicle Road Tax Calculator" },
+      { slug: "vehicle-tax-calculator", categorySlug: "nepal", label: "Nepal Vehicle & Bike Tax Calculator" },
     ],
     content: `
-<h2>Understanding Vehicle Tax in Nepal</h2>
-<p>Vehicle road tax in Nepal is determined at the provincial level by the Ministry of Physical Infrastructure and Transport (Yatayat Bebastha Karyalaya). Taxes vary based on engine displacement (CC) or electric motor kilowatt (kW) ratings.</p>
+<div style="background-color: rgba(220, 38, 38, 0.08); border: 1px solid rgba(220, 38, 38, 0.25); padding: 16px 20px; border-radius: 14px; margin-bottom: 24px;">
+  <h3 style="margin-top: 0; margin-bottom: 8px; font-size: 1.1rem; color: #DC2626;">🏍️ Calculate Your Exact Vehicle Tax & Fines</h3>
+  <p style="margin-bottom: 12px; font-size: 0.9rem; color: #52525B;">Check your annual bike, scooter, car, or EV road tax across all 7 provinces and calculate overdue Blue Book late renewal penalty fines instantly.</p>
+  <a href="/tools/nepal/vehicle-tax-calculator" style="display: inline-block; background-color: #DC2626; color: #ffffff; padding: 8px 16px; border-radius: 8px; font-weight: bold; text-decoration: none; font-size: 0.85rem;">Calculate Vehicle Tax & Blue Book Fines →</a>
+</div>
 
-<h2>Bagmati Province 2-Wheeler Tax Slabs</h2>
+<h2>Understanding Vehicle Tax in Nepal</h2>
+<p>Vehicle road tax in Nepal (सवारी साधन कर) is an annual statutory tax collected by provincial governments through the Ministry of Physical Infrastructure and Transport (Yatayat Bebastha Karyalaya). Road tax rates vary depending on vehicle category (Two-Wheeler, Car/Jeep/Van, Commercial, Electric Vehicle) and engine displacement (CC) or electric motor power (kW).</p>
+
+<h2>Bagmati Province 2-Wheeler (Motorcycle / Scooter) Tax Slabs</h2>
 <table>
-  <thead><tr><th>Engine Capacity (CC)</th><th>Annual Road Tax (NPR)</th></tr></thead>
+  <thead><tr><th>Engine Capacity (CC)</th><th>Annual Road Tax (NPR)</th><th>Total with Blue Book Renewal (NPR)</th></tr></thead>
   <tbody>
-    <tr><td>Up to 125 CC</td><td>NPR 3,000</td></tr>
-    <tr><td>126 CC to 160 CC</td><td>NPR 4,500</td></tr>
-    <tr><td>161 CC to 250 CC</td><td>NPR 6,000</td></tr>
-    <tr><td>251 CC to 400 CC</td><td>NPR 11,500</td></tr>
-    <tr><td>401 CC and above</td><td>NPR 22,000</td></tr>
+    <tr><td>Up to 125 CC</td><td>NPR 3,000</td><td>NPR 3,300</td></tr>
+    <tr><td>126 CC to 160 CC</td><td>NPR 4,500</td><td>NPR 4,800</td></tr>
+    <tr><td>161 CC to 250 CC</td><td>NPR 6,000</td><td>NPR 6,300</td></tr>
+    <tr><td>251 CC to 400 CC</td><td>NPR 11,500</td><td>NPR 11,800</td></tr>
+    <tr><td>401 CC and above</td><td>NPR 22,000</td><td>NPR 22,300</td></tr>
   </tbody>
 </table>
 
-<h2>Renewal Deadlines & Fines</h2>
-<p>Bluebook road taxes must be renewed within the fiscal year or within 90 days of expiration. Late renewals incur escalating fines: 5% in first 30 days, 10% in next 45 days, 20% by end of fiscal year, and up to 100% compound penalties for multi-year overdue renewals.</p>
+<h2>Electric Vehicle (EV) Road Tax Slabs</h2>
+<p>Electric two-wheelers and four-wheelers are taxed under dedicated provincial eco-slabs based on motor power:</p>
+<ul>
+  <li><strong>Electric Two-Wheelers:</strong> Up to 1 kW (approx NPR 1,500/year), 1 kW–3 kW (NPR 2,000/year), Above 3 kW (NPR 3,000/year).</li>
+  <li><strong>Electric Cars / SUVs:</strong> Up to 50 kW, 51–100 kW, 101–200 kW, and Above 200 kW tiers.</li>
+</ul>
+
+<h2>Blue Book Renewal Deadlines & Late Penalty Fines</h2>
+<p>Vehicle road tax must be paid and the Blue Book (सवारी दर्ता किताब) renewed annually before the registered expiry date. Delaying renewal incurs progressive statutory penalties:</p>
+<table>
+  <thead><tr><th>Delay Period</th><th>Penalty Percentage</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>First 30 days after expiry</td><td>5% fine</td><td>Grace period initial tier</td></tr>
+    <tr><td>Day 31 to Day 75 (Next 45 days)</td><td>10% fine</td><td>Moderate delay penalty</td></tr>
+    <tr><td>Day 76 until end of Fiscal Year</td><td>20% fine</td><td>Standard late fee for current FY</td></tr>
+    <tr><td>Overdue for 1 to 5+ Fiscal Years</td><td>Up to 100% fine per year</td><td>Compounding multi-year overdue fines</td></tr>
+  </tbody>
+</table>
+
+<p>You can estimate your exact payable amount before visiting the Yatayat office using our <a href="/tools/nepal/vehicle-tax-calculator">Nepal Vehicle Tax Calculator</a>.</p>
     `,
   },
   {

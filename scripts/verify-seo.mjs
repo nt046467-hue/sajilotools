@@ -199,7 +199,8 @@ const blogDataPath = join(ROOT, "src", "lib", "blog-data.ts");
 if (existsSync(blogDataPath) && existsSync(registryPath)) {
   const blogDataContent = readFileSync(blogDataPath, "utf8");
   const registryContent = readFileSync(registryPath, "utf8");
-  const blogToolMatches = [...blogDataContent.matchAll(/slug:\s*["']([a-z0-9-]+)["']/g)].map(m => m[1]);
+  // Match slugs while cleanly ignoring optional query parameters (e.g. nepali-unicode?mode=preetiToUni)
+  const blogToolMatches = [...blogDataContent.matchAll(/slug:\s*["']([a-z0-9-]+)(?:\?[^"']*)?["']/g)].map(m => m[1]);
   const invalidBlogSlugs = blogToolMatches.filter(slug => !registryContent.includes(`slug: "${slug}"`) && !blogDataContent.includes(`slug: "${slug}",\n    title:`));
   assert(
     invalidBlogSlugs.length === 0,
@@ -237,6 +238,76 @@ const subscribeApiPath = join(ROOT, "src", "app", "api", "subscribe", "route.ts"
 if (existsSync(subscribeApiPath)) {
   const subscribeContent = readFileSync(subscribeApiPath, "utf8");
   assert(subscribeContent.includes("SITE_URL"), "api/subscribe/route.ts: Uses centralized SITE_URL");
+}
+
+// ─── 10. Sprint 4: Static Generation & Topic Cluster Invariants ─────────────
+console.log("\n🔍 Sprint 4 Topic Clusters & Static Route Generation Checks:");
+
+const toolSlugPagePath = join(ROOT, "src", "app", "tools", "[category]", "[slug]", "page.tsx");
+if (existsSync(toolSlugPagePath)) {
+  const toolSlugContent = readFileSync(toolSlugPagePath, "utf8");
+  assert(
+    toolSlugContent.includes("generateStaticParams"),
+    "tools/[category]/[slug]/page.tsx: Implements generateStaticParams() for static generation"
+  );
+  assert(
+    toolSlugContent.includes("getClusterByToolSlug"),
+    "tools/[category]/[slug]/page.tsx: Integrates topic cluster guide linking"
+  );
+}
+
+const categoryPagePath = join(ROOT, "src", "app", "tools", "[category]", "page.tsx");
+if (existsSync(categoryPagePath)) {
+  const categoryContent = readFileSync(categoryPagePath, "utf8");
+  assert(
+    categoryContent.includes("generateStaticParams"),
+    "tools/[category]/page.tsx: Implements generateStaticParams() for category static generation"
+  );
+}
+
+const topicClustersPath = join(ROOT, "src", "lib", "seo-topic-clusters.ts");
+assert(existsSync(topicClustersPath), "src/lib/seo-topic-clusters.ts exists");
+
+if (existsSync(topicClustersPath) && existsSync(registryPath) && existsSync(blogDataPath)) {
+  const clustersContent = readFileSync(topicClustersPath, "utf8");
+  const registryContent = readFileSync(registryPath, "utf8");
+  const blogDataContent = readFileSync(blogDataPath, "utf8");
+
+  const requiredClusters = ["vehicle-tax", "salary-tax", "gold-silver", "land-measurement"];
+  for (const clusterId of requiredClusters) {
+    assert(
+      clustersContent.includes(`"${clusterId}":`),
+      `seo-topic-clusters.ts: Contains P0 cluster "${clusterId}"`
+    );
+  }
+
+  // Verify priority tools
+  const priorityTools = [
+    "vehicle-tax-calculator",
+    "tax-calculator",
+    "gold-silver-calculator",
+    "land-converter",
+  ];
+  for (const toolSlug of priorityTools) {
+    assert(
+      registryContent.includes(`slug: "${toolSlug}"`),
+      `tools-registry.ts: Contains priority tool "${toolSlug}"`
+    );
+  }
+
+  // Verify priority guides
+  const priorityGuides = [
+    "vehicle-road-tax-nepal-guide",
+    "nepal-income-tax-slabs-guide",
+    "gold-silver-rate-nepal-guide",
+    "nepali-land-measurement-guide",
+  ];
+  for (const guideSlug of priorityGuides) {
+    assert(
+      blogDataContent.includes(`slug: "${guideSlug}"`),
+      `blog-data.ts: Contains priority guide "${guideSlug}"`
+    );
+  }
 }
 
 // ─── Summary ────────────────────────────────────────────────────────────────

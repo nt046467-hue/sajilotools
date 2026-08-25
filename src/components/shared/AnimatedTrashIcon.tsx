@@ -19,14 +19,18 @@ export interface AnimatedTrashIconProps {
 }
 
 export interface AnimatedTrashIconHandle {
+  openLid: () => void;
+  closeLid: () => void;
   play: () => Promise<void>;
 }
 
 /**
- * Animated Trash Icon — accurate physics from the reference design.
+ * Animated Trash Icon — Realistic pre-delete hover lid opening + click particle eating physics.
  *
- * When hovered or clicked, the lid pops open, 3 particles tumble inside one-by-one,
- * the bin squishes realistically as it "eats" them, and the lid snaps shut.
+ * 1. On Hover / Ready: Lid smoothly pops open to -28° ("ready to delete").
+ * 2. On Leave: Lid snaps closed cleanly to 0°.
+ * 3. On Click / Delete: Lid pops fully open (-52°), 3 particles tumble inside,
+ *    bin body squishes realistically as it consumes them, lid snaps shut, and onDelete triggers.
  */
 const AnimatedTrashIcon = forwardRef<AnimatedTrashIconHandle, AnimatedTrashIconProps>(
   function AnimatedTrashIcon(
@@ -46,15 +50,45 @@ const AnimatedTrashIcon = forwardRef<AnimatedTrashIconHandle, AnimatedTrashIconP
     const dust2 = useAnimation();
     const dust3 = useAnimation();
     const isAnimating = useRef(false);
+    const isHovered = useRef(false);
 
+    // ── Ready / Hover: Open lid slightly ──
+    const openLid = useCallback(() => {
+      if (isAnimating.current) return;
+      isHovered.current = true;
+      lidControls.start({
+        rotate: -30,
+        transition: { type: "spring", stiffness: 450, damping: 18 },
+      });
+      bodyControls.start({
+        scale: 1.05,
+        transition: { type: "spring", stiffness: 400, damping: 20 },
+      });
+    }, [lidControls, bodyControls]);
+
+    // ── Mouse Leave: Close lid ──
+    const closeLid = useCallback(() => {
+      if (isAnimating.current) return;
+      isHovered.current = false;
+      lidControls.start({
+        rotate: 0,
+        transition: { type: "spring", stiffness: 400, damping: 22 },
+      });
+      bodyControls.start({
+        scale: 1,
+        transition: { type: "spring", stiffness: 400, damping: 22 },
+      });
+    }, [lidControls, bodyControls]);
+
+    // ── Full Click-to-Delete Sequence ──
     const play = useCallback(async () => {
       if (isAnimating.current) return;
       isAnimating.current = true;
 
-      // 1. Pop Lid Open (hinged around left side at 4px, 7px)
+      // 1. Pop Lid Fully Open (hinged around left side at 4px, 7px)
       lidControls.start({
-        rotate: -45,
-        transition: { type: "spring", stiffness: 350, damping: 15 },
+        rotate: -52,
+        transition: { type: "spring", stiffness: 400, damping: 14 },
       });
 
       // 2. Initial state for falling particles
@@ -69,7 +103,7 @@ const AnimatedTrashIcon = forwardRef<AnimatedTrashIconHandle, AnimatedTrashIconP
         x: [-3, -1.5, 0, 0],
         rotate: [-45, 45, 135, 180],
         scale: [0.5, 1, 1, 0.4],
-        transition: { duration: 0.45, ease: "easeIn", times: [0, 0.3, 0.8, 1], delay: 0.1 },
+        transition: { duration: 0.42, ease: "easeIn", times: [0, 0.3, 0.8, 1], delay: 0.08 },
       });
 
       // Particle 2: Data Square (tumbles down)
@@ -79,7 +113,7 @@ const AnimatedTrashIcon = forwardRef<AnimatedTrashIconHandle, AnimatedTrashIconP
         x: [3, 1.5, 0, 0],
         rotate: [45, -45, -135, -180],
         scale: [0.5, 1.2, 1, 0.4],
-        transition: { duration: 0.45, ease: "easeIn", times: [0, 0.3, 0.8, 1], delay: 0.2 },
+        transition: { duration: 0.42, ease: "easeIn", times: [0, 0.3, 0.8, 1], delay: 0.18 },
       });
 
       // Particle 3: Crumpled File Circle (tumbles down)
@@ -88,39 +122,47 @@ const AnimatedTrashIcon = forwardRef<AnimatedTrashIconHandle, AnimatedTrashIconP
         y: [-24, -4, 6, 14],
         rotate: [0, 90, 180, 270],
         scale: [0.5, 1, 1, 0.4],
-        transition: { duration: 0.45, ease: "easeIn", times: [0, 0.3, 0.8, 1], delay: 0.35 },
+        transition: { duration: 0.42, ease: "easeIn", times: [0, 0.3, 0.8, 1], delay: 0.3 },
       });
 
-      // 3. Bin shakes/squishes slightly as it "eats" the trash
+      // 3. Bin shakes/squishes as it "eats" the trash
       bodyControls.start({
-        scaleY: [1, 1.12, 0.92, 1],
-        scaleX: [1, 0.94, 1.05, 1],
-        transition: { duration: 0.35, ease: "easeInOut" },
+        scaleY: [1, 1.15, 0.9, 1],
+        scaleX: [1, 0.93, 1.06, 1],
+        transition: { duration: 0.32, ease: "easeInOut" },
       });
 
-      // 4. Close lid cleanly with spring snap
+      // 4. Close lid cleanly with snappy spring
       await lidControls.start({
         rotate: 0,
-        transition: { type: "spring", stiffness: 400, damping: 20, delay: 0.05 },
+        transition: { type: "spring", stiffness: 450, damping: 20, delay: 0.04 },
       });
 
-      // Settle delay before triggering delete callback
-      await new Promise((r) => setTimeout(r, 100));
+      await new Promise((r) => setTimeout(r, 80));
 
       if (onDelete) {
         onDelete();
       }
 
       isAnimating.current = false;
+      isHovered.current = false;
     }, [lidControls, bodyControls, dust1, dust2, dust3, onDelete]);
 
     useImperativeHandle(ref, () => ({
+      openLid,
+      closeLid,
       play,
     }));
 
     return (
       <span
-        className={`inline-flex items-center justify-center pointer-events-none select-none ${className}`}
+        onPointerEnter={(e) => {
+          if (!disableHover && e.pointerType === "mouse") openLid();
+        }}
+        onPointerLeave={() => {
+          if (!disableHover) closeLid();
+        }}
+        className={`inline-flex items-center justify-center select-none ${className}`}
         style={{ width: size, height: size }}
       >
         <motion.svg
@@ -188,11 +230,12 @@ const AnimatedTrashIcon = forwardRef<AnimatedTrashIconHandle, AnimatedTrashIconP
   }
 );
 
+AnimatedTrashIcon.displayName = "AnimatedTrashIcon";
 export default AnimatedTrashIcon;
 
 /**
- * Animated Trash Button — A complete button with realistic click-to-delete animation.
- * When clicked, the trash can eats the item, and then `onDelete` is triggered.
+ * Animated Trash Button — Complete button with realistic hover pre-opening ("ready to delete")
+ * and click particle eating animation before executing deletion.
  */
 export function AnimatedTrashButton({
   onDelete,
@@ -202,6 +245,8 @@ export function AnimatedTrashButton({
   children,
   disabled,
   type = "button",
+  onPointerEnter,
+  onPointerLeave,
   ...rest
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & {
   onDelete?: () => void | Promise<void>;
@@ -210,20 +255,34 @@ export function AnimatedTrashButton({
   const iconRef = useRef<AnimatedTrashIconHandle | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  const handlePointerEnter = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (disabled || isDeleting) return;
+    if (e.pointerType === "mouse") {
+      iconRef.current?.openLid();
+    }
+    if (onPointerEnter) onPointerEnter(e);
+  };
+
+  const handlePointerLeave = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (disabled || isDeleting) return;
+    iconRef.current?.closeLid();
+    if (onPointerLeave) onPointerLeave(e);
+  };
+
   const handleClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
     if (disabled || isDeleting) return;
     setIsDeleting(true);
 
-    // 1. Play the complete realistic animation (~800ms)
+    // 1. Play the complete realistic eating animation (~750ms)
     if (iconRef.current) {
       await iconRef.current.play();
     } else {
-      await new Promise((r) => setTimeout(r, 800));
+      await new Promise((r) => setTimeout(r, 750));
     }
 
-    // 2. Call the deletion action ONLY AFTER the animation finishes!
+    // 2. Call deletion callback ONLY AFTER animation finishes
     if (onDelete) {
       await onDelete();
     } else if (onClick) {
@@ -238,13 +297,15 @@ export function AnimatedTrashButton({
       {...rest}
       type={type}
       disabled={disabled || isDeleting}
+      onPointerEnter={handlePointerEnter}
+      onPointerLeave={handlePointerLeave}
       onClick={handleClick}
       className={`${className} ${isDeleting ? "pointer-events-none opacity-90" : ""}`}
     >
       <AnimatedTrashIcon
         ref={iconRef}
         size={iconSize}
-        disableHover={isDeleting}
+        disableHover={true} // Controlled by the button parent
       />
       {children}
     </button>

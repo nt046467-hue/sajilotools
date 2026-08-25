@@ -147,19 +147,20 @@ export default function QrBatchTool({ styleOptions }: QrBatchToolProps) {
   const items = parseInput();
 
   return (
-    <div className="space-y-4 p-5 rounded-2xl border border-[#E4E0D8] dark:border-[#1E2338] bg-white dark:bg-[#141829]">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 p-4 sm:p-5 rounded-2xl border border-[#E4E0D8] dark:border-[#1E2338] bg-white dark:bg-[#141829]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h3 className="text-sm font-bold text-[#18181B] dark:text-[#F4F4F5] flex items-center gap-2">
-            <Archive size={16} className="text-[#F5A623]" /> Batch QR Code Generator
+            <Archive size={16} className="text-[#F5A623] shrink-0" />
+            <span>Batch QR Code Generator</span>
           </h3>
           <p className="text-xs text-[#71717A] dark:text-[#A1A1AA] mt-0.5">
             Generate multiple QR codes at once for restaurant tables, event tickets, or product labels.
           </p>
         </div>
 
-        <label className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#E4E0D8] dark:border-[#2A2F48] bg-[#FAFAF8] dark:bg-[#1E2338] text-xs font-medium text-[#18181B] dark:text-[#F4F4F5] hover:bg-[#F0EDE8] transition-colors cursor-pointer shrink-0">
-          <Upload size={12} className="text-[#F5A623]" />
+        <label className="inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border border-[#E4E0D8] dark:border-[#2A2F48] bg-[#FAFAF8] dark:bg-[#1E2338] text-xs font-medium text-[#18181B] dark:text-[#F4F4F5] hover:bg-[#F0EDE8] transition-colors cursor-pointer shrink-0 w-full sm:w-auto">
+          <Upload size={13} className="text-[#F5A623]" />
           Import CSV / Text
           <input type="file" accept=".csv, .txt" onChange={handleCsvUpload} className="hidden" />
         </label>
@@ -176,14 +177,14 @@ export default function QrBatchTool({ styleOptions }: QrBatchToolProps) {
           placeholder="Table 1, https://menu.com/1&#10;Table 2, https://menu.com/2"
           className="w-full px-3.5 py-2.5 rounded-xl border border-[#E4E0D8] dark:border-[#2A2F48] bg-[#FAFAF8] dark:bg-[#1E2338] text-xs text-[#18181B] dark:text-[#F4F4F5] font-mono focus:outline-none focus:ring-2 focus:ring-[#F5A623]/40"
         />
-        <div className="flex items-center justify-between text-[11px] text-[#71717A] dark:text-[#A1A1AA] mt-1">
+        <div className="flex flex-wrap items-center justify-between gap-1 text-[11px] text-[#71717A] dark:text-[#A1A1AA] mt-1">
           <span>Detected: {items.length} item(s)</span>
           <span className="text-amber-600 dark:text-amber-400">Soft Limit: 100 rows per zip run</span>
         </div>
       </div>
 
       {/* Export Settings & Run */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#E4E0D8] dark:border-[#2A2F48]">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-3 border-t border-[#E4E0D8] dark:border-[#2A2F48]">
         <div className="flex items-center gap-3 text-xs">
           <span className="font-medium text-[#18181B] dark:text-[#F4F4F5]">Format:</span>
           <label className="flex items-center gap-1.5 cursor-pointer">
@@ -212,7 +213,7 @@ export default function QrBatchTool({ styleOptions }: QrBatchToolProps) {
           type="button"
           disabled={isGenerating || items.length === 0}
           onClick={generateBatchZip}
-          className="flex items-center gap-2 px-5 py-2.5 bg-[#1F2544] dark:bg-[#F5A623] text-white dark:text-[#0C0F1E] rounded-xl text-xs font-semibold hover:opacity-90 transition-opacity disabled:opacity-50"
+          className="flex items-center justify-center gap-2 px-5 py-2.5 bg-[#1F2544] dark:bg-[#F5A623] text-white dark:text-[#0C0F1E] rounded-xl text-xs font-semibold hover:opacity-90 transition-opacity disabled:opacity-50 w-full sm:w-auto"
         >
           {isGenerating ? (
             <>Generating Batch ({progress}/{totalCount})...</>

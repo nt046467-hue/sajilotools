@@ -816,8 +816,8 @@ export const TOOLS: ToolDef[] = [
     darkColor: "#F87171",
     isClientSide: true,
     trending: true,
-    seoTitle: "Land Unit Converter – Ropani, Anna, Bigha Online",
-    seoDescription: "Convert between Ropani, Anna, Bigha, Kattha, and other Nepali land units instantly. Free and 100% private.",
+    seoTitle: "Nepal Land Unit Converter – Ropani, Aana, Bigha & Kattha Online",
+    seoDescription: "Convert between Ropani, Aana, Bigha, Kattha, Dhur, Square Feet, and Square Meters instantly. Free and 100% private in your browser.",
   },
   {
     slug: "nepali-translator",

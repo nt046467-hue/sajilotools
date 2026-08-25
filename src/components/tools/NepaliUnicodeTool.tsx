@@ -295,7 +295,7 @@ export default function NepaliUnicodeTool() {
   };
 
   const romanPhrases = [
-    { label: "k gardai xeu", text: "sajilo tools nepal ma swagat chha xeu humm" },
+    { label: "k gardai xeu", text: "sajilo tools nepal ma swagat chha" },
     { label: "namaste nepal", text: "namaste mero nepal ramro chha" },
     { label: "kasto chha", text: "kasto chha sanchai ho" },
     { label: "dhanyabad", text: "dherai dherai dhanyabad tapailai" },
@@ -405,7 +405,7 @@ export default function NepaliUnicodeTool() {
             onChange={(e) => setInputText(e.target.value)}
             placeholder={
               mode === "roman"
-                ? "Type in Romanized Nepali (e.g., sajilo tools nepal ma swagat chha xeu humm)..."
+                ? "Type in Romanized Nepali (e.g., sajilo tools nepal ma swagat chha)..."
                 : mode === "preetiToUni"
                   ? "Paste traditional Preeti font text here..."
                   : "Type Devanagari Unicode text here..."
@@ -495,7 +495,7 @@ export default function NepaliUnicodeTool() {
       <div className="p-3.5 rounded-xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] text-xs text-[#71717A] flex items-start gap-2">
         <Info size={16} className="text-[#F5A623] shrink-0 mt-0.5" />
         <span>
-          <strong>How it works:</strong> Type in Romanized Nepali letters (e.g. <code>sajilo tools nepal ma swagat chha xeu humm</code>) and get instant Nepali Devanagari Unicode output (<code>के गर्दै छौ करुणा सन्चै छौ हुम्म</code>) ready to copy and use in Word, Facebook, or Nepalese government forms. Supports Preeti font ↔ Unicode conversions seamlessly!
+          <strong>How it works:</strong> Type in Romanized Nepali letters (e.g. <code>sajilo tools nepal ma swagat chha</code>) and get instant Nepali Devanagari Unicode output (<code>सजिलो तूल्स नेपाल म स्वगत छ</code>) ready to copy and use in Word, Facebook, or Nepalese government forms. Supports Preeti font ↔ Unicode conversions seamlessly!
         </span>
       </div>
     </div>

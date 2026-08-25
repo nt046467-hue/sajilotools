@@ -49,14 +49,17 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-export const ICON_MAP: Record<string, LucideIcon> = {
+import DeveloperSuiteIcon from "@/components/shared/DeveloperSuiteIcon";
+
+export const ICON_MAP: Record<string, any> = {
   FileText,
   Image: ImageIcon,
   AlignLeft,
   QrCode,
   Calculator,
   Palette,
-  Braces,
+  Braces: DeveloperSuiteIcon,
+  Developer: DeveloperSuiteIcon,
   Link2,
   Calendar,
   Keyboard,
