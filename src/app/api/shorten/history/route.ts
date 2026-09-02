@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
 
     const origin = req.nextUrl.origin;
 
-    const formattedLinks = links.map((link) => ({
+    const formattedLinks = links.map((link: any) => ({
       id: link.id,
       slug: link.slug,
       shortUrl: `${origin}/s/${link.slug}`,

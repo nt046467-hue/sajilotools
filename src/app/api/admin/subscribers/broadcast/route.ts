@@ -79,7 +79,7 @@ export async function POST(req: NextRequest) {
       const subscribers = await prisma.subscriber.findMany({
         select: { email: true },
       });
-      subscribers.forEach((s) => {
+      subscribers.forEach((s: { email?: string | null }) => {
         if (s.email && EMAIL_REGEX.test(s.email)) {
           emailSet.add(s.email.toLowerCase().trim());
         }
@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
         const users = await prisma.user.findMany({
           select: { email: true },
         });
-        users.forEach((u) => {
+        users.forEach((u: { email?: string | null }) => {
           if (u.email && EMAIL_REGEX.test(u.email)) {
             emailSet.add(u.email.toLowerCase().trim());
           }

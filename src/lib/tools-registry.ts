@@ -36,7 +36,6 @@ export type CategoryDef = {
 export const CATEGORIES: CategoryDef[] = [
   {
     slug: "developer",
-    tier: "COMMODITY",
     name: "Developer",
     icon: "Braces",
     color: "#1F2544",
@@ -46,7 +45,6 @@ export const CATEGORIES: CategoryDef[] = [
   },
   {
     slug: "text",
-    tier: "COMMODITY",
     name: "Text",
     icon: "AlignLeft",
     color: "#D97706",
@@ -56,7 +54,6 @@ export const CATEGORIES: CategoryDef[] = [
   },
   {
     slug: "pdf",
-    tier: "COMMODITY",
     name: "PDF",
     icon: "FileText",
     color: "#EF4444",
@@ -66,7 +63,6 @@ export const CATEGORIES: CategoryDef[] = [
   },
   {
     slug: "image",
-    tier: "COMMODITY",
     name: "Image",
     icon: "Image",
     color: "#7C3AED",
@@ -76,7 +72,6 @@ export const CATEGORIES: CategoryDef[] = [
   },
   {
     slug: "finance",
-    tier: "COMMODITY",
     name: "Finance",
     icon: "Calculator",
     color: "#22C55E",
@@ -86,7 +81,6 @@ export const CATEGORIES: CategoryDef[] = [
   },
   {
     slug: "nepal",
-    tier: "COMMODITY",
     name: "Nepal Tools",
     icon: "MapPin",
     color: "#DC2626",
@@ -96,7 +90,6 @@ export const CATEGORIES: CategoryDef[] = [
   },
   {
     slug: "everyday",
-    tier: "COMMODITY",
     name: "Everyday",
     icon: "Boxes",
     color: "#0D9488",
