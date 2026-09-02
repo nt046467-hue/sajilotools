@@ -5,7 +5,13 @@ import { prisma } from "@/lib/prisma";
 
 export const dynamic = "force-dynamic";
 
+// PRO_PASS_HIDDEN: This endpoint is disabled while ENABLE_PRO_PASS=false
+const ENABLE_PRO_PASS = process.env.ENABLE_PRO_PASS === "true";
+
 export async function POST(req: NextRequest) {
+  if (!ENABLE_PRO_PASS) {
+    return NextResponse.json({ error: "Pro Pass is not currently available." }, { status: 404 });
+  }
   try {
     const { plan = "pro_monthly", provider = "esewa", email } = await req.json();
 

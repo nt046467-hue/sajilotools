@@ -226,6 +226,7 @@ export async function POST(req: NextRequest) {
     }
 
     // ── 1. Usage Limiting & Pro Subscription Verification ──
+    // PRO_PASS_HIDDEN: When ENABLE_PRO_PASS=false, checkToolUsage returns allowed:true for everyone
     const usage = await checkToolUsage(req, "nepali-translator");
     if (!usage.allowed && !usage.isPro) {
       return NextResponse.json(

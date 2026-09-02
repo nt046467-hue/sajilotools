@@ -13,6 +13,7 @@ export interface UsageCheckResult {
   sessionId: string;
 }
 
+export const ENABLE_PRO_PASS = process.env.ENABLE_PRO_PASS === "true";
 const FREE_DAILY_TRANSLATION_LIMIT = 25;
 
 /**
@@ -40,6 +41,18 @@ export async function checkToolUsage(
   toolSlug: string = "nepali-translator"
 ): Promise<UsageCheckResult> {
   const sessionId = getSessionId(req);
+
+  // When Pro Pass is disabled (AdSense readiness / 100% free mode), grant unlimited access
+  if (!ENABLE_PRO_PASS) {
+    return {
+      allowed: true,
+      isPro: false,
+      plan: "free",
+      remainingCredits: 999999,
+      maxCredits: 999999,
+      sessionId,
+    };
+  }
 
   // 1. Check if user is authenticated
   let userId: string | undefined;
@@ -128,6 +141,7 @@ export async function recordToolUsage(
   sessionId: string,
   toolSlug: string
 ): Promise<void> {
+  if (!ENABLE_PRO_PASS) return;
   try {
     await prisma.usageLog.create({
       data: {
