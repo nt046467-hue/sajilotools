@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import {
   Languages,
@@ -19,13 +19,23 @@ import {
   ArrowRight,
   Download,
   BookOpen,
+  Crown,
+  Zap,
+  Bot,
+  Sliders,
+  ShieldCheck,
 } from "lucide-react";
 import AnimatedTrashIcon, { AnimatedTrashButton } from "@/components/shared/AnimatedTrashIcon";
+import UpgradeProModal from "@/components/shared/UpgradeProModal";
+
+type TranslationTone = "standard" | "formal" | "casual" | "romanized";
 
 type HistoryEntry = {
   sourceText: string;
   translatedText: string;
   mode: "en-to-np" | "np-to-en";
+  tone: TranslationTone;
+  engine?: string;
   timestamp: number;
 };
 
@@ -72,10 +82,18 @@ export default function NepaliTranslatorTool() {
   const [sourceText, setSourceText] = useState("");
   const [translatedText, setTranslatedText] = useState("");
   const [mode, setMode] = useState<"en-to-np" | "np-to-en">("en-to-np");
+  const [tone, setTone] = useState<TranslationTone>("standard");
+  const [engineUsed, setEngineUsed] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [suggestionMsg, setSuggestionMsg] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+
+  // Subscription & Credits State
+  const [isPro, setIsPro] = useState(false);
+  const [remainingCredits, setRemainingCredits] = useState<number>(25);
+  const [maxCredits, setMaxCredits] = useState<number>(25);
+  const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
 
   // History state
   const [history, setHistory] = useState<HistoryEntry[]>([]);
@@ -85,9 +103,25 @@ export default function NepaliTranslatorTool() {
   const [speaking, setSpeaking] = useState(false);
   const [nepaliTtsAvailable, setNepaliTtsAvailable] = useState(true);
 
+  // Fetch subscription & credit status
+  const fetchSubscriptionStatus = useCallback(async () => {
+    try {
+      const res = await fetch("/api/subscription/status?tool=nepali-translator");
+      if (res.ok) {
+        const data = await res.json();
+        setIsPro(data.isPro || false);
+        setRemainingCredits(data.remainingCredits ?? 25);
+        setMaxCredits(data.maxCredits ?? 25);
+      }
+    } catch {
+      // Ignore network errors on initial check
+    }
+  }, []);
+
   // Load history & setup TTS voices check on mount
   useEffect(() => {
     setHistory(loadHistory());
+    fetchSubscriptionStatus();
 
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       const checkVoices = () => {
@@ -101,10 +135,10 @@ export default function NepaliTranslatorTool() {
       checkVoices();
       window.speechSynthesis.onvoiceschanged = checkVoices;
     }
-  }, []);
+  }, [fetchSubscriptionStatus]);
 
-  // Helper to split text into chunks under 350 characters at sentence boundaries
-  const chunkText = (text: string, maxLen = 1000): string[] => {
+  // Chunk text into sentence-aware blocks
+  const chunkText = (text: string, maxLen = 1200): string[] => {
     if (text.length <= maxLen) return [text];
 
     const paragraphs = text.split(/(\n+)/);
@@ -132,14 +166,16 @@ export default function NepaliTranslatorTool() {
     setErrorMsg("");
     setSuggestionMsg(null);
     setTranslatedText("");
+    setEngineUsed("");
     if (speaking) stopSpeech();
 
     const sourceLang = mode === "en-to-np" ? "en" : "ne";
     const targetLang = mode === "en-to-np" ? "ne" : "en";
 
     try {
-      const chunks = chunkText(trimmed, 1000);
+      const chunks = chunkText(trimmed, 1200);
       const translatedChunks: string[] = [];
+      let detectedEngine = "Gemini 1.5 Flash (AI Native)";
 
       for (const chunk of chunks) {
         if (!chunk.trim()) {
@@ -154,12 +190,19 @@ export default function NepaliTranslatorTool() {
             text: chunk,
             sourceLang,
             targetLang,
+            tone,
           }),
         });
 
         const data = await res.json();
 
         if (!res.ok) {
+          if (res.status === 429 && data.limitReached) {
+            setIsUpgradeModalOpen(true);
+            throw new Error(
+              data?.error || "Daily free AI translation quota reached. Upgrade to Pro for unlimited translations."
+            );
+          }
           throw new Error(
             data?.error || "Translation service failed. Please try again."
           );
@@ -168,16 +211,28 @@ export default function NepaliTranslatorTool() {
         if (data.translatedText) {
           translatedChunks.push(data.translatedText);
         }
+        if (data.engine) {
+          detectedEngine = data.engine;
+        }
+        if (data.remainingCredits !== undefined) {
+          setRemainingCredits(data.remainingCredits);
+        }
+        if (data.isPro !== undefined) {
+          setIsPro(data.isPro);
+        }
       }
 
       const finalResult = translatedChunks.join("");
       setTranslatedText(finalResult);
+      setEngineUsed(detectedEngine);
 
       // Save to History (max 5)
       const newEntry: HistoryEntry = {
         sourceText: trimmed,
         translatedText: finalResult,
         mode,
+        tone,
+        engine: detectedEngine,
         timestamp: Date.now(),
       };
       setHistory((prev) => {
@@ -200,9 +255,9 @@ export default function NepaliTranslatorTool() {
         normalizedSource.split(/\s+/).includes(tok)
       );
 
-      if ((isNoOp || containsRomanNepali) && mode === "en-to-np") {
+      if ((isNoOp || containsRomanNepali) && mode === "en-to-np" && tone !== "romanized") {
         setSuggestionMsg(
-          "This input looks like Romanized Nepali (e.g. 'mah maya garxu'). Meaning translation needs English text. For converting Romanized Nepali letters into Devanagari script, use our Nepali Unicode Typing Tool."
+          "This input looks like Romanized Nepali (e.g. 'mah maya garxu'). For converting Romanized phonetic letters directly into Devanagari script, try our Nepali Unicode Typing Tool."
         );
       }
     } catch (err: any) {
@@ -222,6 +277,7 @@ export default function NepaliTranslatorTool() {
     setSourceText(translatedText);
     setTranslatedText(tmp);
     setSuggestionMsg(null);
+    setEngineUsed("");
     if (speaking) stopSpeech();
   }
 
@@ -238,7 +294,7 @@ export default function NepaliTranslatorTool() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `sajilotools-translation-${mode}.txt`;
+    link.download = `sajilotools-translation-${mode}-${tone}.txt`;
     link.click();
     URL.revokeObjectURL(url);
   }
@@ -257,7 +313,7 @@ export default function NepaliTranslatorTool() {
       return;
     }
 
-    window.speechSynthesis.cancel(); // Stop any active audio
+    window.speechSynthesis.cancel();
     const langCode = targetIsNepali ? "ne-NP" : "en-US";
     const utterance = new SpeechSynthesisUtterance(translatedText);
     utterance.lang = langCode;
@@ -286,6 +342,8 @@ export default function NepaliTranslatorTool() {
     setSourceText(entry.sourceText);
     setTranslatedText(entry.translatedText);
     setMode(entry.mode);
+    if (entry.tone) setTone(entry.tone);
+    if (entry.engine) setEngineUsed(entry.engine);
     setErrorMsg("");
     setSuggestionMsg(null);
     if (speaking) stopSpeech();
@@ -296,31 +354,93 @@ export default function NepaliTranslatorTool() {
     saveHistory([]);
   }
 
+  const TONES: { id: TranslationTone; label: string; desc: string; icon: string }[] = [
+    { id: "standard", label: "Standard (प्राकृतिक)", desc: "Natural balanced translation", icon: "🌐" },
+    { id: "formal", label: "Formal (आदरार्थी / शिष्ट)", desc: "Respectful honorific Nepali", icon: "🎩" },
+    { id: "casual", label: "Casual (बोलिचाली)", desc: "Friendly everyday colloquial", icon: "💬" },
+    { id: "romanized", label: "Nepglish (Romanized)", desc: "Phonetic English alphabet", icon: "🔤" },
+  ];
+
   return (
     <div className="space-y-6">
-      {/* Language Switcher Bar */}
-      <div className="flex items-center justify-between p-2 rounded-2xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48]">
-        <div className="flex items-center gap-2 px-4 py-2 font-bold text-sm text-[#18181B] dark:text-[#F4F4F5]">
-          <Languages size={18} className="text-[#DC2626]" />
-          <span>{mode === "en-to-np" ? "English" : "नेपाली (Nepali)"}</span>
+      {/* ── Top Header Bar: Language Switcher + AI Mode & Pro Pass Status ── */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-2 rounded-2xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48]">
+        {/* Language Switcher */}
+        <div className="flex items-center justify-between sm:justify-start gap-2">
+          <div className="flex items-center gap-2 px-3 py-1.5 font-bold text-sm text-[#18181B] dark:text-[#F4F4F5]">
+            <Languages size={17} className="text-[#DC2626]" />
+            <span>{mode === "en-to-np" ? "English" : "नेपाली (Nepali)"}</span>
+          </div>
+
+          <button
+            onClick={swapLanguages}
+            className="p-2 rounded-xl bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] text-[#DC2626] hover:scale-105 transition-transform shadow-xs"
+            title="Swap Languages"
+          >
+            <ArrowLeftRight size={15} />
+          </button>
+
+          <div className="flex items-center gap-2 px-3 py-1.5 font-bold text-sm text-[#18181B] dark:text-[#F4F4F5]">
+            <span>{mode === "en-to-np" ? "नेपाली (Nepali)" : "English"}</span>
+          </div>
         </div>
 
-        <button
-          onClick={swapLanguages}
-          className="p-2.5 rounded-xl bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] text-[#DC2626] hover:scale-105 transition-transform shadow-xs"
-          title="Swap Languages"
-        >
-          <ArrowLeftRight size={16} />
-        </button>
-
-        <div className="flex items-center gap-2 px-4 py-2 font-bold text-sm text-[#18181B] dark:text-[#F4F4F5]">
-          <span>{mode === "en-to-np" ? "नेपाली (Nepali)" : "English"}</span>
+        {/* AI Engine & Pro Pass Status Badges */}
+        <div className="flex items-center justify-between sm:justify-end gap-2">
+          {/* Pro / Free Credits Badge */}
+          {isPro ? (
+            <div className="flex items-center gap-1.5 text-xs font-bold text-[#F5A623] px-3 py-1.5 rounded-xl bg-[#F5A623]/10 border border-[#F5A623]/30">
+              <Crown size={14} className="fill-current" />
+              <span>Pro Unlimited</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-semibold text-[#71717A] dark:text-[#A1A1AA]">
+                AI Daily: <strong className="text-[#18181B] dark:text-[#F4F4F5]">{remainingCredits}/{maxCredits}</strong>
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsUpgradeModalOpen(true)}
+                className="flex items-center gap-1 text-[11px] font-bold text-[#F5A623] px-2.5 py-1 rounded-lg bg-[#F5A623]/10 border border-[#F5A623]/30 hover:bg-[#F5A623]/20 transition-colors"
+              >
+                <Crown size={12} />
+                <span>Upgrade</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Input / Output Grid */}
+      {/* ── AI Stylistic Tone / Nuance Switcher ── */}
+      <div className="space-y-1.5">
+        <label className="block text-[11px] font-bold text-[#71717A] dark:text-[#A1A1AA] uppercase tracking-wider">
+          AI Translation Nuance & Tone
+        </label>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          {TONES.map((t) => (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => setTone(t.id)}
+              className={`p-2.5 rounded-xl border text-left transition-all flex flex-col justify-between gap-1 ${
+                tone === t.id
+                  ? "border-[#DC2626] bg-[#DC2626]/5 dark:bg-[#DC2626]/10 text-[#18181B] dark:text-[#F4F4F5] shadow-xs ring-1 ring-[#DC2626]"
+                  : "border-[#E4E0D8] dark:border-[#2A2F48] bg-white dark:bg-[#141829] text-[#71717A] dark:text-[#A1A1AA] hover:border-[#DC2626]/40"
+              }`}
+            >
+              <div className="flex items-center gap-1.5">
+                <span className="text-sm">{t.icon}</span>
+                <span className="text-xs font-bold truncate">{t.label}</span>
+              </div>
+              <span className="text-[10px] text-[#A1A1AA] line-clamp-1">{t.desc}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Input / Output Grid ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Source */}
+        {/* Source Box */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <label className="block text-xs font-bold text-[#71717A] uppercase tracking-wider">
@@ -337,6 +457,7 @@ export default function NepaliTranslatorTool() {
                     setTranslatedText("");
                     setErrorMsg("");
                     setSuggestionMsg(null);
+                    setEngineUsed("");
                   }}
                   className="text-xs text-[#DC2626] font-semibold hover:underline flex items-center gap-1"
                   iconSize={12}
@@ -351,35 +472,29 @@ export default function NepaliTranslatorTool() {
             onChange={(e) => setSourceText(e.target.value)}
             placeholder={
               mode === "en-to-np"
-                ? "Type or paste English text here... (e.g. 'I love Nepal very much')"
-                : "यहाँ नेपालीमा टाइप वा पेस्ट गर्नुहोस्..."
+                ? "Type or paste English text here... (e.g. 'I am delighted to meet you today.')"
+                : "यहाँ नेपालीमा टाइप वा पेस्ट गर्नुहोस्... (उदा. 'म तपाईंलाई भेटेर धेरै खुसी भएँ।')"
             }
             className="w-full h-48 px-4 py-3 rounded-2xl border border-[#E4E0D8] dark:border-[#1E2338] bg-white dark:bg-[#141829] text-[#18181B] dark:text-[#F4F4F5] placeholder:text-[#A1A1AA] focus:outline-none focus:ring-2 focus:ring-[#DC2626]/40 resize-none text-base leading-relaxed"
           />
 
           {/* Quick Example Phrases */}
           <div className="pt-1">
-            <span className="text-[11px] font-semibold text-[#71717A] mr-2">Quick phrase suggestions:</span>
+            <span className="text-[11px] font-semibold text-[#71717A] mr-2">Quick phrases:</span>
             <div className="inline-flex flex-wrap gap-1.5 mt-1">
               {(mode === "en-to-np"
                 ? [
                     "Hello, how are you?",
                     "Thank you very much",
                     "Welcome to Nepal",
-                    "What is your name?",
                     "Where is the bus station?",
-                    "How much does this cost?",
-                    "I need medical assistance",
                     "Please sign this document",
                   ]
                 : [
                     "नमस्ते, तपाईंलाई कस्तो छ?",
                     "धेरै धेरै धन्यवाद",
                     "नेपालमा स्वागत छ",
-                    "तपाईंको नाम के हो?",
                     "बस स्टेशन कहाँ छ?",
-                    "यसको कति पर्छ?",
-                    "मलाई मद्दत चाहिन्छ",
                     "कृपया यो कागजात हेरिदिनुहोस्",
                   ]
               ).map((phrase, pIdx) => (
@@ -395,14 +510,22 @@ export default function NepaliTranslatorTool() {
           </div>
         </div>
 
-        {/* Translation */}
+        {/* Translation Output Box */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className="block text-xs font-bold text-[#71717A] uppercase tracking-wider">
-              Translation Result ({mode === "en-to-np" ? "Nepali" : "English"})
-            </label>
+            <div className="flex items-center gap-2">
+              <label className="block text-xs font-bold text-[#71717A] uppercase tracking-wider">
+                Translation ({mode === "en-to-np" ? "Nepali" : "English"})
+              </label>
+              {engineUsed && (
+                <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/40">
+                  {engineUsed}
+                </span>
+              )}
+            </div>
+
             {translatedText && (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 {/* Speaker TTS Button */}
                 <button
                   onClick={toggleSpeech}
@@ -442,7 +565,7 @@ export default function NepaliTranslatorTool() {
                   className="flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-lg border border-[#E4E0D8] dark:border-[#2A2F48] text-[#18181B] dark:text-[#F4F4F5] hover:bg-[#F7F5F0] dark:hover:bg-[#1E2338] transition-colors"
                 >
                   <Download size={13} className="text-[#DC2626]" />
-                  <span>Save .txt</span>
+                  <span>.txt</span>
                 </button>
 
                 {/* Copy Button */}
@@ -460,7 +583,7 @@ export default function NepaliTranslatorTool() {
             value={translatedText}
             readOnly
             placeholder="अनुवाद यहाँ देखा पर्नेछ..."
-            className="w-full h-48 px-4 py-3 rounded-2xl border border-[#E4E0D8] dark:border-[#1E2338] bg-[#FAFAF8] dark:bg-[#1E2338] text-[#18181B] dark:text-[#F4F4F5] placeholder:text-[#A1A1AA] resize-none text-base leading-relaxed"
+            className="w-full h-48 px-4 py-3 rounded-2xl border border-[#E4E0D8] dark:border-[#1E2338] bg-[#FAFAF8] dark:bg-[#1E2338] text-[#18181B] dark:text-[#F4F4F5] placeholder:text-[#A1A1AA] resize-none text-base leading-relaxed font-normal"
           />
         </div>
       </div>
@@ -481,44 +604,54 @@ export default function NepaliTranslatorTool() {
         </div>
       )}
 
-      {/* Error Feedback */}
+      {/* Error / Quota Feedback */}
       {errorMsg && (
-        <div className="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900 text-xs text-rose-700 dark:text-rose-300 flex items-start gap-2">
-          <AlertCircle size={16} className="shrink-0 mt-0.5" />
-          <span>{errorMsg}</span>
+        <div className="p-4 rounded-xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900 text-xs text-rose-700 dark:text-rose-300 flex items-start justify-between gap-2">
+          <div className="flex items-start gap-2">
+            <AlertCircle size={16} className="shrink-0 mt-0.5" />
+            <span>{errorMsg}</span>
+          </div>
+          {errorMsg.includes("quota") && (
+            <button
+              onClick={() => setIsUpgradeModalOpen(true)}
+              className="px-3 py-1 rounded-lg bg-[#F5A623] text-[#0C0F1E] font-bold text-xs shrink-0"
+            >
+              Upgrade to Pro
+            </button>
+          )}
         </div>
       )}
 
-      {/* Action Button */}
+      {/* Primary Translate Action Button */}
       <button
         onClick={translate}
         disabled={!sourceText.trim() || loading}
-        className="w-full py-3.5 bg-[#1F2544] dark:bg-[#DC2626] text-white font-bold rounded-2xl text-sm hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm"
+        className="w-full py-4 bg-gradient-to-r from-[#1F2544] to-[#141829] dark:from-[#DC2626] dark:to-[#B91C1C] text-white font-bold rounded-2xl text-sm hover:opacity-95 transition-all disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-md cursor-pointer active:scale-[0.99]"
       >
         {loading ? (
           <>
             <Loader2 size={16} className="animate-spin" />
-            <span>Translating...</span>
+            <span>Translating with AI Neural Engine...</span>
           </>
         ) : (
           <>
-            <Languages size={16} /> Translate Now (अनुवाद गर्नुहोस्)
+            <Bot size={16} /> Translate with AI ({tone === "formal" ? "Formal" : tone === "casual" ? "Casual" : tone === "romanized" ? "Nepglish" : "Standard"})
           </>
         )}
       </button>
 
-      {/* ── Feature 1: Translation History (Collapsible Panel) ── */}
+      {/* ── Feature: Translation History (Collapsible Panel) ── */}
       {history.length > 0 && (
         <div className="rounded-2xl border border-[#E4E0D8] dark:border-[#1E2338] bg-white dark:bg-[#141829] overflow-hidden transition-all shadow-xs">
           <div className="flex items-center justify-between p-3.5 px-4 bg-[#FAFAF8] dark:bg-[#1E2338]/60 border-b border-[#E4E0D8] dark:border-[#1E2338]">
             <div className="flex items-center gap-2 text-xs font-bold text-[#18181B] dark:text-[#F4F4F5]">
               <History size={15} className="text-[#DC2626]" />
-              <span>Recent Translations (Last 5)</span>
+              <span>Recent AI Translations (Last 5)</span>
             </div>
             <div className="flex items-center gap-3">
               <AnimatedTrashButton
                 onDelete={clearHistory}
-                className="text-[11px] font-semibold text-rose-500 hover:underline flex items-center gap-1"
+                className="text-[11px] font-semibold text-rose-500 hover:underline flex items-center gap-1 cursor-pointer"
                 iconSize={12}
               >
                 Clear history
@@ -531,7 +664,7 @@ export default function NepaliTranslatorTool() {
               <button
                 key={idx}
                 onClick={() => restoreHistoryEntry(entry)}
-                className="w-full text-left p-3 px-4 hover:bg-[#FAFAF8] dark:hover:bg-[#1E2338]/40 transition-colors flex items-center justify-between gap-4 group"
+                className="w-full text-left p-3 px-4 hover:bg-[#FAFAF8] dark:hover:bg-[#1E2338]/40 transition-colors flex items-center justify-between gap-4 group cursor-pointer"
               >
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 text-xs font-semibold text-[#18181B] dark:text-[#F4F4F5] mb-0.5 truncate">
@@ -546,6 +679,10 @@ export default function NepaliTranslatorTool() {
                   <div className="flex items-center gap-2 text-[10px] text-[#A1A1AA]">
                     <span className="uppercase font-bold tracking-wider">
                       {entry.mode === "en-to-np" ? "EN → NP" : "NP → EN"}
+                    </span>
+                    <span>•</span>
+                    <span className="capitalize font-semibold text-[#F5A623]">
+                      {entry.tone || "standard"}
                     </span>
                     <span>•</span>
                     <span className="flex items-center gap-1">
@@ -569,12 +706,21 @@ export default function NepaliTranslatorTool() {
 
       {/* Quality Notice & Privacy */}
       <div className="p-3.5 rounded-xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] text-xs text-[#71717A] flex items-start gap-2">
-        <Info size={16} className="text-[#DC2626] shrink-0 mt-0.5" />
+        <ShieldCheck size={16} className="text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
         <span>
-          <strong>Note:</strong> Translation text is sent via our server to third-party translation providers (Google Translate, MyMemory) for processing. Translation results may be cached for up to 30 days for performance. Your text is not permanently logged or sold. See our{" "}
+          <strong>AI Privacy & Accuracy:</strong> Powered by multi-tier neural models (Gemini 1.5 Flash AI, Groq LLaMA, Neural Cache). Translations are processed securely and never sold to third parties. See our{" "}
           <a href="/privacy-policy" className="underline font-medium text-[#1F2544] dark:text-[#F5A623]">Privacy Policy</a> for full details.
         </span>
       </div>
+
+      {/* Upgrade to Pro Modal */}
+      <UpgradeProModal
+        isOpen={isUpgradeModalOpen}
+        onClose={() => setIsUpgradeModalOpen(false)}
+        onSuccess={() => {
+          fetchSubscriptionStatus();
+        }}
+      />
     </div>
   );
 }

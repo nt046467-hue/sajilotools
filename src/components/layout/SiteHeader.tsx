@@ -27,6 +27,8 @@ import {
   MessageSquarePlus,
   AlignLeft,
   Boxes,
+  Monitor,
+  Check,
 } from "lucide-react";
 import SearchBar from "@/components/SearchBar";
 import { TOOLS as REGISTERED_TOOLS } from "@/lib/tools-registry";
@@ -270,7 +272,7 @@ export default function SiteHeader() {
       <header className="sticky top-0 z-40 w-full bg-white/80 dark:bg-[#080B16]/80 backdrop-blur-xl border-b border-[#E4E0D8] dark:border-[#1E2338] transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 gap-6">
-            
+
             {/* 1. LEFT: Brand Logo & Navigation */}
             <div className="flex items-center gap-8 shrink-0">
               <Link href="/" className="flex items-center gap-2 group">
@@ -281,55 +283,50 @@ export default function SiteHeader() {
               <nav className="hidden lg:flex items-center gap-1">
                 <Link
                   href="/"
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                    pathname === "/"
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${pathname === "/"
                       ? "text-[#18181B] dark:text-white bg-black/[0.05] dark:bg-white/[0.08] font-semibold"
                       : "text-[#52525B] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
-                  }`}
+                    }`}
                 >
                   Home
                 </Link>
 
                 <Link
                   href="/tools"
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                    pathname === "/tools"
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${pathname === "/tools"
                       ? "text-[#18181B] dark:text-white bg-black/[0.05] dark:bg-white/[0.08] font-semibold"
                       : "text-[#52525B] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
-                  }`}
+                    }`}
                 >
                   Tools
                 </Link>
 
                 <Link
                   href="/tools/nepal"
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                    pathname.startsWith("/tools/nepal")
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${pathname.startsWith("/tools/nepal")
                       ? "text-[#18181B] dark:text-white bg-black/[0.05] dark:bg-white/[0.08] font-semibold"
                       : "text-[#52525B] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
-                  }`}
+                    }`}
                 >
                   Nepali Tools
                 </Link>
 
                 <Link
                   href="/tools/everyday"
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                    pathname.startsWith("/tools/everyday")
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${pathname.startsWith("/tools/everyday")
                       ? "text-[#18181B] dark:text-white bg-black/[0.05] dark:bg-white/[0.08] font-semibold"
                       : "text-[#52525B] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
-                  }`}
+                    }`}
                 >
                   Everyday
                 </Link>
 
                 <Link
                   href="/blog"
-                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                    pathname.startsWith("/blog")
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${pathname.startsWith("/blog")
                       ? "text-[#18181B] dark:text-white bg-black/[0.05] dark:bg-white/[0.08] font-semibold"
                       : "text-[#52525B] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
-                  }`}
+                    }`}
                 >
                   Guides
                 </Link>
@@ -339,18 +336,16 @@ export default function SiteHeader() {
                   <button
                     type="button"
                     onClick={() => setToolsDropdownOpen((prev) => !prev)}
-                    className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
-                      toolsDropdownOpen || pathname.startsWith("/tools/")
+                    className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${toolsDropdownOpen || pathname.startsWith("/tools/")
                         ? "text-[#18181B] dark:text-white bg-black/[0.05] dark:bg-white/[0.08]"
                         : "text-[#52525B] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
-                    }`}
+                      }`}
                   >
                     <span>Categories</span>
                     <ChevronDown
                       size={14}
-                      className={`transition-transform duration-200 opacity-60 ${
-                        toolsDropdownOpen ? "rotate-180" : ""
-                      }`}
+                      className={`transition-transform duration-200 opacity-60 ${toolsDropdownOpen ? "rotate-180" : ""
+                        }`}
                     />
                   </button>
 
@@ -432,14 +427,14 @@ export default function SiteHeader() {
                 <Settings2 size={16} />
               </button>
 
-              {/* Dark/Light Mode Switcher */}
+              {/* Dark/Light Mode Switcher (Desktop) */}
               <button
                 type="button"
                 onClick={() => {
                   const isCurrentlyDark = document.documentElement.classList.contains("dark");
                   setTheme(isCurrentlyDark ? "light" : "dark");
                 }}
-                className="p-2 rounded-xl text-[#52525B] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.04] dark:hover:bg-white/[0.06] border border-[#E4E0D8] dark:border-[#1E2338] transition-colors cursor-pointer"
+                className="hidden md:flex p-2 rounded-xl text-[#52525B] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.04] dark:hover:bg-white/[0.06] border border-[#E4E0D8] dark:border-[#1E2338] transition-colors cursor-pointer"
                 aria-label="Toggle theme"
               >
                 <Sun size={16} className="hidden dark:block text-amber-400" />
@@ -463,17 +458,15 @@ export default function SiteHeader() {
 
       {/* ── MOBILE DRAWER ── */}
       <div
-        className={`lg:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-xs transition-opacity duration-300 ${
-          mobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
+        className={`lg:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-xs transition-opacity duration-300 ${mobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
         onClick={() => setMobileOpen(false)}
         aria-hidden={!mobileOpen}
       />
-      
+
       <div
-        className={`lg:hidden fixed top-0 right-0 z-50 h-dvh w-[88vw] max-w-sm bg-white dark:bg-[#080B16] border-l border-[#E4E0D8] dark:border-[#1E2338] shadow-2xl flex flex-col overflow-hidden transition-transform duration-300 ease-out will-change-transform ${
-          mobileOpen ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`lg:hidden fixed top-0 right-0 z-50 h-dvh w-[88vw] max-w-sm bg-white dark:bg-[#080B16] border-l border-[#E4E0D8] dark:border-[#1E2338] shadow-2xl flex flex-col overflow-hidden transition-transform duration-300 ease-out will-change-transform ${mobileOpen ? "translate-x-0" : "translate-x-full"
+          }`}
         aria-hidden={!mobileOpen}
       >
         {/* Drawer Header */}
@@ -520,11 +513,10 @@ export default function SiteHeader() {
                   key={link.name}
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
-                  className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${
-                    isActive
+                  className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${isActive
                       ? "bg-black/[0.05] dark:bg-white/[0.08] text-[#18181B] dark:text-white"
                       : "text-[#52525B] dark:text-[#A1A1AA] hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
-                  }`}
+                    }`}
                 >
                   <span className="flex items-center gap-2.5">
                     <Icon size={16} className="opacity-70" />
@@ -662,106 +654,276 @@ export default function SiteHeader() {
         </div>
       )}
 
-      {/* ── SETTINGS MODAL ── */}
+      {/* ── SETTINGS PANEL ── */}
       {settingsOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-in fade-in duration-150"
-          onClick={() => setSettingsOpen(false)}
-        >
+        <>
+          {/* Backdrop */}
           <div
-            className="bg-white dark:bg-[#0E1322] border border-[#E4E0D8] dark:border-[#1E2338] rounded-2xl p-5 max-w-sm w-full shadow-2xl space-y-4"
+            className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs animate-in fade-in duration-200"
+            onClick={() => setSettingsOpen(false)}
+          />
+          {/* Panel — full-screen on mobile, centered modal on desktop */}
+          <div
+            className="fixed z-50 inset-0 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:max-w-md md:w-full md:max-h-[85vh] md:rounded-2xl bg-white dark:bg-[#0E1322] md:border md:border-[#E4E0D8] dark:md:border-[#1E2338] md:shadow-2xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-4 md:slide-in-from-bottom-2 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-[#E4E0D8] dark:border-[#1E2338] pb-3">
-              <div className="flex items-center gap-2">
-                <Settings2 size={16} className="text-teal-600 dark:text-teal-400" />
-                <h3 className="font-semibold text-sm text-[#18181B] dark:text-white">
-                  Preferences
+            {/* ── Header ── */}
+            <div className="flex items-center justify-between px-5 py-4 border-b border-[#E4E0D8] dark:border-[#1E2338] bg-[#FAFAF8] dark:bg-[#0E1322] shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="p-1.5 rounded-lg bg-teal-50 dark:bg-teal-950/40">
+                  <Settings2 size={16} className="text-teal-600 dark:text-teal-400" />
+                </div>
+                <h3 className="font-bold text-sm text-[#18181B] dark:text-white">
+                  Preferences & Settings
                 </h3>
               </div>
               <button
                 onClick={() => setSettingsOpen(false)}
-                className="text-[#71717A] hover:text-[#18181B] dark:hover:text-white"
+                className="p-1.5 rounded-lg text-[#71717A] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition-colors"
+                aria-label="Close settings"
               >
-                <X size={16} />
+                <X size={18} />
               </button>
             </div>
 
-            <div className="space-y-4">
-              {/* Theme */}
-              <div>
-                <label className="block text-xs font-semibold text-[#71717A] uppercase tracking-wider mb-2">
-                  Theme
-                </label>
-                <div className="grid grid-cols-3 gap-1.5">
-                  <button
-                    onClick={() => setTheme("light")}
-                    className={`py-2 rounded-xl text-xs font-semibold border transition-colors cursor-pointer ${
-                      theme === "light"
-                        ? "bg-[#18181B] text-white border-[#18181B]"
-                        : "border-[#E4E0D8] dark:border-[#1E2338] text-[#71717A] hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
-                    }`}
-                  >
-                    Light
-                  </button>
-                  <button
-                    onClick={() => setTheme("dark")}
-                    className={`py-2 rounded-xl text-xs font-semibold border transition-colors cursor-pointer ${
-                      theme === "dark"
-                        ? "bg-teal-600 text-white border-teal-600"
-                        : "border-[#E4E0D8] dark:border-[#1E2338] text-[#71717A] hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
-                    }`}
-                  >
-                    Dark
-                  </button>
-                  <button
-                    onClick={() => setTheme("system")}
-                    className={`py-2 rounded-xl text-xs font-semibold border transition-colors cursor-pointer ${
-                      theme === "system"
-                        ? "bg-[#18181B] text-white dark:bg-white dark:text-[#18181B] border-transparent"
-                        : "border-[#E4E0D8] dark:border-[#1E2338] text-[#71717A] hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
-                    }`}
-                  >
-                    System
-                  </button>
-                </div>
-              </div>
+            {/* ── Scrollable Body ── */}
+            <div className="flex-1 overflow-y-auto overscroll-contain">
+              <div className="p-5 space-y-6">
 
-              {/* PWA offline */}
-              <div className="flex items-center justify-between p-3 rounded-xl bg-black/[0.02] dark:bg-white/[0.03] border border-[#E4E0D8] dark:border-[#1E2338]">
-                <div className="space-y-0.5">
-                  <div className="text-xs font-semibold text-[#18181B] dark:text-white">
-                    Offline PWA Mode
+                {/* ─ Appearance ─ */}
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-[11px] font-bold text-[#71717A] dark:text-[#8E95A8] uppercase tracking-wider">
+                      Appearance
+                    </span>
+                    <span className="text-[11px] font-semibold text-teal-600 dark:text-teal-400 capitalize">
+                      {theme} Theme
+                    </span>
                   </div>
-                  <div className="text-[11px] text-[#71717A]">
-                    {pwaActive ? "App shell cached offline" : "Offline mode off"}
+
+                  <div className="grid grid-cols-3 gap-2">
+                    {/* Light Option */}
+                    <button
+                      type="button"
+                      onClick={() => setTheme("light")}
+                      className={`group relative flex flex-col p-1.5 rounded-xl border-2 transition-all cursor-pointer ${
+                        theme === "light"
+                          ? "border-[#0D9488] dark:border-[#2DD4BF] bg-[#0D9488]/[0.04] dark:bg-[#2DD4BF]/[0.06] shadow-xs"
+                          : "border-[#E4E0D8] dark:border-[#1E2338] bg-black/[0.02] dark:bg-white/[0.02] hover:border-[#A1A1AA] dark:hover:border-[#3A4066]"
+                      }`}
+                    >
+                      {/* Top-Right Check Badge */}
+                      {theme === "light" && (
+                        <span className="absolute top-1 right-1 h-3.5 w-3.5 rounded-full bg-[#0D9488] dark:bg-[#2DD4BF] text-white dark:text-[#080B16] flex items-center justify-center shadow-xs z-10">
+                          <Check size={9} strokeWidth={3.5} />
+                        </span>
+                      )}
+
+                      {/* Mini Window Mockup */}
+                      <div className="w-full h-11 rounded-lg bg-[#FAFAF8] border border-[#E4E0D8] p-1 flex flex-col justify-between shadow-2xs overflow-hidden">
+                        <div className="flex items-center justify-between pb-0.5 border-b border-[#E4E0D8]">
+                          <div className="flex items-center gap-0.5">
+                            <span className="h-1 w-1 rounded-full bg-rose-400" />
+                            <span className="h-1 w-1 rounded-full bg-amber-400" />
+                            <span className="h-1 w-1 rounded-full bg-emerald-400" />
+                          </div>
+                          <div className="h-0.5 w-4 rounded-full bg-[#E4E0D8]" />
+                        </div>
+                        <div className="space-y-0.5">
+                          <div className="h-1 w-3/4 rounded-xs bg-[#E4E0D8]" />
+                          <div className="h-0.5 w-1/2 rounded-xs bg-[#E4E0D8]/60" />
+                        </div>
+                      </div>
+
+                      {/* Centered Label Row */}
+                      <div className="flex items-center justify-center gap-1 mt-1.5">
+                        <Sun size={12} className={theme === "light" ? "text-[#0D9488] dark:text-[#2DD4BF]" : "text-[#71717A]"} />
+                        <span className={`text-[11px] font-semibold ${theme === "light" ? "text-[#18181B] dark:text-white font-bold" : "text-[#71717A]"}`}>
+                          Light
+                        </span>
+                      </div>
+                    </button>
+
+                    {/* Dark Option */}
+                    <button
+                      type="button"
+                      onClick={() => setTheme("dark")}
+                      className={`group relative flex flex-col p-1.5 rounded-xl border-2 transition-all cursor-pointer ${
+                        theme === "dark"
+                          ? "border-[#0D9488] dark:border-[#2DD4BF] bg-[#0D9488]/[0.04] dark:bg-[#2DD4BF]/[0.06] shadow-xs"
+                          : "border-[#E4E0D8] dark:border-[#1E2338] bg-black/[0.02] dark:bg-white/[0.02] hover:border-[#A1A1AA] dark:hover:border-[#3A4066]"
+                      }`}
+                    >
+                      {/* Top-Right Check Badge */}
+                      {theme === "dark" && (
+                        <span className="absolute top-1 right-1 h-3.5 w-3.5 rounded-full bg-[#0D9488] dark:bg-[#2DD4BF] text-white dark:text-[#080B16] flex items-center justify-center shadow-xs z-10">
+                          <Check size={9} strokeWidth={3.5} />
+                        </span>
+                      )}
+
+                      {/* Mini Window Mockup */}
+                      <div className="w-full h-11 rounded-lg bg-[#080B16] border border-[#1E2338] p-1 flex flex-col justify-between shadow-2xs overflow-hidden">
+                        <div className="flex items-center justify-between pb-0.5 border-b border-[#1E2338]">
+                          <div className="flex items-center gap-0.5">
+                            <span className="h-1 w-1 rounded-full bg-rose-500/80" />
+                            <span className="h-1 w-1 rounded-full bg-amber-500/80" />
+                            <span className="h-1 w-1 rounded-full bg-emerald-500/80" />
+                          </div>
+                          <div className="h-0.5 w-4 rounded-full bg-[#1E2338]" />
+                        </div>
+                        <div className="space-y-0.5">
+                          <div className="h-1 w-3/4 rounded-xs bg-[#1E2338]" />
+                          <div className="h-0.5 w-1/2 rounded-xs bg-[#1E2338]/60" />
+                        </div>
+                      </div>
+
+                      {/* Centered Label Row */}
+                      <div className="flex items-center justify-center gap-1 mt-1.5">
+                        <Moon size={12} className={theme === "dark" ? "text-[#0D9488] dark:text-[#2DD4BF]" : "text-[#71717A]"} />
+                        <span className={`text-[11px] font-semibold ${theme === "dark" ? "text-[#18181B] dark:text-white font-bold" : "text-[#71717A]"}`}>
+                          Dark
+                        </span>
+                      </div>
+                    </button>
+
+                    {/* System Option */}
+                    <button
+                      type="button"
+                      onClick={() => setTheme("system")}
+                      className={`group relative flex flex-col p-1.5 rounded-xl border-2 transition-all cursor-pointer ${
+                        theme === "system"
+                          ? "border-[#0D9488] dark:border-[#2DD4BF] bg-[#0D9488]/[0.04] dark:bg-[#2DD4BF]/[0.06] shadow-xs"
+                          : "border-[#E4E0D8] dark:border-[#1E2338] bg-black/[0.02] dark:bg-white/[0.02] hover:border-[#A1A1AA] dark:hover:border-[#3A4066]"
+                      }`}
+                    >
+                      {/* Top-Right Check Badge */}
+                      {theme === "system" && (
+                        <span className="absolute top-1 right-1 h-3.5 w-3.5 rounded-full bg-[#0D9488] dark:bg-[#2DD4BF] text-white dark:text-[#080B16] flex items-center justify-center shadow-xs z-10">
+                          <Check size={9} strokeWidth={3.5} />
+                        </span>
+                      )}
+
+                      {/* Mini Window Mockup (Split) */}
+                      <div className="w-full h-11 rounded-lg border border-[#E4E0D8] dark:border-[#1E2338] flex shadow-2xs overflow-hidden">
+                        {/* Left Light */}
+                        <div className="w-1/2 h-full bg-[#FAFAF8] p-1 flex flex-col justify-between border-r border-[#E4E0D8]">
+                          <div className="flex items-center gap-0.5">
+                            <span className="h-1 w-1 rounded-full bg-rose-400" />
+                            <span className="h-1 w-1 rounded-full bg-amber-400" />
+                          </div>
+                          <div className="h-1 w-full rounded-xs bg-[#E4E0D8]" />
+                        </div>
+                        {/* Right Dark */}
+                        <div className="w-1/2 h-full bg-[#080B16] p-1 flex flex-col justify-between">
+                          <div className="flex items-center justify-end">
+                            <span className="h-1 w-1 rounded-full bg-emerald-500/80" />
+                          </div>
+                          <div className="h-1 w-full rounded-xs bg-[#1E2338]" />
+                        </div>
+                      </div>
+
+                      {/* Centered Label Row */}
+                      <div className="flex items-center justify-center gap-1 mt-1.5">
+                        <Monitor size={12} className={theme === "system" ? "text-[#0D9488] dark:text-[#2DD4BF]" : "text-[#71717A]"} />
+                        <span className={`text-[11px] font-semibold ${theme === "system" ? "text-[#18181B] dark:text-white font-bold" : "text-[#71717A]"}`}>
+                          System
+                        </span>
+                      </div>
+                    </button>
                   </div>
                 </div>
-                <button
-                  onClick={togglePwa}
-                  className="px-2.5 py-1 text-xs font-semibold rounded-lg border border-[#E4E0D8] dark:border-[#1E2338] hover:bg-white dark:hover:bg-[#1E2338] transition-colors cursor-pointer"
-                >
-                  {pwaActive ? "Turn Off" : "Enable"}
-                </button>
-              </div>
 
-              {/* Privacy note */}
-              <div className="text-[11px] text-[#71717A] flex items-center gap-1.5">
-                <ShieldCheck size={14} className="text-emerald-500 shrink-0" />
-                <span>100% Client-side. No tracking or data stored on servers.</span>
+                {/* ─ Offline & PWA ─ */}
+                <div>
+                  <div className="text-[11px] font-bold text-[#71717A] dark:text-[#8E95A8] uppercase tracking-wider mb-3">
+                    Offline Access
+                  </div>
+                  <div className="flex items-center justify-between p-4 rounded-xl bg-black/[0.02] dark:bg-white/[0.02] border border-[#E4E0D8] dark:border-[#1E2338]">
+                    <div className="space-y-1 pr-3">
+                      <div className="text-xs font-bold text-[#18181B] dark:text-white flex items-center gap-1.5">
+                        <span className={`inline-flex h-2 w-2 rounded-full ${pwaActive ? "bg-emerald-500" : "bg-zinc-300 dark:bg-zinc-600"}`} />
+                        Offline PWA Mode
+                      </div>
+                      <div className="text-[11px] text-[#71717A] leading-relaxed">
+                        {pwaActive
+                          ? "App shell is cached. Tools work offline."
+                          : "Enable to use client-side tools without internet."}
+                      </div>
+                    </div>
+                    <button
+                      onClick={togglePwa}
+                      className={`px-3.5 py-1.5 text-xs font-bold rounded-xl border transition-all cursor-pointer shrink-0 ${pwaActive
+                          ? "border-rose-200 dark:border-rose-900/50 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30"
+                          : "border-emerald-200 dark:border-emerald-900/50 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
+                        }`}
+                    >
+                      {pwaActive ? "Turn Off" : "Enable"}
+                    </button>
+                  </div>
+                </div>
+
+                {/* ─ Quick Links ─ */}
+                <div>
+                  <div className="text-[11px] font-bold text-[#71717A] dark:text-[#8E95A8] uppercase tracking-wider mb-3">
+                    Quick Links
+                  </div>
+                  <div className="space-y-1.5">
+                    {[
+                      { name: "About SajiloTools", href: "/about", icon: Info },
+                      { name: "Privacy Policy", href: "/privacy-policy", icon: ShieldCheck },
+                      { name: "Suggest a Tool", href: "/contact", icon: MessageSquarePlus },
+                    ].map((link) => {
+                      const LinkIcon = link.icon;
+                      return (
+                        <Link
+                          key={link.name}
+                          href={link.href}
+                          onClick={() => setSettingsOpen(false)}
+                          className="flex items-center justify-between p-3 rounded-xl hover:bg-black/[0.03] dark:hover:bg-white/[0.04] transition-colors"
+                        >
+                          <span className="flex items-center gap-2.5">
+                            <LinkIcon size={15} className="text-[#71717A]" />
+                            <span className="text-xs font-semibold text-[#18181B] dark:text-[#F4F4F5]">
+                              {link.name}
+                            </span>
+                          </span>
+                          <ArrowRight size={13} className="text-[#D4D4D8] dark:text-[#52525B]" />
+                        </Link>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* ─ Privacy Badge ─ */}
+                <div className="flex items-start gap-2.5 p-3.5 rounded-xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/30">
+                  <ShieldCheck size={16} className="text-emerald-500 shrink-0 mt-0.5" />
+                  <div className="space-y-0.5">
+                    <div className="text-[11px] font-bold text-emerald-700 dark:text-emerald-400">
+                      Privacy-First
+                    </div>
+                    <div className="text-[11px] text-emerald-600/80 dark:text-emerald-400/70 leading-relaxed">
+                      All client-side tools run 100% in your browser. No data is uploaded or tracked on our servers.
+                    </div>
+                  </div>
+                </div>
+
               </div>
             </div>
 
-            <div className="pt-2 border-t border-[#E4E0D8] dark:border-[#1E2338] flex justify-end">
+            {/* ── Footer ── */}
+            <div className="px-5 py-4 border-t border-[#E4E0D8] dark:border-[#1E2338] bg-[#FAFAF8] dark:bg-[#0E1322] flex items-center justify-between shrink-0">
+              <span className="text-[10px] text-[#A1A1AA] dark:text-[#52525B] font-medium">
+                SajiloTools v1.0
+              </span>
               <button
                 onClick={() => setSettingsOpen(false)}
-                className="px-4 py-1.5 bg-[#18181B] text-white dark:bg-white dark:text-[#18181B] text-xs font-semibold rounded-xl hover:opacity-90 transition-opacity cursor-pointer"
+                className="px-5 py-2 bg-[#18181B] text-white dark:bg-white dark:text-[#18181B] text-xs font-bold rounded-xl hover:opacity-90 transition-opacity cursor-pointer"
               >
                 Done
               </button>
             </div>
           </div>
-        </div>
+        </>
       )}
     </>
   );
