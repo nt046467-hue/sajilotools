@@ -7,8 +7,10 @@ import {
   Search,
   X,
   ArrowRight,
+  SlidersHorizontal,
+  Flame,
+  Check,
   CornerDownLeft,
-  Sparkles,
   Calendar,
   CalendarDays,
   FileText,
@@ -395,7 +397,7 @@ export default function HeroGlowingSearchBar({
             {/* Header */}
             <div className="px-4 py-2 border-b flex items-center justify-between text-[11px] font-semibold tracking-wider uppercase bg-[#FAFAF8] dark:bg-white/5 border-[#E4E0D8] dark:border-white/10 text-zinc-500 dark:text-zinc-400">
               <span className="flex items-center gap-1.5">
-                <Sparkles size={13} className="text-[#F5A623]" />
+                <Search size={13} className="text-[#F5A623]" />
                 <span>
                   {searchResults.length > 0
                     ? `Tools for "${query}" (${searchResults.length})`

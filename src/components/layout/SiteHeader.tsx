@@ -23,7 +23,6 @@ import {
   Image as ImageIcon,
   ChevronDown,
   Layers,
-  Sparkles,
   Info,
   MessageSquarePlus,
   AlignLeft,

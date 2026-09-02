@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import {
   Link2,
   FileText,
@@ -11,6 +11,8 @@ import {
   Phone,
   MapPin,
   Calendar,
+  X,
+  RotateCcw,
 } from "lucide-react";
 import {
   ContentType,
@@ -32,6 +34,18 @@ import {
   parseLocationInput,
 } from "./qr-serializers";
 
+const ALL_TABS: { type: ContentType; label: string; icon: React.ElementType }[] = [
+  { type: "url", label: "URL", icon: Link2 },
+  { type: "text", label: "Text", icon: FileText },
+  { type: "wifi", label: "WiFi", icon: Wifi },
+  { type: "vcard", label: "vCard", icon: User },
+  { type: "email", label: "Email", icon: Mail },
+  { type: "sms", label: "SMS", icon: MessageSquare },
+  { type: "phone", label: "Phone", icon: Phone },
+  { type: "location", label: "Location", icon: MapPin },
+  { type: "event", label: "Event", icon: Calendar },
+];
+
 interface QrPayloadFormProps {
   activeType: ContentType;
   onTypeChange: (type: ContentType) => void;
@@ -45,7 +59,33 @@ export default function QrPayloadForm({
   onPayloadChange,
   initialData,
 }: QrPayloadFormProps) {
-  // Field state per content type
+  const [visibleTypes, setVisibleTypes] = useState<ContentType[]>([
+    "url",
+    "text",
+    "wifi",
+    "vcard",
+    "email",
+    "sms",
+    "phone",
+    "location",
+    "event",
+  ]);
+
+  const [dragState, setDragState] = useState<{
+    type: ContentType;
+    isReadyToRemove: boolean;
+    dx: number;
+    dy: number;
+  } | null>(null);
+
+  const dragTrackingRef = useRef<{
+    type: ContentType;
+    startX: number;
+    startY: number;
+    rect: DOMRect;
+    hasMoved: boolean;
+  } | null>(null);
+
   const [url, setUrl] = useState(initialData?.url || "");
   const [text, setText] = useState(initialData?.text || "");
 
@@ -59,10 +99,10 @@ export default function QrPayloadForm({
   const [vcard, setVcard] = useState<VCardData>({
     firstName: initialData?.firstName || "",
     lastName: initialData?.lastName || "",
-    phone: initialData?.phone || "",
-    email: initialData?.email || "",
     organization: initialData?.organization || "",
     jobTitle: initialData?.jobTitle || "",
+    phone: initialData?.phone || "",
+    email: initialData?.email || "",
     website: initialData?.website || "",
     street: initialData?.street || "",
     city: initialData?.city || "",
@@ -98,37 +138,21 @@ export default function QrPayloadForm({
     description: initialData?.description || "",
   });
 
-  // Re-sync initialData if provided from presets or history restore
   useEffect(() => {
-    if (initialData) {
-      if (initialData.url !== undefined) setUrl(initialData.url);
-      if (initialData.text !== undefined) setText(initialData.text);
-      if (initialData.phone !== undefined) setPhone(initialData.phone);
-      if (initialData.ssid !== undefined) setWifi((prev) => ({ ...prev, ...initialData }));
-      if (
-        initialData.firstName !== undefined ||
-        initialData.lastName !== undefined ||
-        initialData.email !== undefined ||
-        initialData.organization !== undefined
-      ) {
-        setVcard((prev) => ({ ...prev, ...initialData }));
-      }
-      if (initialData.to !== undefined || initialData.subject !== undefined) {
-        setEmail((prev) => ({ ...prev, ...initialData }));
-      }
-      if (initialData.message !== undefined || (initialData.phone !== undefined && activeType === "sms")) {
-        setSms((prev) => ({ ...prev, ...initialData }));
-      }
-      if (initialData.latitude !== undefined || initialData.rawInput !== undefined) {
-        setLocation((prev) => ({ ...prev, ...initialData }));
-      }
-      if (initialData.title !== undefined || initialData.startDate !== undefined) {
-        setEvent((prev) => ({ ...prev, ...initialData }));
-      }
+    if (!initialData) return;
+    if (initialData.url !== undefined) setUrl(initialData.url);
+    if (initialData.text !== undefined) setText(initialData.text);
+    if (initialData.ssid !== undefined) setWifi((prev) => ({ ...prev, ...initialData }));
+    if (initialData.firstName !== undefined) setVcard((prev) => ({ ...prev, ...initialData }));
+    if (initialData.to !== undefined) setEmail((prev) => ({ ...prev, ...initialData }));
+    if (initialData.message !== undefined) setSms((prev) => ({ ...prev, ...initialData }));
+    if (typeof initialData === "string") {
+      if (activeType === "phone") setPhone(initialData);
+      if (activeType === "url") setUrl(initialData);
+      if (activeType === "text") setText(initialData);
     }
   }, [initialData, activeType]);
 
-  // Compute current payload & validity
   useEffect(() => {
     let payload = "";
     let isValid = false;
@@ -137,13 +161,12 @@ export default function QrPayloadForm({
       case "url": {
         const trimmed = url.trim();
         isValid = trimmed.length > 0;
-        payload = trimmed;
+        payload = isValid ? (trimmed.startsWith("http://") || trimmed.startsWith("https://") ? trimmed : `https://${trimmed}`) : "";
         break;
       }
       case "text": {
-        const trimmed = text.trim();
-        isValid = trimmed.length > 0;
-        payload = trimmed;
+        isValid = text.trim().length > 0;
+        payload = text;
         break;
       }
       case "wifi": {
@@ -152,13 +175,12 @@ export default function QrPayloadForm({
         break;
       }
       case "vcard": {
-        const nameValid = vcard.firstName.trim().length > 0 || vcard.lastName.trim().length > 0;
-        isValid = nameValid || vcard.phone.trim().length > 0 || vcard.organization.trim().length > 0;
+        isValid = vcard.firstName.trim().length > 0 || vcard.lastName.trim().length > 0 || vcard.organization.trim().length > 0 || vcard.phone.trim().length > 0;
         payload = isValid ? serializeVCard(vcard) : "";
         break;
       }
       case "email": {
-        isValid = email.to.trim().length > 0;
+        isValid = email.to.trim().length > 0 && email.to.includes("@");
         payload = isValid ? serializeEmail(email) : "";
         break;
       }
@@ -174,7 +196,7 @@ export default function QrPayloadForm({
       }
       case "location": {
         const geoStr = serializeGeo(location);
-        isValid = geoStr.length > 4; // e.g. "geo:x,y"
+        isValid = geoStr.length > 4;
         payload = isValid ? geoStr : "";
         break;
       }
@@ -188,47 +210,168 @@ export default function QrPayloadForm({
     onPayloadChange(payload, isValid);
   }, [activeType, url, text, wifi, vcard, email, sms, phone, location, event, onPayloadChange]);
 
-  const tabs: { type: ContentType; label: string; icon: React.ElementType }[] = [
-    { type: "url", label: "URL", icon: Link2 },
-    { type: "text", label: "Text", icon: FileText },
-    { type: "wifi", label: "WiFi", icon: Wifi },
-    { type: "vcard", label: "vCard", icon: User },
-    { type: "email", label: "Email", icon: Mail },
-    { type: "sms", label: "SMS", icon: MessageSquare },
-    { type: "phone", label: "Phone", icon: Phone },
-    { type: "location", label: "Location", icon: MapPin },
-    { type: "event", label: "Event", icon: Calendar },
-  ];
+  const handleChipPointerDown = (type: ContentType, e: React.PointerEvent<HTMLButtonElement>) => {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    dragTrackingRef.current = {
+      type,
+      startX: e.clientX,
+      startY: e.clientY,
+      rect,
+      hasMoved: false,
+    };
+  };
+
+  const handleChipPointerMove = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (!dragTrackingRef.current) return;
+    const { type, startX, startY, rect, hasMoved } = dragTrackingRef.current;
+    const dx = e.clientX - startX;
+    const dy = e.clientY - startY;
+    const dist = Math.hypot(dx, dy);
+
+    if (!hasMoved && dist > 10) {
+      dragTrackingRef.current.hasMoved = true;
+      try {
+        (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+      } catch {}
+    }
+
+    if (dragTrackingRef.current.hasMoved) {
+      const isOutside =
+        e.clientX < rect.left - 12 ||
+        e.clientX > rect.right + 12 ||
+        e.clientY < rect.top - 12 ||
+        e.clientY > rect.bottom + 12 ||
+        dist > 35;
+
+      setDragState({
+        type,
+        isReadyToRemove: isOutside,
+        dx,
+        dy,
+      });
+    }
+  };
+
+  const handleChipPointerUp = (type: ContentType, e: React.PointerEvent<HTMLButtonElement>) => {
+    if (!dragTrackingRef.current) return;
+
+    if (dragTrackingRef.current.hasMoved) {
+      try {
+        (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+      } catch {}
+
+      if (dragState?.isReadyToRemove) {
+        const nextVisible = visibleTypes.filter((t) => t !== type);
+        setVisibleTypes(nextVisible);
+
+        if (activeType === type && nextVisible.length > 0) {
+          onTypeChange(nextVisible[0]);
+        }
+      }
+    } else {
+      onTypeChange(type);
+    }
+
+    dragTrackingRef.current = null;
+    setDragState(null);
+  };
+
+  const handleChipPointerCancel = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (dragTrackingRef.current?.hasMoved) {
+      try {
+        (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+      } catch {}
+    }
+    dragTrackingRef.current = null;
+    setDragState(null);
+  };
+
+  const handleResetTabs = () => {
+    setVisibleTypes(ALL_TABS.map((t) => t.type));
+  };
+
+  const visibleTabObjects = ALL_TABS.filter((t) => visibleTypes.includes(t.type));
 
   return (
     <div className="space-y-4">
-      {/* Type Selector Tabs */}
       <div>
-        <label className="block text-xs font-bold text-[#71717A] dark:text-[#A1A1AA] uppercase tracking-wider mb-2">
-          Select Content Type
-        </label>
-        <div className="flex flex-wrap gap-1.5 p-1.5 rounded-xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48]">
-          {tabs.map((tab) => {
+        <div className="flex items-center justify-between mb-2">
+          <label className="block text-xs font-bold text-[#71717A] dark:text-[#A1A1AA] uppercase tracking-wider">
+            Select Content Type
+          </label>
+          {visibleTypes.length < ALL_TABS.length && (
+            <button
+              type="button"
+              onClick={handleResetTabs}
+              className="flex items-center gap-1 text-[11px] font-semibold text-[#F5A623] hover:underline"
+            >
+              <RotateCcw size={11} />
+              <span>Reset tabs ({ALL_TABS.length - visibleTypes.length} hidden)</span>
+            </button>
+          )}
+        </div>
+
+        <div className="flex flex-wrap gap-1.5 p-1.5 rounded-xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] relative select-none">
+          {visibleTabObjects.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeType === tab.type;
+            const isDraggingThis = dragState?.type === tab.type;
+            const isReadyToRemove = isDraggingThis && dragState.isReadyToRemove;
+
             return (
-              <button
-                key={tab.type}
-                onClick={() => onTypeChange(tab.type)}
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
-                  isActive
-                    ? "bg-[#1F2544] text-white dark:bg-[#F5A623] dark:text-[#0C0F1E] shadow-sm"
-                    : "text-[#71717A] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-[#F4F4F5] hover:bg-black/5 dark:hover:bg-white/5"
-                }`}
-              >
-                <Icon size={14} />
-                <span>{tab.label}</span>
-              </button>
+              <div key={tab.type} className="relative">
+                {isDraggingThis && (
+                  <div
+                    className={`absolute -top-7 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded text-[9px] font-extrabold uppercase tracking-wider shadow-lg pointer-events-none z-30 whitespace-nowrap transition-colors ${
+                      isReadyToRemove
+                        ? "bg-red-600 text-white animate-pulse"
+                        : "bg-neutral-800 text-white dark:bg-neutral-700"
+                    }`}
+                  >
+                    {isReadyToRemove ? "Release to remove" : "Drag to remove"}
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  onPointerDown={(e) => handleChipPointerDown(tab.type, e)}
+                  onPointerMove={handleChipPointerMove}
+                  onPointerUp={(e) => handleChipPointerUp(tab.type, e)}
+                  onPointerCancel={handleChipPointerCancel}
+                  style={{
+                    touchAction: "none",
+                    transform: isDraggingThis
+                      ? `translate3d(${dragState.dx * 0.4}px, ${dragState.dy * 0.4}px, 0) scale(${isReadyToRemove ? 0.95 : 1.03})`
+                      : undefined,
+                  }}
+                  className={`relative flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
+                    isReadyToRemove
+                      ? "bg-red-600 text-white border-transparent shadow-sm"
+                      : isDraggingThis
+                      ? "bg-[#1F2544] text-white dark:bg-[#F5A623] dark:text-[#0C0F1E] shadow-md ring-2 ring-[#F5A623]"
+                      : isActive
+                      ? "bg-[#1F2544] text-white dark:bg-[#F5A623] dark:text-[#0C0F1E] shadow-sm"
+                      : "text-[#71717A] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-[#F4F4F5] hover:bg-black/5 dark:hover:bg-white/5"
+                  }`}
+                >
+                  {isReadyToRemove ? (
+                    <div className="flex items-center gap-1">
+                      <X size={13} className="shrink-0 text-white" />
+                      <span className="font-bold">Remove</span>
+                    </div>
+                  ) : (
+                    <>
+                      <Icon size={14} className="shrink-0" />
+                      <span>{tab.label}</span>
+                    </>
+                  )}
+                </button>
+              </div>
             );
           })}
         </div>
       </div>
-
       {/* Form Fields */}
       <div className="p-4 rounded-xl border border-[#E4E0D8] dark:border-[#1E2338] bg-white dark:bg-[#141829] space-y-4">
         {/* URL Form */}

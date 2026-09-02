@@ -51,6 +51,7 @@ import { getBlogPost } from "@/lib/blog-data";
 import ToolPageClient from "@/components/ToolPageClient";
 import AdUnit from "@/components/AdUnit";
 import ToolFaqAccordion from "@/components/ToolFaqAccordion";
+import ToolAboutCollapsible from "@/components/ToolAboutCollapsible";
 
 import DeveloperSuiteIcon from "@/components/shared/DeveloperSuiteIcon";
 
@@ -348,149 +349,153 @@ export default function ToolPage({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
           {/* Detailed Unique Content Card */}
           <div className="lg:col-span-2 bg-white dark:bg-[#141829] rounded-2xl border border-[#E4E0D8] dark:border-[#1E2338] p-6 sm:p-8 space-y-6">
-            {/* About Paragraphs */}
-            <div>
-              <h2
-                className="text-xl font-bold text-[#18181B] dark:text-[#F4F4F5] mb-4"
-                style={{ fontFamily: "'Sora', sans-serif" }}
-              >
-                About {tool.name}
-              </h2>
-              {toolContent.aboutParagraphs.map((para, idx) => (
-                <p
-                  key={idx}
-                  className="text-sm text-[#52525B] dark:text-[#A1A1AA] leading-relaxed mb-3 last:mb-0"
-                >
-                  {para}
-                </p>
-              ))}
-            </div>
-
-            {/* Practical Use Cases */}
-            {toolContent.useCases && toolContent.useCases.length > 0 && (
-              <div className="pt-4 border-t border-[#E4E0D8] dark:border-[#1E2338]">
-                <h3 className="text-sm font-semibold text-[#18181B] dark:text-[#F4F4F5] mb-3 flex items-center gap-2">
-                  <ListChecks size={16} className="text-[#F5A623]" /> Common Use Cases
-                </h3>
-                <ul className="text-xs text-[#52525B] dark:text-[#A1A1AA] space-y-2">
-                  {toolContent.useCases.map((useCase, uIdx) => (
-                    <li key={uIdx} className="flex items-start gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#1F2544] dark:bg-[#F5A623] mt-1 shrink-0" />
-                      <span className="leading-relaxed">{useCase}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* How To Steps */}
-            {toolContent.howToSteps && toolContent.howToSteps.length > 0 && (
-              <div className="pt-4 border-t border-[#E4E0D8] dark:border-[#1E2338]">
-                <h3 className="text-sm font-semibold text-[#18181B] dark:text-[#F4F4F5] mb-3 flex items-center gap-2">
-                  <ListOrdered size={16} className="text-[#22C55E]" /> How to Use {tool.name}
-                </h3>
-                <ol className="text-xs text-[#52525B] dark:text-[#A1A1AA] space-y-2 list-decimal list-inside font-medium">
-                  {toolContent.howToSteps.map((step, sIdx) => (
-                    <li key={sIdx} className="leading-relaxed">
-                      {step}
-                    </li>
-                  ))}
-                </ol>
-              </div>
-            )}
-
-            {/* Practical Input/Output Examples */}
-            {toolContent.examples && toolContent.examples.length > 0 && (
-              <div className="pt-4 border-t border-[#E4E0D8] dark:border-[#1E2338]">
-                <h3 className="text-sm font-semibold text-[#18181B] dark:text-[#F4F4F5] mb-3 flex items-center gap-2">
-                  <Globe2 size={16} className="text-purple-500" /> Real-World Examples
-                </h3>
-                <div className="space-y-3">
-                  {toolContent.examples.map((ex, eIdx) => (
-                    <div
-                      key={eIdx}
-                      className="p-3.5 bg-[#FAFAF8] dark:bg-[#1E2338]/60 border border-[#E4E0D8] dark:border-[#2A2F48] rounded-xl space-y-2 text-xs"
-                    >
-                      <div className="font-semibold text-[#18181B] dark:text-[#F4F4F5]">
-                        {ex.title}
-                      </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        <div>
-                          <span className="text-[10px] uppercase font-bold text-[#A1A1AA] block mb-1">
-                            Input
-                          </span>
-                          <code className="block p-2 bg-white dark:bg-[#141829] rounded border border-[#E4E0D8] dark:border-[#2A2F48] text-[#18181B] dark:text-[#F4F4F5] font-mono overflow-x-auto whitespace-pre-wrap">
-                            {ex.input}
-                          </code>
-                        </div>
-                        <div>
-                          <span className="text-[10px] uppercase font-bold text-[#A1A1AA] block mb-1">
-                            Output
-                          </span>
-                          <code className="block p-2 bg-white dark:bg-[#141829] rounded border border-[#E4E0D8] dark:border-[#2A2F48] text-[#22C55E] font-mono overflow-x-auto whitespace-pre-wrap">
-                            {ex.output}
-                          </code>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Limitations & Notes */}
-            {toolContent.limitations && toolContent.limitations.length > 0 && (
-              <div className="pt-4 border-t border-[#E4E0D8] dark:border-[#1E2338]">
-                <h3 className="text-sm font-semibold text-[#18181B] dark:text-[#F4F4F5] mb-3 flex items-center gap-2">
-                  <Info size={16} className="text-blue-500" /> Important Notes &amp; Limitations
-                </h3>
-                <ul className="text-xs text-[#52525B] dark:text-[#A1A1AA] space-y-2">
-                  {toolContent.limitations.map((lim, lIdx) => (
-                    <li key={lIdx} className="flex items-start gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1 shrink-0" />
-                      <span className="leading-relaxed">{lim}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* Authoritative Related Guide Link */}
-            {clusterGuide && (
-              <div className="pt-4 border-t border-[#E4E0D8] dark:border-[#1E2338]">
-                <div className="p-4 rounded-xl bg-gradient-to-r from-red-50 to-amber-50 dark:from-[#1E2338] dark:to-[#1A1F36] border border-[#DC2626]/20 dark:border-[#DC2626]/30">
-                  <div className="flex items-center gap-2 text-xs font-bold text-[#DC2626] uppercase tracking-wide mb-1">
-                    <BookOpen size={15} /> In-Depth Topic Guide
-                  </div>
-                  <h4 className="text-sm sm:text-base font-bold text-[#18181B] dark:text-[#F4F4F5] mb-1">
-                    {clusterGuide.title}
-                  </h4>
-                  <p className="text-xs text-[#52525B] dark:text-[#A1A1AA] mb-3 leading-relaxed">
-                    {topicCluster?.guideDescription || clusterGuide.description}
-                  </p>
-                  <Link
-                    href={`/blog/${clusterGuide.slug}`}
-                    className="inline-flex items-center gap-1.5 text-xs font-bold text-[#DC2626] hover:underline"
+            <ToolAboutCollapsible toolName={tool.name}>
+              <div className="space-y-6">
+                {/* About Paragraphs */}
+                <div>
+                  <h2
+                    className="text-xl font-bold text-[#18181B] dark:text-[#F4F4F5] mb-4"
+                    style={{ fontFamily: "'Sora', sans-serif" }}
                   >
-                    <span>{topicCluster?.guideAnchorText || "Read Complete Guide"}</span>
-                    <ArrowRight size={14} />
-                  </Link>
+                    About {tool.name}
+                  </h2>
+                  {toolContent.aboutParagraphs.map((para, idx) => (
+                    <p
+                      key={idx}
+                      className="text-sm text-[#52525B] dark:text-[#A1A1AA] leading-relaxed mb-3 last:mb-0"
+                    >
+                      {para}
+                    </p>
+                  ))}
+                </div>
+
+                {/* Practical Use Cases */}
+                {toolContent.useCases && toolContent.useCases.length > 0 && (
+                  <div className="pt-4 border-t border-[#E4E0D8] dark:border-[#1E2338]">
+                    <h3 className="text-sm font-semibold text-[#18181B] dark:text-[#F4F4F5] mb-3 flex items-center gap-2">
+                      <ListChecks size={16} className="text-[#F5A623]" /> Common Use Cases
+                    </h3>
+                    <ul className="text-xs text-[#52525B] dark:text-[#A1A1AA] space-y-2">
+                      {toolContent.useCases.map((useCase, uIdx) => (
+                        <li key={uIdx} className="flex items-start gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#1F2544] dark:bg-[#F5A623] mt-1 shrink-0" />
+                          <span className="leading-relaxed">{useCase}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* How To Steps */}
+                {toolContent.howToSteps && toolContent.howToSteps.length > 0 && (
+                  <div className="pt-4 border-t border-[#E4E0D8] dark:border-[#1E2338]">
+                    <h3 className="text-sm font-semibold text-[#18181B] dark:text-[#F4F4F5] mb-3 flex items-center gap-2">
+                      <ListOrdered size={16} className="text-[#22C55E]" /> How to Use {tool.name}
+                    </h3>
+                    <ol className="text-xs text-[#52525B] dark:text-[#A1A1AA] space-y-2 list-decimal list-inside font-medium">
+                      {toolContent.howToSteps.map((step, sIdx) => (
+                        <li key={sIdx} className="leading-relaxed">
+                          {step}
+                        </li>
+                      ))}
+                    </ol>
+                  </div>
+                )}
+
+                {/* Practical Input/Output Examples */}
+                {toolContent.examples && toolContent.examples.length > 0 && (
+                  <div className="pt-4 border-t border-[#E4E0D8] dark:border-[#1E2338]">
+                    <h3 className="text-sm font-semibold text-[#18181B] dark:text-[#F4F4F5] mb-3 flex items-center gap-2">
+                      <Globe2 size={16} className="text-purple-500" /> Real-World Examples
+                    </h3>
+                    <div className="space-y-3">
+                      {toolContent.examples.map((ex, eIdx) => (
+                        <div
+                          key={eIdx}
+                          className="p-3.5 bg-[#FAFAF8] dark:bg-[#1E2338]/60 border border-[#E4E0D8] dark:border-[#2A2F48] rounded-xl space-y-2 text-xs"
+                        >
+                          <div className="font-semibold text-[#18181B] dark:text-[#F4F4F5]">
+                            {ex.title}
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <div>
+                              <span className="text-[10px] uppercase font-bold text-[#A1A1AA] block mb-1">
+                                Input
+                              </span>
+                              <code className="block p-2 bg-white dark:bg-[#141829] rounded border border-[#E4E0D8] dark:border-[#2A2F48] text-[#18181B] dark:text-[#F4F4F5] font-mono overflow-x-auto whitespace-pre-wrap">
+                                {ex.input}
+                              </code>
+                            </div>
+                            <div>
+                              <span className="text-[10px] uppercase font-bold text-[#A1A1AA] block mb-1">
+                                Output
+                              </span>
+                              <code className="block p-2 bg-white dark:bg-[#141829] rounded border border-[#E4E0D8] dark:border-[#2A2F48] text-[#22C55E] font-mono overflow-x-auto whitespace-pre-wrap">
+                                {ex.output}
+                              </code>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Limitations & Notes */}
+                {toolContent.limitations && toolContent.limitations.length > 0 && (
+                  <div className="pt-4 border-t border-[#E4E0D8] dark:border-[#1E2338]">
+                    <h3 className="text-sm font-semibold text-[#18181B] dark:text-[#F4F4F5] mb-3 flex items-center gap-2">
+                      <Info size={16} className="text-blue-500" /> Important Notes &amp; Limitations
+                    </h3>
+                    <ul className="text-xs text-[#52525B] dark:text-[#A1A1AA] space-y-2">
+                      {toolContent.limitations.map((lim, lIdx) => (
+                        <li key={lIdx} className="flex items-start gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-blue-500 mt-1 shrink-0" />
+                          <span className="leading-relaxed">{lim}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Authoritative Related Guide Link */}
+                {clusterGuide && (
+                  <div className="pt-4 border-t border-[#E4E0D8] dark:border-[#1E2338]">
+                    <div className="p-4 rounded-xl bg-gradient-to-r from-red-50 to-amber-50 dark:from-[#1E2338] dark:to-[#1A1F36] border border-[#DC2626]/20 dark:border-[#DC2626]/30">
+                      <div className="flex items-center gap-2 text-xs font-bold text-[#DC2626] uppercase tracking-wide mb-1">
+                        <BookOpen size={15} /> In-Depth Topic Guide
+                      </div>
+                      <h4 className="text-sm sm:text-base font-bold text-[#18181B] dark:text-[#F4F4F5] mb-1">
+                        {clusterGuide.title}
+                      </h4>
+                      <p className="text-xs text-[#52525B] dark:text-[#A1A1AA] mb-3 leading-relaxed">
+                        {topicCluster?.guideDescription || clusterGuide.description}
+                      </p>
+                      <Link
+                        href={`/blog/${clusterGuide.slug}`}
+                        className="inline-flex items-center gap-1.5 text-xs font-bold text-[#DC2626] hover:underline"
+                      >
+                        <span>{topicCluster?.guideAnchorText || "Read Complete Guide"}</span>
+                        <ArrowRight size={14} />
+                      </Link>
+                    </div>
+                  </div>
+                )}
+
+                {/* Privacy Explanation */}
+                <div className="pt-4 border-t border-[#E4E0D8] dark:border-[#1E2338]">
+                  <h3 className="text-sm font-semibold text-[#18181B] dark:text-[#F4F4F5] mb-2 flex items-center gap-2">
+                    <ShieldCheck size={16} className="text-emerald-500" /> Privacy &amp; Data Security
+                  </h3>
+                  <p className="text-xs text-[#52525B] dark:text-[#A1A1AA] leading-relaxed">
+                    {toolContent.privacyNote ||
+                      (tool.isClientSide
+                        ? `${tool.name} processes all operations 100% locally in your web browser memory. Your files, text snippets, and generated outputs are never stored, logged, or uploaded to any remote server.`
+                        : `${tool.name} securely fetches live reference data via lightweight API queries. See our Privacy Policy for details on how your data is handled.`)}
+                  </p>
                 </div>
               </div>
-            )}
-
-            {/* Privacy Explanation */}
-            <div className="pt-4 border-t border-[#E4E0D8] dark:border-[#1E2338]">
-              <h3 className="text-sm font-semibold text-[#18181B] dark:text-[#F4F4F5] mb-2 flex items-center gap-2">
-                <ShieldCheck size={16} className="text-emerald-500" /> Privacy &amp; Data Security
-              </h3>
-              <p className="text-xs text-[#52525B] dark:text-[#A1A1AA] leading-relaxed">
-                {toolContent.privacyNote ||
-                  (tool.isClientSide
-                    ? `${tool.name} processes all operations 100% locally in your web browser memory. Your files, text snippets, and generated outputs are never stored, logged, or uploaded to any remote server.`
-                    : `${tool.name} securely fetches live reference data via lightweight API queries. See our Privacy Policy for details on how your data is handled.`)}
-              </p>
-            </div>
+            </ToolAboutCollapsible>
 
             {/* Unique Tool FAQ Accordion */}
             <ToolFaqAccordion faqs={toolContent.faqs} />

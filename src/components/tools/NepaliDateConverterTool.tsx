@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import NepaliDate from "nepali-date-converter";
-import { Calendar, ArrowLeftRight, Copy, Check, Info, Sparkles, Clock, CalendarDays } from "lucide-react";
+import { Calendar, ArrowLeftRight, Copy, Check, Info, Clock, CalendarDays } from "lucide-react";
 import CalculatorCrossLink from "@/components/tools/shared/CalculatorCrossLink";
 
 const NEPALI_MONTHS_EN = [
@@ -297,7 +297,7 @@ export default function NepaliDateConverterTool() {
               <div>
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-[#71717A] uppercase tracking-wider flex items-center gap-1.5">
-                    <Sparkles size={13} className="text-[#DC2626]" />
+                    <CalendarDays size={13} className="text-[#DC2626]" />
                     <span>Converted Result ({mode === "bs-to-ad" ? "English AD" : "Bikram Sambat BS"})</span>
                   </span>
                   <button

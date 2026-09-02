@@ -20,7 +20,7 @@ const slugMatches = [...registryContent.matchAll(/slug:\s*"([^"]+)"/g)];
 const registeredSlugs = [...new Set(slugMatches.map((m) => m[1]))].filter((s) => !categorySlugs.has(s));
 
 // Extract all component keys from TOOL_COMPONENTS in ToolPageClient.tsx
-const loaderMatches = [...loaderContent.matchAll(/"([a-z0-9-]+)":\s*dynamic\(/g)];
+const loaderMatches = [...loaderContent.matchAll(/"([a-z0-9-]+)":\s*(?:dynamic|loadTool)\(/g)];
 const loaderSlugs = new Set(loaderMatches.map((m) => m[1]));
 
 console.log("=== SajiloTools Tool Registry & Loader Validator ===");

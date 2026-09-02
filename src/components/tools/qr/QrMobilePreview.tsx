@@ -74,6 +74,9 @@ export default function QrMobilePreview({
 
   const handlePointerDown = (e: React.PointerEvent) => {
     if (isExpanded || isDismissed || isDismissing) return;
+    // Only handle primary button / first touch
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+
     dragMovedRef.current = false;
     isHoveringDismissRef.current = false;
     setIsHoveringDismiss(false);
@@ -96,10 +99,9 @@ export default function QrMobilePreview({
     if (floatingBtnRef.current) {
       floatingBtnRef.current.style.transition = "none";
     }
-
-    try {
-      (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-    } catch {}
+    // NOTE: Do NOT call setPointerCapture here.
+    // We only capture the pointer after the drag threshold (12px) is confirmed
+    // in handlePointerMove, so normal taps on other elements are never intercepted.
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
@@ -108,9 +110,15 @@ export default function QrMobilePreview({
     const dy = e.clientY - dragStartRef.current.startY;
     const dist = Math.hypot(dx, dy);
 
-    if (!dragMovedRef.current && dist > 5) {
+    // Require 12px movement before entering drag mode — this prevents
+    // any accidental drag state on simple taps of content-type tabs or other elements.
+    if (!dragMovedRef.current && dist > 12) {
       dragMovedRef.current = true;
       setIsDragging(true);
+      // Only capture pointer AFTER we've confirmed a real drag gesture started
+      try {
+        (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+      } catch {}
     }
 
     if (dragMovedRef.current) {
@@ -138,17 +146,18 @@ export default function QrMobilePreview({
         // Immediate 0ms visual feedback on bottom target
         if (dismissCircleRef.current) {
           if (isNearDismiss) {
-            dismissCircleRef.current.className = "w-16 h-16 rounded-full flex items-center justify-center transition-all duration-200 backdrop-blur-xl border bg-red-600 text-white border-red-300 scale-125 shadow-[0_0_40px_rgba(239,68,68,0.95)] ring-4 ring-red-500/50 rotate-90";
+            // Near dismiss zone: red fill, slight pulse — no excessive scaling
+            dismissCircleRef.current.className = "w-14 h-14 rounded-full flex items-center justify-center transition-all duration-200 backdrop-blur-xl border bg-red-500 text-white border-red-300 scale-110 shadow-[0_0_28px_rgba(239,68,68,0.8)] ring-2 ring-red-400/60";
           } else {
-            dismissCircleRef.current.className = "w-16 h-16 rounded-full flex items-center justify-center transition-all duration-200 backdrop-blur-xl border bg-black/75 dark:bg-[#151A2E]/95 text-white border-white/30 scale-100 shadow-[0_10px_30px_rgba(0,0,0,0.6)]";
+            dismissCircleRef.current.className = "w-14 h-14 rounded-full flex items-center justify-center transition-all duration-200 backdrop-blur-xl border bg-black/75 dark:bg-[#151A2E]/95 text-white border-white/30 scale-100 shadow-[0_10px_30px_rgba(0,0,0,0.6)]";
           }
         }
         if (dismissLabelRef.current) {
           dismissLabelRef.current.textContent = isNearDismiss ? "Release to remove" : "Drag here to remove";
           if (isNearDismiss) {
-            dismissLabelRef.current.className = "text-[10px] font-extrabold tracking-wider uppercase px-3.5 py-1 rounded-full backdrop-blur-md transition-all duration-200 shadow-md bg-red-600 text-white scale-110 shadow-red-500/50";
+            dismissLabelRef.current.className = "text-[10px] font-extrabold tracking-wider uppercase px-3 py-1 rounded-full backdrop-blur-md transition-all duration-200 shadow-md bg-red-500 text-white shadow-red-500/40";
           } else {
-            dismissLabelRef.current.className = "text-[10px] font-extrabold tracking-wider uppercase px-3.5 py-1 rounded-full backdrop-blur-md transition-all duration-200 shadow-md bg-black/75 text-white/90 border border-white/15";
+            dismissLabelRef.current.className = "text-[10px] font-extrabold tracking-wider uppercase px-3 py-1 rounded-full backdrop-blur-md transition-all duration-200 shadow-md bg-black/75 text-white/90 border border-white/15";
           }
         }
       }
@@ -162,9 +171,12 @@ export default function QrMobilePreview({
 
   const handlePointerUp = (e: React.PointerEvent) => {
     if (!dragStartRef.current) return;
-    try {
-      (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
-    } catch {}
+    // Only release capture if a drag was actually started (capture was set in handlePointerMove)
+    if (dragMovedRef.current) {
+      try {
+        (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+      } catch {}
+    }
 
     dragStartRef.current = null;
 
@@ -539,22 +551,22 @@ export default function QrMobilePreview({
           >
             <div
               ref={dismissCircleRef}
-              className={`w-16 h-16 rounded-full flex items-center justify-center transition-all duration-200 backdrop-blur-xl border ${
+              className={`w-14 h-14 rounded-full flex items-center justify-center transition-all duration-200 backdrop-blur-xl border ${
                 isHoveringDismiss
-                  ? "bg-red-600 text-white border-red-300 scale-125 shadow-[0_0_40px_rgba(239,68,68,0.95)] ring-4 ring-red-500/50 rotate-90"
+                  ? "bg-red-500 text-white border-red-300 scale-110 shadow-[0_0_28px_rgba(239,68,68,0.8)] ring-2 ring-red-400/60"
                   : "bg-black/75 dark:bg-[#151A2E]/95 text-white border-white/30 scale-100 shadow-[0_10px_30px_rgba(0,0,0,0.6)]"
               }`}
             >
               <X
-                size={isHoveringDismiss ? 28 : 24}
+                size={22}
                 className="transition-transform duration-200"
               />
             </div>
             <span
               ref={dismissLabelRef}
-              className={`text-[10px] font-extrabold tracking-wider uppercase px-3.5 py-1 rounded-full backdrop-blur-md transition-all duration-200 shadow-md ${
+              className={`text-[10px] font-extrabold tracking-wider uppercase px-3 py-1 rounded-full backdrop-blur-md transition-all duration-200 shadow-md ${
                 isHoveringDismiss
-                  ? "bg-red-600 text-white scale-110 shadow-red-500/50"
+                  ? "bg-red-500 text-white shadow-red-500/40"
                   : "bg-black/75 text-white/90 border border-white/15"
               }`}
             >
@@ -594,7 +606,7 @@ export default function QrMobilePreview({
             <div
               className={`relative bg-white/95 dark:bg-[#151A2E]/95 backdrop-blur-md border ${
                 isHoveringDismiss
-                  ? "border-rose-500 ring-2 ring-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.5)]"
+                  ? "border-[#E4E0D8] dark:border-[#2A2F48] shadow-[0_4px_12px_rgba(0,0,0,0.15)] opacity-75"
                   : isDragging
                   ? "border-[#F5A623] shadow-[0_16px_36px_rgba(0,0,0,0.3)] ring-2 ring-[#F5A623]"
                   : "border-[#E4E0D8] dark:border-[#2A2F48] shadow-[0_8px_24px_rgba(0,0,0,0.18)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.45)]"
@@ -629,7 +641,7 @@ export default function QrMobilePreview({
             <div
               className={`relative bg-white/95 dark:bg-[#151A2E]/95 backdrop-blur-md border ${
                 isHoveringDismiss
-                  ? "border-rose-500 ring-2 ring-rose-500 shadow-[0_0_20px_rgba(244,63,94,0.5)]"
+                  ? "border-[#E4E0D8] dark:border-[#2A2F48] shadow-[0_4px_12px_rgba(0,0,0,0.15)] opacity-75"
                   : isDragging
                   ? "border-[#F5A623] shadow-[0_16px_36px_rgba(0,0,0,0.3)] ring-2 ring-[#F5A623]"
                   : "border-[#E4E0D8] dark:border-[#2A2F48] shadow-[0_8px_24px_rgba(0,0,0,0.15)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.4)]"

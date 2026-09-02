@@ -2,6 +2,8 @@
 // Central registry of all tools on the platform. Each tool has a slug, display
 // name, description, category, icon name (from lucide-react), and metadata.
 
+export type ToolTier = "FLAGSHIP" | "MOAT" | "COMMODITY";
+
 export type ToolDef = {
   slug: string;
   name: string;
@@ -13,6 +15,7 @@ export type ToolDef = {
   color: string;
   darkColor: string;
   isClientSide: boolean;
+  tier: ToolTier;
   featured?: boolean;
   trending?: boolean;
   isLatest?: boolean;
@@ -33,6 +36,7 @@ export type CategoryDef = {
 export const CATEGORIES: CategoryDef[] = [
   {
     slug: "developer",
+    tier: "COMMODITY",
     name: "Developer",
     icon: "Braces",
     color: "#1F2544",
@@ -42,6 +46,7 @@ export const CATEGORIES: CategoryDef[] = [
   },
   {
     slug: "text",
+    tier: "COMMODITY",
     name: "Text",
     icon: "AlignLeft",
     color: "#D97706",
@@ -51,6 +56,7 @@ export const CATEGORIES: CategoryDef[] = [
   },
   {
     slug: "pdf",
+    tier: "COMMODITY",
     name: "PDF",
     icon: "FileText",
     color: "#EF4444",
@@ -60,6 +66,7 @@ export const CATEGORIES: CategoryDef[] = [
   },
   {
     slug: "image",
+    tier: "COMMODITY",
     name: "Image",
     icon: "Image",
     color: "#7C3AED",
@@ -69,6 +76,7 @@ export const CATEGORIES: CategoryDef[] = [
   },
   {
     slug: "finance",
+    tier: "COMMODITY",
     name: "Finance",
     icon: "Calculator",
     color: "#22C55E",
@@ -78,6 +86,7 @@ export const CATEGORIES: CategoryDef[] = [
   },
   {
     slug: "nepal",
+    tier: "COMMODITY",
     name: "Nepal Tools",
     icon: "MapPin",
     color: "#DC2626",
@@ -87,6 +96,7 @@ export const CATEGORIES: CategoryDef[] = [
   },
   {
     slug: "everyday",
+    tier: "COMMODITY",
     name: "Everyday",
     icon: "Boxes",
     color: "#0D9488",
@@ -101,6 +111,7 @@ export const TOOLS: ToolDef[] = [
   // ── Developer ──
   {
     slug: "json-formatter",
+    tier: "COMMODITY",
     name: "JSON Formatter",
     desc: "Format, minify, and validate JSON in one click",
     category: "Developer",
@@ -116,6 +127,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "base64-encoder",
+    tier: "COMMODITY",
     name: "Base64 Encoder / Decoder",
     desc: "Encode or decode Base64 strings instantly",
     category: "Developer",
@@ -131,6 +143,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "url-encoder",
+    tier: "COMMODITY",
     name: "URL Encoder / Decoder",
     desc: "Percent-encode or decode URL components",
     category: "Developer",
@@ -145,6 +158,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "hash-generator",
+    tier: "COMMODITY",
     name: "Hash Generator",
     desc: "Generate MD5, SHA-1, SHA-256, SHA-512 hashes from text",
     category: "Developer",
@@ -160,6 +174,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "regex-tester",
+    tier: "COMMODITY",
     name: "Regex Tester",
     desc: "Test regular expressions with live highlighting",
     category: "Developer",
@@ -174,6 +189,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "color-picker",
+    tier: "COMMODITY",
     name: "Color Picker & Converter",
     desc: "Pick and convert colors between HEX, RGB, HSL",
     category: "Developer",
@@ -189,6 +205,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "password-generator",
+    tier: "COMMODITY",
     name: "Password Generator",
     desc: "Generate secure random passwords with customizable rules",
     category: "Developer",
@@ -204,6 +221,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "lorem-ipsum",
+    tier: "COMMODITY",
     name: "Lorem Ipsum Generator",
     desc: "Generate placeholder text for designs and mockups",
     category: "Developer",
@@ -218,6 +236,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "qr-generator",
+    tier: "COMMODITY",
     name: "QR Code Generator",
     desc: "Create QR codes for any URL or text instantly",
     category: "Developer",
@@ -233,6 +252,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "timezone-converter",
+    tier: "COMMODITY",
     name: "Time Zone Converter",
     desc: "Convert times between any time zones with live multi-zone comparison and Nepal (UTC+5:45) support",
     category: "Developer",
@@ -247,6 +267,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "markdown-preview",
+    tier: "COMMODITY",
     name: "Markdown Preview",
     desc: "Write Markdown and preview the rendered HTML in real time",
     category: "Developer",
@@ -262,6 +283,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "link-shortener",
+    tier: "COMMODITY",
     name: "Link Shortener",
     desc: "Shorten long URLs with clean custom aliases",
     category: "Developer",
@@ -277,6 +299,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "uuid-generator",
+    tier: "COMMODITY",
     name: "UUID Generator",
     desc: "Generate v4 UUIDs individually or in bulk, with copy and export",
     category: "Developer",
@@ -291,6 +314,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "jwt-decoder",
+    tier: "COMMODITY",
     name: "JWT Decoder",
     desc: "Decode JWT tokens to inspect header and payload, with optional HMAC signature verification",
     category: "Developer",
@@ -305,6 +329,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "unix-timestamp-converter",
+    tier: "COMMODITY",
     name: "Unix Timestamp Converter",
     desc: "Convert Unix epoch timestamps to human-readable dates and back, in any timezone",
     category: "Developer",
@@ -319,6 +344,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "css-js-minifier",
+    tier: "COMMODITY",
     name: "CSS & JS Minifier",
     desc: "Minify CSS or JavaScript by removing whitespace, comments, and shortening code",
     category: "Developer",
@@ -333,6 +359,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "hmac-generator",
+    tier: "COMMODITY",
     name: "HMAC Generator",
     desc: "Generate cryptographic HMAC signatures using SHA-256, SHA-512, MD5, or SHA-1 with custom secret keys",
     category: "Developer",
@@ -348,6 +375,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "random-token-generator",
+    tier: "COMMODITY",
     name: "Random Token Generator",
     desc: "Generate cryptographically secure API keys, secret tokens, hex strings, and bulk random keys",
     category: "Developer",
@@ -363,6 +391,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "file-checksum-verifier",
+    tier: "COMMODITY",
     name: "File Checksum Verifier",
     desc: "Verify file integrity locally by calculating SHA-256, SHA-512, SHA-1, and MD5 hashes without uploading files",
     category: "Developer",
@@ -380,6 +409,7 @@ export const TOOLS: ToolDef[] = [
   // ── Text ──
   {
     slug: "word-counter",
+    tier: "COMMODITY",
     name: "Word Counter",
     desc: "Count words, characters, sentences, and paragraphs",
     category: "Text",
@@ -395,6 +425,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "case-converter",
+    tier: "COMMODITY",
     name: "Case Converter",
     desc: "Transform text to UPPER, lower, Title, camelCase and more",
     category: "Text",
@@ -409,6 +440,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "text-diff",
+    tier: "COMMODITY",
     name: "Text Diff Checker",
     desc: "Compare two texts and highlight every difference",
     category: "Text",
@@ -423,6 +455,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "string-utilities",
+    tier: "COMMODITY",
     name: "String Utilities",
     desc: "Reverse, trim, repeat, slugify and manipulate strings",
     category: "Text",
@@ -439,6 +472,7 @@ export const TOOLS: ToolDef[] = [
   // ── PDF ──
   {
     slug: "pdf-merger",
+    tier: "COMMODITY",
     name: "PDF Merger",
     desc: "Combine multiple PDFs into one seamless file",
     category: "PDF",
@@ -454,6 +488,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "pdf-splitter",
+    tier: "COMMODITY",
     name: "PDF Splitter",
     desc: "Extract or split pages from PDF files",
     category: "PDF",
@@ -468,6 +503,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "pdf-to-word",
+    tier: "COMMODITY",
     name: "PDF to Word",
     desc: "Convert PDF text content into an editable Microsoft Word (.docx) document",
     category: "PDF",
@@ -484,6 +520,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "pdf-organizer",
+    tier: "COMMODITY",
     name: "PDF Organizer",
     desc: "Rotate, delete, and reorder PDF pages with drag-and-drop thumbnails",
     category: "PDF",
@@ -498,6 +535,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "pdf-watermark",
+    tier: "COMMODITY",
     name: "PDF Watermark",
     desc: "Add a text or image watermark across every page of your PDF",
     category: "PDF",
@@ -512,6 +550,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "jpg-pdf-converter",
+    tier: "COMMODITY",
     name: "JPG ↔ PDF Converter",
     desc: "Convert JPG images into a PDF, or extract PDF pages as JPG images",
     category: "PDF",
@@ -526,6 +565,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "pdf-compressor",
+    tier: "COMMODITY",
     name: "PDF Compressor",
     desc: "Shrink PDF file size by recompressing embedded images",
     category: "PDF",
@@ -542,6 +582,7 @@ export const TOOLS: ToolDef[] = [
   // ── Image ──
   {
     slug: "image-compressor",
+    tier: "COMMODITY",
     name: "Image Compressor",
     desc: "Reduce image size without any visible quality loss",
     category: "Image",
@@ -557,6 +598,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "image-resizer",
+    tier: "COMMODITY",
     name: "Image Resizer",
     desc: "Resize images to exact dimensions or scale percentage",
     category: "Image",
@@ -571,6 +613,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "image-cropper",
+    tier: "COMMODITY",
     name: "Image Cropper",
     desc: "Crop images visually with freeform or aspect ratio presets (1:1, 16:9, 4:3, 9:16)",
     category: "Image",
@@ -585,6 +628,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "image-converter",
+    tier: "COMMODITY",
     name: "Image Converter",
     desc: "Convert images between PNG, JPEG, WebP and BMP formats",
     category: "Image",
@@ -601,6 +645,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "image-to-base64",
+    tier: "COMMODITY",
     name: "Image to Base64",
     desc: "Convert images into Base64 strings, HTML tags, and CSS background URIs",
     category: "Image",
@@ -615,6 +660,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "background-remover",
+    tier: "COMMODITY",
     name: "AI Background Remover",
     desc: "Remove image backgrounds with on-device AI — private, free, and no upload required",
     category: "Image",
@@ -631,6 +677,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "favicon-generator",
+    tier: "COMMODITY",
     name: "Favicon Generator",
     desc: "Generate a full favicon set (ICO, PNG sizes, Apple touch icon) from any image",
     category: "Image",
@@ -645,6 +692,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "image-watermark",
+    tier: "COMMODITY",
     name: "Image Watermark",
     desc: "Add a text or logo watermark to your photos, single or in bulk",
     category: "Image",
@@ -659,6 +707,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "image-rotate-flip",
+    tier: "COMMODITY",
     name: "Image Rotate & Flip",
     desc: "Rotate images 90/180/270° or flip horizontally and vertically",
     category: "Image",
@@ -675,6 +724,7 @@ export const TOOLS: ToolDef[] = [
   // ── Finance ──
   {
     slug: "nrs-converter",
+    tier: "MOAT",
     name: "NRs Currency Converter",
     desc: "Convert Nepali Rupees to any world currency with live NRB exchange rates",
     category: "Finance",
@@ -690,6 +740,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "emi-calculator",
+    tier: "COMMODITY",
     name: "EMI Calculator",
     desc: "Calculate monthly EMI, total interest and amortization for NPR/INR loans",
     category: "Finance",
@@ -705,6 +756,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "tax-calculator",
+    tier: "MOAT",
     name: "Income Tax & Salary TDS Calculator",
     desc: "Calculate Nepal salary tax, monthly Salary TDS, and annual income tax with latest IRD slabs",
     category: "Finance",
@@ -720,6 +772,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "interest-calculator",
+    tier: "COMMODITY",
     name: "Interest Calculator (Simple & Compound)",
     desc: "Calculate simple and compound interest returns with flexible compounding frequency",
     category: "Finance",
@@ -734,6 +787,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "pf-calculator",
+    tier: "MOAT",
     name: "Provident Fund (EPF / CIT / SSF) Calculator",
     desc: "Calculate employee and employer retirement fund growth and tax-free corpus projection",
     category: "Finance",
@@ -748,6 +802,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "gold-silver-calculator",
+    tier: "MOAT",
     name: "Gold & Silver (Tola / Aana / Lal) Calculator",
     desc: "Calculate live gold and silver prices in Tola, Aana, Lal, and Grams with real-time FENEGOSIDA rates",
     category: "Finance",
@@ -762,6 +817,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "sip-calculator",
+    tier: "COMMODITY",
     name: "SIP / Mutual Fund Calculator",
     desc: "Calculate systematic investment returns, compound growth and wealth accumulation",
     category: "Finance",
@@ -776,6 +832,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "fd-calculator",
+    tier: "MOAT",
     name: "Fixed Deposit (FD) Calculator",
     desc: "Calculate returns on bank Fixed Deposits with compounding and 5% TDS tax",
     category: "Finance",
@@ -790,6 +847,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "vat-calculator",
+    tier: "MOAT",
     name: "13% VAT Calculator",
     desc: "Add or remove 13% Nepal Value Added Tax (VAT) from prices instantly",
     category: "Finance",
@@ -806,6 +864,7 @@ export const TOOLS: ToolDef[] = [
   // ── Nepal ──
   {
     slug: "land-converter",
+    tier: "MOAT",
     name: "Land Unit Converter",
     desc: "Convert Ropani, Anna, Bigha, Kattha and more",
     category: "Nepal Tools",
@@ -821,6 +880,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "nepali-translator",
+    tier: "FLAGSHIP",
     name: "English ↔ Nepali Translator",
     desc: "Translate text instantly between English and Nepali Devanagari",
     category: "Nepal Tools",
@@ -835,6 +895,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "nepali-date-converter",
+    tier: "MOAT",
     name: "Nepali Date Converter (BS ↔ AD)",
     desc: "Convert Bikram Sambat (वि.सं.) to Gregorian English (AD) dates with exact Miti and Day",
     category: "Nepal Tools",
@@ -850,6 +911,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "nepali-unicode",
+    tier: "MOAT",
     name: "Nepali Unicode Typing Tool",
     desc: "Type in Romanized English and convert instantly into Devanagari Unicode",
     category: "Nepal Tools",
@@ -864,6 +926,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "nepali-number-words",
+    tier: "MOAT",
     name: "Nepali Number to Words",
     desc: "Convert numbers into Nepali Lakh/Crore words for bank cheques, invoices, and legal documents",
     category: "Nepal Tools",
@@ -878,6 +941,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "nepali-calendar",
+    tier: "MOAT",
     name: "Nepali Calendar (BS)",
     desc: "Bikram Sambat monthly calendar grid with festivals, national holidays, and Saturdays",
     category: "Nepal Tools",
@@ -892,6 +956,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "traditional-unit-converter",
+    tier: "MOAT",
     name: "Traditional Unit Converter (Weight & Grain)",
     desc: "Convert Dharni, Tola, Pau, Seer, Muri, Pathi, Mana and Liters/Kg",
     category: "Nepal Tools",
@@ -906,6 +971,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "vehicle-tax-calculator",
+    tier: "MOAT",
     name: "Vehicle & Bike Tax Calculator",
     desc: "Estimate annual road tax and late renewal fines for motorcycles (bikes), cars, and EVs across all 7 provinces",
     category: "Nepal Tools",
@@ -920,6 +986,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "ward-municipality-lookup",
+    tier: "MOAT",
     name: "Ward & Municipality Lookup",
     desc: "Find administrative details, ward counts, and official address formats across all 753 local government units in Nepal",
     category: "Nepal Tools",
@@ -936,6 +1003,7 @@ export const TOOLS: ToolDef[] = [
   // ── Everyday ──
   {
     slug: "unit-converter",
+    tier: "COMMODITY",
     name: "Universal Unit Converter",
     desc: "Convert length, weight, temperature, volume, area, speed, time, and data storage units",
     category: "Everyday",
@@ -952,6 +1020,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "percentage-calculator",
+    tier: "COMMODITY",
     name: "Percentage Calculator",
     desc: "Calculate percentage of a number, percentage change, and percentage difference",
     category: "Everyday",
@@ -967,6 +1036,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "gpa-percentage-converter",
+    tier: "MOAT",
     name: "GPA to Percentage Converter",
     desc: "Convert GPA to percentage and percentage to GPA using Nepal NEB and university standards",
     category: "Everyday",
@@ -982,6 +1052,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "bmi-calculator",
+    tier: "COMMODITY",
     name: "BMI Calculator",
     desc: "Calculate Body Mass Index (BMI) using metric or imperial units with standard WHO categories",
     category: "Everyday",
@@ -996,6 +1067,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "discount-calculator",
+    tier: "COMMODITY",
     name: "Discount & Markup Calculator",
     desc: "Calculate sale price after discount, original price before discount, or profit markup percentage",
     category: "Everyday",
@@ -1010,6 +1082,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "bmr-calculator",
+    tier: "COMMODITY",
     name: "BMR & TDEE Calculator",
     desc: "Calculate Basal Metabolic Rate and Total Daily Energy Expenditure with Mifflin-St Jeor & Katch-McArdle formulas",
     category: "Everyday",
@@ -1025,6 +1098,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "calorie-calculator",
+    tier: "COMMODITY",
     name: "Calorie & Macro Calculator",
     desc: "Calculate daily calorie targets for weight loss, maintenance, or muscle gain with macro ratios (Protein, Carbs, Fats)",
     category: "Everyday",
@@ -1040,6 +1114,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     slug: "age-calculator",
+    tier: "COMMODITY",
     name: "Age Calculator & Birthday Countdown",
     desc: "Calculate exact age in years, months, days, total days alive, and next birthday countdown",
     category: "Everyday",
@@ -1064,4 +1139,20 @@ export function getToolBySlug(slug: string): ToolDef | undefined {
 
 export function getCategoryBySlug(slug: string): CategoryDef | undefined {
   return CATEGORIES.find((c) => c.slug === slug);
+}
+
+export function getFlagshipTool(): ToolDef | undefined {
+  return TOOLS.find((t) => t.tier === "FLAGSHIP");
+}
+
+export function getMoatTools(): ToolDef[] {
+  return TOOLS.filter((t) => t.tier === "MOAT");
+}
+
+export function getCommodityTools(): ToolDef[] {
+  return TOOLS.filter((t) => t.tier === "COMMODITY");
+}
+
+export function getToolsByTier(tier: ToolTier): ToolDef[] {
+  return TOOLS.filter((t) => t.tier === tier);
 }

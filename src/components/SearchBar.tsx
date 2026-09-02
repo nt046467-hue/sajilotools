@@ -55,7 +55,6 @@ import {
   Activity,
   Tag,
   Flame,
-  Sparkles,
   HeartPulse,
   Cake,
   MessageSquarePlus,
