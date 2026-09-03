@@ -142,6 +142,12 @@ export default function CategoryPageClient({
 
   useEffect(() => {
     syncFavorites();
+    window.addEventListener("sajilo_favorites_updated", syncFavorites);
+    window.addEventListener("storage", syncFavorites);
+    return () => {
+      window.removeEventListener("sajilo_favorites_updated", syncFavorites);
+      window.removeEventListener("storage", syncFavorites);
+    };
   }, [category]);
 
   const toggleFav = (name: string, e: React.MouseEvent) => {
@@ -152,7 +158,8 @@ export default function CategoryPageClient({
       next.has(name) ? next.delete(name) : next.add(name);
       try {
         localStorage.setItem("sajilo_favorites", JSON.stringify(Array.from(next)));
-      } catch { }
+        window.dispatchEvent(new Event("sajilo_favorites_updated"));
+      } catch {}
       return next;
     });
   };
@@ -288,14 +295,20 @@ export default function CategoryPageClient({
               const Icon = getIcon(tool.icon);
               const isFav = favorites.has(tool.name);
               return (
-                <Link
+                <div
                   key={tool.slug}
-                  href={`/tools/${tool.categorySlug}/${tool.slug}`}
                   className="group relative bg-white dark:bg-[#141829] rounded-2xl border border-[#E4E0D8] dark:border-[#1E2338] p-6 shadow-[0_1px_4px_rgba(0,0,0,0.05)] dark:shadow-none hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_8px_24px_rgba(0,0,0,0.35)] transition-all duration-200 hover:-translate-y-0.5"
                 >
-                  <div className="flex items-start justify-between mb-4">
+                  {/* Stretched navigation link */}
+                  <Link
+                    href={`/tools/${tool.categorySlug}/${tool.slug}`}
+                    className="absolute inset-0 z-0 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#F5A623]/40"
+                    aria-label={tool.name}
+                  />
+
+                  <div className="relative z-10 flex items-start justify-between mb-4 pointer-events-none">
                     <div
-                      className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 tool-accent-bg tool-accent-text"
+                      className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 tool-accent-bg tool-accent-text pointer-events-auto"
                       style={getToolAccentStyle(tool.color, tool.darkColor)}
                     >
                       <Icon
@@ -312,7 +325,8 @@ export default function CategoryPageClient({
                       </span>
                       <button
                         onClick={(e) => toggleFav(tool.name, e)}
-                        className={`p-2 rounded-xl transition-all duration-150 border ${isFav
+                        data-no-progress="true"
+                        className={`p-2 rounded-xl transition-all duration-150 border pointer-events-auto cursor-pointer ${isFav
                             ? "text-rose-500 bg-rose-500/15 border-rose-500/30"
                             : "text-[#A1A1AA] hover:text-rose-500 bg-[#FAFAF8] dark:bg-[#1E2338] border-[#E4E0D8] dark:border-[#2A2F48]"
                           }`}
@@ -328,21 +342,21 @@ export default function CategoryPageClient({
                   </div>
 
                   <h3
-                    className="font-semibold text-[#18181B] dark:text-[#F4F4F5] text-sm mb-1.5"
+                    className="relative z-0 pointer-events-none font-semibold text-[#18181B] dark:text-[#F4F4F5] text-sm mb-1.5 group-hover:text-[#F5A623] transition-colors"
                     style={{ fontFamily: "'Sora', sans-serif" }}
                   >
                     {tool.name}
                   </h3>
-                  <p className="text-[#71717A] dark:text-[#A1A1AA] text-xs leading-relaxed mb-4">
+                  <p className="relative z-0 pointer-events-none text-[#71717A] dark:text-[#A1A1AA] text-xs leading-relaxed mb-4">
                     {tool.desc}
                   </p>
 
-                  <div className="flex items-center justify-end">
+                  <div className="relative z-0 pointer-events-none flex items-center justify-end">
                     <span className="flex items-center gap-1 text-xs font-semibold text-[#1F2544] dark:text-[#F5A623] opacity-0 group-hover:opacity-100 transition-opacity">
                       Open <ArrowRight size={11} strokeWidth={2} />
                     </span>
                   </div>
-                </Link>
+                </div>
               );
             })}
           </div>

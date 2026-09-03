@@ -2405,56 +2405,75 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
   "nepali-number-words": {
     slug: "nepali-number-words",
     aboutParagraphs: [
-      "Nepali Number to Words Converter converts numerical amounts into formal Nepali Lakh/Crore words in both English and Devanagari script (नेपाली अक्षरमा).",
-      "Ideal for writing bank cheques, financial contracts, tax receipts, official agreements, and understanding how the South Asian numeral grouping (Lakh, Crore, Arab) works compared to the international million/billion system."
+      "Nepali Number Converter is a fast bidirectional utility that converts numbers into formal Nepali Devanagari words (नेपाली अक्षरमा) and converts Nepali number words back into exact numeric digits.",
+      "In Nepal, financial cheques, legal contracts, property registry deeds, tax invoices, and official government applications require writing numerical values in formal words using the South Asian grouping hierarchy (Hajar, Lakh, Crore, Arab, Kharab). This converter supports both plain numbers and formal currency mode ('रुपैयाँ मात्र' / 'Rupees ... Only') with full decimal rupee and paisa accuracy.",
+      "The tool operates 100% locally in your web browser with zero server data transmission, ensuring that sensitive cheque amounts and financial transactions remain completely private."
     ],
     useCases: [
-      "Writing out exact currency wording for bank cheque filling (e.g. Rupees Five Lakh Only / ५ लाख रुपैयाँ मात्र)",
-      "Formatting numbers for legal real estate contracts, land transactions, and registry deeds",
-      "Converting figures for accounting receipts and IRD tax invoices in Nepal",
-      "Looking up how numbers like 1 Lakh, 1.45 Lakh, or 1 Crore are pronounced and written in Nepali"
+      "Writing out exact currency wording for Nepali bank cheques (e.g. ४५,६७८ -> 'पैंतालीस हजार छ सय अठहत्तर रुपैयाँ मात्र')",
+      "Converting Nepali words on legal land deeds or invoices back into digits (e.g. 'एक लाख पैंतालीस हजार' -> 1,45,000)",
+      "Formatting numbers for IRD tax invoices, company audits, and salary slips in Nepal",
+      "Translating Devanagari numerals (१२३४५) to standard digits (12345) and vice-versa",
+      "Writing academic notes, receipts, and citizenship/passport application forms"
     ],
     howToSteps: [
-      "Type any number or currency figure in the input field (e.g. 145000).",
-      "View instant formal wording in both English (Lakhs/Crores) and Nepali Devanagari.",
-      "Click 'Copy' to paste directly into your cheque, invoice, or legal document."
+      "Select your desired conversion mode using the top tabs: 'Number ➔ Nepali Words' or 'Nepali Words ➔ Number'.",
+      "In Number mode: Enter any number or Devanagari digits (e.g. 45678 or ४५६७८ or 1250.50). Toggle 'Currency Mode' to include 'रुपैयाँ मात्र'.",
+      "In Words mode: Enter or paste Nepali number words (e.g. 'पैंतालीस हजार छ सय अठहत्तर').",
+      "View instant conversion in standard digits, Nepali digits, Devanagari words, and English Lakh/Crore words.",
+      "Click 'Copy' to copy the formatted text directly into your cheque, invoice, or document."
     ],
     examples: [
       {
-        title: "1 Lakh 45 Hajar Conversion (1,45,000)",
-        input: "145000",
-        output: "English: One Lakh Forty Five Thousand Rupees Only | Nepali: एक लाख पैंतालीस हजार रुपैयाँ मात्र"
+        title: "Standard Number Conversion (45,678)",
+        input: "45678",
+        output: "Nepali: पैंतालीस हजार छ सय अठहत्तर रुपैयाँ मात्र | English: Forty Five Thousand Six Hundred Seventy Eight Rupees Only | Nepali Digits: ४५,६७८"
       },
       {
-        title: "Bank Cheque Formatting (5,50,000)",
-        input: "550000",
-        output: "English: Five Lakh Fifty Thousand Rupees Only | Nepali: पाँच लाख पचास हजार रुपैयाँ मात्र"
+        title: "Nepali Words to Digits ('पैंतालीस हजार छ सय अठहत्तर')",
+        input: "पैंतालीस हजार छ सय अठहत्तर",
+        output: "Arabic Digits: 45,678 | Nepali Digits: ४५,६७८"
+      },
+      {
+        title: "Lakh Conversion with Devanagari Digits (१,४५,०००)",
+        input: "145000",
+        output: "Nepali: एक लाख पैंतालीस हजार रुपैयाँ मात्र | English: One Lakh Forty Five Thousand Rupees Only"
+      },
+      {
+        title: "Rupees and Paisa Cheque Amount (Rs. 1,250.50)",
+        input: "1250.50",
+        output: "Nepali: एक हजार दुई सय पचास रुपैयाँ पचास पैसा मात्र | English: One Thousand Two Hundred Fifty Rupees and Fifty Paisa Only"
       }
     ],
     limitations: [
-      "Uses the South Asian Lakh (100,000 = १,००,०००) and Crore (10,000,000 = १,००,००,०००) numbering system standard in Nepal"
+      "Follows the authentic Nepali/South Asian number scale (100 = Say, 1,000 = Hajar, 100,000 = Lakh, 10,000,000 = Crore, 1,000,000,000 = Arab, 100,000,000,000 = Kharab)",
+      "Currency mode rounds decimal values to two digits (Paisa: 0 to 99)"
     ],
-    relatedToolSlugs: ["vat-calculator", "tax-calculator", "land-converter", "nepali-unicode"],
+    relatedToolSlugs: ["nepali-unicode", "nepali-date-converter", "land-converter", "nrs-currency-converter", "age-calculator"],
     faqs: [
       {
-        question: "What is 1 Lakh in Nepali and how is it written?",
-        answer: "1 Lakh (१ लाख) in Nepali is equal to 100,000 (one hundred thousand or १०० हजार). In Nepali Devanagari, it is written as १,००,००० (एक लाख रुपैयाँ मात्र)."
+        question: "How do I convert Nepali words into numbers?",
+        answer: "Switch to 'Nepali Words ➔ Number' mode, type or paste the words in Nepali Devanagari (such as 'पैंतालीस हजार छ सय अठहत्तर'), and the parser will instantly evaluate and display both standard digits (45,678) and Devanagari digits (४५,६७८)."
       },
       {
-        question: "How do I write 1,45,000 (1 Lakh 45 Hajar) in English words and Nepali?",
-        answer: "In English words using the Nepali/South Asian system: 'One Lakh Forty Five Thousand Rupees Only'. In Nepali Devanagari: 'एक लाख पैंतालीस हजार रुपैयाँ मात्र'."
+        question: "How are Lakh, Crore, and Arab calculated in the Nepali numbering system?",
+        answer: "Unlike the international system which groups numbers by threes (Millions, Billions), the Nepali system groups the first three digits (Hundreds), then every two digits thereafter: 1 Hajar = 1,000; 1 Lakh = 1,00,000 (100 Thousand); 1 Crore = 1,00,00,000 (10 Million); 1 Arab = 1,00,00,00,000 (1 Billion); 1 Kharab = 1,00,00,00,00,000 (100 Billion)."
       },
       {
-        question: "How is the Nepali numbering system different from the international system?",
-        answer: "The international system groups digits by threes (Thousands, Millions, Billions, e.g. 1,000,000 = 1 Million). The Nepali/South Asian system groups the first three digits, then every two digits thereafter: Hajar (1,000), Lakh (1,00,000 = 100 Thousand), Crore (1,00,00,000 = 10 Million), Arab (1,00,00,00,000 = 1 Billion)."
+        question: "Can I enter Devanagari digits like १२३४५ directly?",
+        answer: "Yes, the input automatically recognizes and normalizes Unicode Devanagari digits (०, १, २, ३, ४, ५, ६, ७, ८, ९) into standard numeric values seamlessly."
       },
       {
-        question: "How do I write change or currency amounts in Nepali words?",
-        answer: "Rupee figures end with 'रुपैयाँ मात्र' (Rupees ... Only), and decimal change values are written as Paisa (e.g. ५० पैसा / 50 Paisa)."
+        question: "Does it format amounts specifically for bank cheques in Nepal?",
+        answer: "Yes, in Currency Mode it automatically formats amounts with formal banking prefixes/suffixes like 'रुपैयाँ ... मात्र' in Nepali and 'Rupees ... Only' in English, preventing unauthorized alteration on physical bank cheques."
       },
       {
-        question: "Does it format currency amounts for bank cheques?",
-        answer: "Yes, it automatically adds formal 'Rupees ... Only' and 'रुपैयाँ मात्र' suffixes standard for banking institutions across Nepal."
+        question: "Does the converter support decimal amounts in rupees and paisa?",
+        answer: "Yes, decimals like 1250.50 are converted into 'एक हजार दुई सय पचास रुपैयाँ पचास पैसा मात्र' in currency mode and '... दशमलव पाँच शून्य' in plain number mode."
+      },
+      {
+        question: "Is the number conversion performed in the browser?",
+        answer: "Yes, 100% of the conversion happens client-side inside your browser sandbox. No figures or words are transmitted to any server or external API."
       }
     ]
   },
@@ -2751,31 +2770,62 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
   "age-calculator": {
     slug: "age-calculator",
     aboutParagraphs: [
-      "Age Calculator (AD) calculates your exact age in years, months, and days based on your Gregorian birthdate.",
-      "It also displays total days lived, total weeks/hours lived, and a countdown to your next upcoming birthday."
+      "Age Calculator & Birthday Countdown is a dual-calendar utility that computes your exact age in years, months, and days using either the Bikram Sambat (BS) or Gregorian (AD) calendar.",
+      "Nepalese official records, citizenship papers, birth certificates, and academic admissions frequently use Bikram Sambat dates, whereas passports, visas, and international forms require Gregorian (AD) dates. This tool seamlessly converts between both calendar systems and performs exact age arithmetic, total days alive statistics, and next birthday countdowns in both BS and AD.",
+      "Calculations are performed 100% on your device using client-side JavaScript. Your birth dates and personal information are never saved to any database or sent to any server."
     ],
-    faqs: [
-      {
-        question: "How is exact age in months and days calculated?",
-        answer: "It computes exact calendar date differences, adjusting for varying month lengths and leap years."
-      },
-      {
-        question: "Looking for Bikram Sambat (BS) age calculation?",
-        answer: "Use our Nepali Date Converter (BS ↔ AD) tool for full Bikram Sambat (BS) calendar date conversion."
-      },
-      {
-        question: "Does it show a countdown to the next birthday?",
-        answer: "Yes, it shows exact remaining months, days, hours, and seconds until your next birthday."
-      },
-      {
-        question: "Can I see total days, hours, and minutes lived?",
-        answer: "Yes, detailed life statistics display your total lifetime broken down into total days, weeks, and hours."
-      }
+    useCases: [
+      "Checking exact age eligibility for Lok Sewa Aayog government examinations in Nepal",
+      "Converting Bikram Sambat birth certificate dates into Gregorian AD for passport and foreign visa applications",
+      "Calculating exact age in years, months, and days for school, +2, and university admissions",
+      "Tracking countdown to your upcoming Nepali (BS) or Gregorian (AD) birthday",
+      "Finding total days, weeks, and hours lived for personal milestones"
     ],
     howToSteps: [
-      "Select your Date of Birth in the date picker.",
-      "View your exact age broken down by years, months, and days.",
-      "Check total days alive and your next birthday countdown."
+      "Choose your birth calendar: select 'BS (नेपाली)' or 'AD (English)'.",
+      "If BS: select your Year (साल), Month (महिना), and Day (गते). The day picker automatically adjusts to the exact number of days (29 to 32) in the selected month.",
+      "If AD: choose your Gregorian birth date using the calendar picker.",
+      "Select your target date (defaults to today's date in both BS and AD).",
+      "View your exact age breakdown, cross-referenced calendar dates, lifetime statistics, and next birthday countdown."
+    ],
+    examples: [
+      {
+        title: "Bikram Sambat Birth Date (2058 Bhadra 12 BS)",
+        input: "Birth: 2058 Bhadra 12 BS | Calculated As Of: 2083 Bhadra 12 BS",
+        output: "Exact Age: 25 Years, 0 Months, 0 Days | Next Birthday: Today! | Equivalent AD DOB: August 28, 2001 AD"
+      },
+      {
+        title: "Mixed Calendar Calculation (AD DOB with BS Target)",
+        input: "Birth: 2001-01-01 AD | Calculated As Of: 2083 Bhadra 18 BS",
+        output: "Exact Age: 25 Years, 8 Months, 2 Days | DOB in BS: 2057 Poush 17 BS"
+      }
+    ],
+    limitations: [
+      "Supported Bikram Sambat calendar range covers 2000 BS to 2090 BS (approximately 1943 AD to 2033 AD)",
+      "Target date must be on or after the birth date"
+    ],
+    relatedToolSlugs: ["nepali-date-converter", "nepali-calendar", "nepali-number-words", "bmi-calculator"],
+    faqs: [
+      {
+        question: "Can I calculate my age using my Bikram Sambat (BS) birth date?",
+        answer: "Yes! Simply toggle the calendar switch to 'BS', and choose your Nepali year, month, and day. The calculator accurately converts the date and computes your exact age."
+      },
+      {
+        question: "How does the calculator handle mixed BS and AD dates?",
+        answer: "The calculator converts all inputs into a canonical calendar date before computing the age difference, allowing you to enter a BS birthdate with an AD target date or vice-versa."
+      },
+      {
+        question: "How does next birthday countdown work for Nepali (BS) birthdays?",
+        answer: "If you enter a BS birth date, the next birthday countdown tracks the next occurrence of your specific BS month and day (such as Bhadra 12), and displays the countdown in days along with the equivalent Gregorian date."
+      },
+      {
+        question: "What happens if a selected BS month only has 29 or 30 days?",
+        answer: "The date picker dynamically limits the selectable days based on the authentic astronomical Bikram Sambat calendar data for that specific year and month. If you switch months, the day is automatically clamped to the valid range."
+      },
+      {
+        question: "Is my birth date uploaded to a server?",
+        answer: "No. All calculations are executed completely inside your web browser. No personal dates or private details are stored or uploaded."
+      }
     ]
   },
 

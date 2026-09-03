@@ -1,4 +1,5 @@
 declare module "nepali-date-converter" {
+  export const dateConfigMap: Record<string, Record<string, number>>;
   export default class NepaliDate {
     constructor(date?: string | Date | number | NepaliDate);
     constructor(year: number, month: number, day: number);
@@ -11,3 +12,4 @@ declare module "nepali-date-converter" {
     static fromAD(adDate: Date): NepaliDate;
   }
 }
+

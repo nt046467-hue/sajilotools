@@ -143,12 +143,24 @@ export default function ToolsCatalogClient() {
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem("sajilo_favorites");
-      if (stored) {
-        setFavorites(new Set(JSON.parse(stored)));
-      }
-    } catch { }
+    const syncFavs = () => {
+      try {
+        const stored = localStorage.getItem("sajilo_favorites");
+        if (stored) {
+          setFavorites(new Set(JSON.parse(stored)));
+        } else {
+          setFavorites(new Set());
+        }
+      } catch {}
+    };
+
+    syncFavs();
+    window.addEventListener("sajilo_favorites_updated", syncFavs);
+    window.addEventListener("storage", syncFavs);
+    return () => {
+      window.removeEventListener("sajilo_favorites_updated", syncFavs);
+      window.removeEventListener("storage", syncFavs);
+    };
   }, []);
 
   const toggleFav = (name: string, e: React.MouseEvent) => {
@@ -159,7 +171,8 @@ export default function ToolsCatalogClient() {
       next.has(name) ? next.delete(name) : next.add(name);
       try {
         localStorage.setItem("sajilo_favorites", JSON.stringify(Array.from(next)));
-      } catch { }
+        window.dispatchEvent(new Event("sajilo_favorites_updated"));
+      } catch {}
       return next;
     });
   };

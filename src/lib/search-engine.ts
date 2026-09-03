@@ -228,7 +228,9 @@ export const SEARCH_INTENTS: Record<string, string[]> = {
     "type in nepali", "devanagari font typing", "roman nepali"
   ],
   "nepali-number-words": [
-    "number to words", "nepali number in words", "lakh crore converter", "cheque number to words",
+    "nepali number converter", "nepali words to number", "number to nepali words", "nepali number to words",
+    "nepali number in words", "number in nepali words", "nepali rupees in words", "nepali cheque amount converter",
+    "१ २ ३ number converter", "रकम अक्षरमा", "अक्षरमा रकम", "lakh crore converter", "cheque number to words",
     "amount in words nepali", "rupees in words", "bank cheque writer", "lakh in nepali",
     "1 lakh 45 hajar in english", "change in nepali", "nepali number system", "how to write lakh in nepali"
   ],
@@ -282,8 +284,9 @@ export const SEARCH_INTENTS: Record<string, string[]> = {
     "daily calorie intake", "diet macros"
   ],
   "age-calculator": [
-    "age calculator", "calculate exact age", "birthday countdown", "how old am i",
-    "days alive calculator", "age in months days"
+    "age calculator", "bs age calculator", "ad age calculator", "bikram sambat age calculator",
+    "nepali age calculator", "miti age calculator", "birthday countdown", "bs birthday countdown",
+    "calculate exact age", "how old am i", "days alive calculator", "age in months days"
   ],
 };
 

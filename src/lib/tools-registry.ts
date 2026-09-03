@@ -31,6 +31,10 @@ export type CategoryDef = {
   darkColor: string;
   bgClass: string;
   desc: string;
+  intro?: string;
+  popularTasks?: string[];
+  designedFor?: string;
+  highlights?: string[];
 };
 
 export const CATEGORIES: CategoryDef[] = [
@@ -42,6 +46,17 @@ export const CATEGORIES: CategoryDef[] = [
     darkColor: "#9AA3D6",
     bgClass: "bg-[#EFF6FF] dark:bg-[#172554]/60",
     desc: "Essential utilities for developers — formatters, encoders, generators and more.",
+    intro: "Developer Tools is a sandboxed suite of code formatters, validators, encoders, and cryptographic utilities. Whether you need to inspect JSON payloads, encode Base64 tokens, generate cryptographic SHA-256 hashes, test regular expressions, or generate random UUIDs, all processing happens strictly inside your browser sandbox with zero network transmission of your private keys or secrets.",
+    popularTasks: [
+      "Format, validate, and minify JSON data",
+      "Encode & decode Base64 strings and data URIs",
+      "Generate SHA-256, SHA-512, and MD5 cryptographic hashes",
+      "Generate RFC-compliant UUID v4 identifiers",
+      "Encode and decode URLs and query parameters",
+      "Test and debug Regular Expressions (RegEx)"
+    ],
+    designedFor: "Software engineers, frontend/backend developers, QA testers, system administrators, and cybersecurity professionals.",
+    highlights: ["Zero Server Payload Upload", "Web Crypto API Sandbox", "One-Click Formats & Exports"]
   },
   {
     slug: "text",
@@ -51,6 +66,17 @@ export const CATEGORIES: CategoryDef[] = [
     darkColor: "#D97706",
     bgClass: "bg-[#FFFBEB] dark:bg-[#451A03]/60",
     desc: "Text manipulation tools — counters, converters, formatters for everyday writing.",
+    intro: "Text Tools helps writers, copywriters, researchers, and students format, analyze, and clean up written content. Analyze character, word, and reading-time metrics, compare side-by-side text diffs, convert between case conventions, and transliterate Romanized text to Devanagari script with complete privacy.",
+    popularTasks: [
+      "Count live words, characters, sentences, and reading time",
+      "Compare two text snippets with side-by-side diff highlighting",
+      "Convert uppercase, lowercase, title case, and camelCase",
+      "Remove duplicate lines and normalize whitespace",
+      "Translate and transliterate text between English and Nepali",
+      "Clean formatted strings for publication and web display"
+    ],
+    designedFor: "Content creators, academic researchers, legal drafters, journalists, and students writing essays or articles.",
+    highlights: ["Devanagari & Unicode Support", "Instant Character Metrics", "Side-by-Side Visual Diff"]
   },
   {
     slug: "pdf",
@@ -60,6 +86,17 @@ export const CATEGORIES: CategoryDef[] = [
     darkColor: "#EF4444",
     bgClass: "bg-[#FEF2F2] dark:bg-[#450A0A]/60",
     desc: "Work with PDFs — merge, split, compress and convert documents.",
+    intro: "PDF Tools enables fast document management directly inside your web browser. Merge multiple contracts, split PDF page ranges, compress documents to meet strict file-size limits for government portal uploads, and extract pages without uploading sensitive paperwork to third-party cloud servers.",
+    popularTasks: [
+      "Merge multiple PDF files into a single organized document",
+      "Split PDFs by custom page numbers or individual ranges",
+      "Compress PDF file sizes for passport and visa portal uploads",
+      "Extract specific pages from large ebooks and reports",
+      "Rotate upside-down scanned pages",
+      "Convert images to multi-page PDF documents"
+    ],
+    designedFor: "Job applicants uploading CVs, visa and passport applicants, office administrators, legal practitioners, and educators.",
+    highlights: ["Local WebAssembly Processing", "No Upload Size Subscriptions", "Zero Server Storage"]
   },
   {
     slug: "image",
@@ -69,6 +106,17 @@ export const CATEGORIES: CategoryDef[] = [
     darkColor: "#A78BFA",
     bgClass: "bg-[#F5F3FF] dark:bg-[#2E1065]/60",
     desc: "Image processing tools — compress, resize, convert and optimize visuals.",
+    intro: "Image Tools offers modern in-browser image optimization and editing utilities. Compress JPEG, PNG, and WebP assets to decrease page load times, resize photographs to exact passport or social media dimensions, convert formats, and remove backgrounds using on-device machine learning without sending photos over the network.",
+    popularTasks: [
+      "Compress photos to reduce file size while preserving clarity",
+      "Resize pictures to passport photo or social banner dimensions",
+      "Convert between PNG, JPEG, WebP, and SVG formats",
+      "Crop photos with predefined aspect ratios",
+      "Remove image backgrounds using local machine learning",
+      "Generate complete multi-size favicon packages"
+    ],
+    designedFor: "Web developers optimizing site performance, photographers, digital marketers, graphic designers, and government portal applicants.",
+    highlights: ["Private Client-Side Canvas & WebAssembly", "Batch Image Processing", "Instant Download"]
   },
   {
     slug: "finance",
@@ -78,6 +126,17 @@ export const CATEGORIES: CategoryDef[] = [
     darkColor: "#22C55E",
     bgClass: "bg-[#F0FDF4] dark:bg-[#052E16]/60",
     desc: "Financial calculators and converters tailored for Nepali users.",
+    intro: "Finance Tools provides clear financial calculators calibrated for personal and business decisions in Nepal. Estimate monthly loan EMI payments, calculate Inland Revenue Department (IRD) salary tax deductions according to current single and married slabs, forecast retirement savings with EPF and SSF projections, and calculate compound interest.",
+    popularTasks: [
+      "Calculate monthly loan EMI and view amortization schedule",
+      "Compute Nepal salary TDS tax across single/married slabs",
+      "Calculate Systematic Investment Plan (SIP) returns",
+      "Forecast retirement gratuity with EPF and SSF calculators",
+      "Calculate VAT amounts and gross invoice totals",
+      "Check live foreign exchange rates against Nepalese Rupee (NPR)"
+    ],
+    designedFor: "Salaried employees in Nepal, loan applicants, chartered accountants, small business owners, and personal finance planners.",
+    highlights: ["Updated to Current IRD Tax Slabs", "Complete Amortization Breakdown", "Realistic Investment Estimates"]
   },
   {
     slug: "nepal",
@@ -87,6 +146,17 @@ export const CATEGORIES: CategoryDef[] = [
     darkColor: "#F87171",
     bgClass: "bg-[#FFF1F2] dark:bg-[#450A0A]/60",
     desc: "Tools built specifically for Nepal — land conversion, date converters and more.",
+    intro: "SajiloTools Nepal Tools brings together practical utilities designed around everyday tasks in Nepal. It includes Bikram Sambat (BS) and Gregorian (AD) date conversion, traditional land measurement conversion across Ropani and Bigha systems, bidirectional Nepali number and Devanagari words conversion, Nepal-specific financial calculators (including vehicle bluebook tax and salary TDS), and local administrative ward lookup. Built to simplify official paperwork, citizenship/passport applications, banking, real estate, and academic requirements.",
+    popularTasks: [
+      "Convert Ropani, Aana, Paisa, Daam ↔ Bigha, Kattha, Dhur",
+      "Convert Bikram Sambat (BS) ↔ Gregorian (AD) dates",
+      "Convert numbers to Nepali Devanagari words for cheques & invoices",
+      "Calculate Bagmati province vehicle bluebook renewal tax",
+      "Type in Romanized English and convert to Nepali Unicode",
+      "Lookup Nepal local government wards across 753 municipalities"
+    ],
+    designedFor: "Citizens filling government forms, real estate agents, accountants, bank staff writing cheques, students applying for passports/citizenship, and businesses in Nepal.",
+    highlights: ["100% In-Browser Privacy", "Authentic Bikram Sambat Engine", "Updated to Nepal Tax Slabs"]
   },
   {
     slug: "everyday",
@@ -96,6 +166,17 @@ export const CATEGORIES: CategoryDef[] = [
     darkColor: "#2DD4BF",
     bgClass: "bg-[#F0FDFA] dark:bg-[#042F2E]/60",
     desc: "Everyday calculators and unit converters for students and professionals.",
+    intro: "Everyday Tools provides high-precision calculators and converters for routine measurements, health tracking, academic grading, and financial discounts. Features an authentic dual-calendar (BS + AD) exact age calculator with birthday countdown, clinical WHO body mass index (BMI) classification, NEB-standard GPA to percentage conversion, and multi-unit conversions.",
+    popularTasks: [
+      "Calculate exact age using BS or AD birth dates",
+      "Track countdown to upcoming Bikram Sambat or English birthday",
+      "Calculate Body Mass Index (BMI) & ideal weight range",
+      "Convert NEB SEE / +2 GPA to percentage",
+      "Calculate percentage change, markup, and discount savings",
+      "Convert length, weight, area, volume, and temperature units"
+    ],
+    designedFor: "Students calculating marks/GPA, job seekers verifying eligibility age, health-conscious individuals, shoppers, and professionals.",
+    highlights: ["Dual Calendar BS/AD Support", "Zero Personal Data Collection", "Instant Visual Results"]
   },
 ];
 
@@ -920,8 +1001,8 @@ export const TOOLS: ToolDef[] = [
   {
     slug: "nepali-number-words",
     tier: "MOAT",
-    name: "Nepali Number to Words",
-    desc: "Convert numbers into Nepali Lakh/Crore words for bank cheques, invoices, and legal documents",
+    name: "Nepali Number Converter",
+    desc: "Convert numbers to Nepali words or Nepali number words back to digits with currency and Lakh/Crore support",
     category: "Nepal Tools",
     categorySlug: "nepal",
     icon: "FileText",
@@ -929,8 +1010,8 @@ export const TOOLS: ToolDef[] = [
     color: "#DC2626",
     darkColor: "#F87171",
     isClientSide: true,
-    seoTitle: "Nepali Number to Words – Lakh, Crore & Cheque Converter",
-    seoDescription: "Convert numbers and currency figures into Nepali Lakh/Crore words in English and Devanagari (अक्षरमा) for bank cheques and legal documents. Free and instant.",
+    seoTitle: "Nepali Number Converter – Numbers to Words & Words to Numbers",
+    seoDescription: "Convert Nepali numbers between digits and words in Devanagari, including lakh, crore and rupee amounts. Supports Nepali digits and numeric input.",
   },
   {
     slug: "nepali-calendar",
@@ -1109,7 +1190,7 @@ export const TOOLS: ToolDef[] = [
     slug: "age-calculator",
     tier: "COMMODITY",
     name: "Age Calculator & Birthday Countdown",
-    desc: "Calculate exact age in years, months, days, total days alive, and next birthday countdown",
+    desc: "Calculate your exact age using either Bikram Sambat (BS) or Gregorian (AD) dates, with your next birthday countdown",
     category: "Everyday",
     categorySlug: "everyday",
     icon: "Cake",
@@ -1117,8 +1198,8 @@ export const TOOLS: ToolDef[] = [
     color: "#0D9488",
     darkColor: "#2DD4BF",
     isClientSide: true,
-    seoTitle: "Age Calculator Online – Calculate Exact Age & Birthday Countdown",
-    seoDescription: "Calculate your exact age in years, months, weeks, days, and hours with an instant next birthday countdown. 100% free and private browser tool.",
+    seoTitle: "Age Calculator BS & AD – Exact Age & Birthday Countdown",
+    seoDescription: "Calculate exact age from Bikram Sambat (BS) or Gregorian (AD) birth dates, convert between calendars, and see your next birthday countdown.",
   },
 ];
 

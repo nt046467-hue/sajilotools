@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { ChevronDown, BookOpen } from "lucide-react";
 
 interface ToolAboutCollapsibleProps {
@@ -13,19 +13,36 @@ export default function ToolAboutCollapsible({
   children,
 }: ToolAboutCollapsibleProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleToggle = useCallback(() => {
+    if (isExpanded) {
+      // Collapsing: scroll the container's top back into view smoothly
+      // so the user isn't left staring at mid-page after "Show Less"
+      setIsExpanded(false);
+      requestAnimationFrame(() => {
+        containerRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      });
+    } else {
+      setIsExpanded(true);
+    }
+  }, [isExpanded]);
 
   return (
-    <div className="relative">
-      {/* Mobile Collapsible Wrapper */}
+    <div ref={containerRef} className="relative scroll-mt-20">
+      {/* Content Wrapper — clips on mobile when collapsed */}
       <div
-        className={`transition-all duration-500 ease-in-out sm:max-h-none overflow-hidden ${
-          isExpanded ? "max-h-[5000px]" : "max-h-[320px] sm:max-h-none"
+        className={`transition-[max-height] duration-500 ease-in-out sm:max-h-none overflow-hidden ${
+          isExpanded ? "max-h-[8000px]" : "max-h-[320px] sm:max-h-none"
         }`}
       >
         {children}
       </div>
 
-      {/* Mobile Fade Overlay when collapsed */}
+      {/* Fade overlay on mobile when collapsed */}
       {!isExpanded && (
         <div className="sm:hidden absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white dark:from-[#141829] to-transparent pointer-events-none rounded-b-2xl" />
       )}
@@ -34,8 +51,9 @@ export default function ToolAboutCollapsible({
       <div className="sm:hidden pt-3 text-center relative z-10">
         <button
           type="button"
-          onClick={() => setIsExpanded(!isExpanded)}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] text-xs font-bold text-[#18181B] dark:text-[#F4F4F5] hover:bg-[#F0EDE8] dark:hover:bg-[#2A2F48] transition-colors shadow-xs cursor-pointer"
+          onClick={handleToggle}
+          data-no-progress="true"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] text-xs font-bold text-[#18181B] dark:text-[#F4F4F5] hover:bg-[#F0EDE8] dark:hover:bg-[#2A2F48] transition-colors shadow-xs cursor-pointer active:scale-[0.97]"
           aria-expanded={isExpanded}
         >
           <BookOpen size={14} className="text-[#F5A623]" />

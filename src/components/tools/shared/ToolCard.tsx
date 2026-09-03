@@ -80,14 +80,32 @@ export default function ToolCard({
     };
   }, [tool.slug]);
 
+  // Safety timeout: Auto-reset loading state if navigation is cancelled or delayed
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem("sajilo_favorites");
-      if (stored) {
-        const set = new Set(JSON.parse(stored));
-        setFavorited(set.has(tool.name));
-      }
-    } catch {}
+    if (!isNavigatingThis) return;
+    const timer = setTimeout(() => {
+      setIsNavigatingThis(false);
+      activeNavigatingSlug = null;
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, [isNavigatingThis]);
+
+  useEffect(() => {
+    const syncFav = () => {
+      try {
+        const stored = localStorage.getItem("sajilo_favorites");
+        if (stored) {
+          const set = new Set(JSON.parse(stored));
+          setFavorited(set.has(tool.name));
+        } else {
+          setFavorited(false);
+        }
+      } catch {}
+    };
+
+    syncFav();
+    window.addEventListener("sajilo_favorites_updated", syncFav);
+    return () => window.removeEventListener("sajilo_favorites_updated", syncFav);
   }, [tool.name]);
 
   const toggleFav = (e: React.MouseEvent) => {
@@ -118,19 +136,25 @@ export default function ToolCard({
   };
 
   return (
-    <Link
-      href={`/tools/${tool.categorySlug}/${tool.slug}`}
-      onClick={handleCardClick}
-      className={`group relative block bg-white dark:bg-[#141829] rounded-2xl border border-[#E4E0D8] dark:border-[#1E2338] p-5 sm:p-6 shadow-[0_1px_4px_rgba(0,0,0,0.05)] dark:shadow-none transition-all duration-200 active:scale-[0.98] ${
+    <div
+      className={`group relative block bg-white dark:bg-[#141829] rounded-2xl border border-[#E4E0D8] dark:border-[#1E2338] p-5 sm:p-6 shadow-[0_1px_4px_rgba(0,0,0,0.05)] dark:shadow-none transition-all duration-200 ${
         isNavigatingThis
           ? "opacity-90 pointer-events-none cursor-wait ring-1 ring-[#F5A623]/30"
-          : "hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_8px_24px_rgba(0,0,0,0.35)] hover:-translate-y-0.5"
+          : "hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_8px_24px_rgba(0,0,0,0.35)] hover:-translate-y-0.5 active:scale-[0.98]"
       } ${className}`}
     >
+      {/* Primary Stretched Navigation Link covering the whole card */}
+      <Link
+        href={`/tools/${tool.categorySlug}/${tool.slug}`}
+        onClick={handleCardClick}
+        className="absolute inset-0 z-0 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#F5A623]/40"
+        aria-label={tool.name}
+      />
+
       {/* Header Row: Icon + Favorite Button */}
-      <div className="flex items-start justify-between mb-4 sm:mb-5">
+      <div className="relative z-10 flex items-start justify-between mb-4 sm:mb-5 pointer-events-none">
         <div
-          className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 tool-accent-bg tool-accent-text transition-transform duration-200 group-hover:scale-105"
+          className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 tool-accent-bg tool-accent-text transition-transform duration-200 group-hover:scale-105 pointer-events-auto"
           style={getToolAccentStyle(tool.color, tool.darkColor)}
         >
           <Icon size={20} strokeWidth={2} />
@@ -139,19 +163,20 @@ export default function ToolCard({
         <button
           type="button"
           onClick={toggleFav}
-          className={`p-1.5 rounded-lg transition-all duration-150 ${
+          data-no-progress="true"
+          className={`p-2 rounded-xl transition-all duration-150 pointer-events-auto cursor-pointer border ${
             favorited
-              ? "text-rose-500 bg-rose-50 dark:bg-rose-950/50"
-              : "text-[#D4D4D8] dark:text-[#374151] hover:text-[#A1A1AA] dark:hover:text-[#6B7280] hover:bg-[#F7F5F0] dark:hover:bg-[#1E2338]"
+              ? "text-rose-500 bg-rose-500/15 border-rose-500/30"
+              : "text-[#A1A1AA] hover:text-rose-500 bg-[#FAFAF8] dark:bg-[#1E2338] border-[#E4E0D8] dark:border-[#2A2F48]"
           }`}
           aria-label={favorited ? "Remove from favorites" : "Add to favorites"}
         >
-          <Heart size={15} strokeWidth={2} fill={favorited ? "currentColor" : "none"} />
+          <Heart size={16} strokeWidth={2} className={favorited ? "fill-rose-500 text-rose-500" : ""} />
         </button>
       </div>
 
       {/* Tool Title & Badge */}
-      <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+      <div className="relative z-0 flex items-center gap-2 mb-1.5 flex-wrap pointer-events-none">
         <h3
           className="font-semibold text-[#18181B] dark:text-[#F4F4F5] text-sm leading-snug group-hover:text-[#F5A623] transition-colors"
           style={{ fontFamily: "'Sora', sans-serif" }}
@@ -162,12 +187,12 @@ export default function ToolCard({
       </div>
 
       {/* Tool Description */}
-      <p className="text-[#71717A] dark:text-[#A1A1AA] text-xs leading-relaxed mb-4 line-clamp-2 min-h-[32px]">
+      <p className="relative z-0 text-[#71717A] dark:text-[#A1A1AA] text-xs leading-relaxed mb-4 line-clamp-2 min-h-[32px] pointer-events-none">
         {tool.desc}
       </p>
 
       {/* Footer Row: Category + Open Link / Single Micro-Spinner */}
-      <div className="flex items-center justify-between pt-2 border-t border-[#E4E0D8]/50 dark:border-[#1E2338]/50">
+      <div className="relative z-0 flex items-center justify-between pt-2 border-t border-[#E4E0D8]/50 dark:border-[#1E2338]/50 pointer-events-none">
         {showCategory ? (
           <span className="text-[10px] font-semibold text-[#A1A1AA] dark:text-[#52525B] uppercase tracking-wider">
             {tool.category}
@@ -189,6 +214,6 @@ export default function ToolCard({
           )}
         </div>
       </div>
-    </Link>
+    </div>
   );
 }

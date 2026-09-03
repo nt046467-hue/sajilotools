@@ -119,13 +119,25 @@ export default function ToolPageClient({
   const [isFav, setIsFav] = useState(false);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem("sajilo_favorites");
-      if (raw) {
-        const list: string[] = JSON.parse(raw);
-        setIsFav(list.includes(tool.name));
-      }
-    } catch {}
+    const syncFav = () => {
+      try {
+        const raw = localStorage.getItem("sajilo_favorites");
+        if (raw) {
+          const list: string[] = JSON.parse(raw);
+          setIsFav(list.includes(tool.name));
+        } else {
+          setIsFav(false);
+        }
+      } catch {}
+    };
+
+    syncFav();
+    window.addEventListener("sajilo_favorites_updated", syncFav);
+    window.addEventListener("storage", syncFav);
+    return () => {
+      window.removeEventListener("sajilo_favorites_updated", syncFav);
+      window.removeEventListener("storage", syncFav);
+    };
   }, [tool.name]);
 
   const toggleFavorite = () => {
@@ -141,6 +153,7 @@ export default function ToolPageClient({
         setIsFav(true);
       }
       localStorage.setItem("sajilo_favorites", JSON.stringify(updated));
+      window.dispatchEvent(new Event("sajilo_favorites_updated"));
     } catch {}
   };
 
