@@ -15,6 +15,12 @@ import { usePathname, useSearchParams } from "next/navigation";
  * 4. External links, buttons, hash-only links, keyboard-modified clicks,
  *    and elements marked data-no-progress="true" are all ignored.
  */
+export function triggerProgressBar() {
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("sajilo:start-progress"));
+  }
+}
+
 export default function RouteProgressBar() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -27,6 +33,17 @@ export default function RouteProgressBar() {
   const clearTimers = () => {
     timersRef.current.forEach(clearTimeout);
     timersRef.current = [];
+  };
+
+  const startProgress = () => {
+    clearTimers();
+    isNavigatingRef.current = true;
+    setVisible(true);
+    setProgress(25);
+
+    timersRef.current.push(setTimeout(() => setProgress(55), 120));
+    timersRef.current.push(setTimeout(() => setProgress(75), 350));
+    timersRef.current.push(setTimeout(() => setProgress(88), 700));
   };
 
   // ── Step 2: Complete the bar when the route actually changes ──
@@ -49,14 +66,19 @@ export default function RouteProgressBar() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname, searchParams]);
 
-  // ── Step 1: Intercept clicks on internal links ──
+  // ── Step 1: Intercept clicks on internal links & custom trigger ──
   useEffect(() => {
+    const handleCustomStart = () => {
+      startProgress();
+    };
+    window.addEventListener("sajilo:start-progress", handleCustomStart);
+
     const handleClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement | null;
       if (!target) return;
 
-      // Skip buttons, toggles, modals, form controls
-      if (target.closest("button, [data-no-progress='true']")) return;
+      // Skip elements explicitly marked no-progress
+      if (target.closest("[data-no-progress='true']")) return;
 
       const anchor = target.closest("a");
       if (!anchor) return;
@@ -84,20 +106,13 @@ export default function RouteProgressBar() {
       const currentUrl = window.location.pathname + window.location.search;
       if (href === currentUrl) return;
 
-      // Start the progress animation
-      clearTimers();
-      isNavigatingRef.current = true;
-      setVisible(true);
-      setProgress(25);
-
-      timersRef.current.push(setTimeout(() => setProgress(55), 120));
-      timersRef.current.push(setTimeout(() => setProgress(75), 350));
-      timersRef.current.push(setTimeout(() => setProgress(88), 700));
+      startProgress();
     };
 
     document.addEventListener("click", handleClick, true);
     return () => {
       document.removeEventListener("click", handleClick, true);
+      window.removeEventListener("sajilo:start-progress", handleCustomStart);
       clearTimers();
     };
   }, []);

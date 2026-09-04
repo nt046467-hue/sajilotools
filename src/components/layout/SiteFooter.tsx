@@ -17,7 +17,7 @@ const NAV_LINKS = [
 
 export default function SiteFooter() {
   return (
-    <footer className="border-t border-border bg-background/80 backdrop-blur-xl transition-colors">
+    <footer className="print:hidden border-t border-border bg-background/80 backdrop-blur-xl transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
         {/* Footer Banner Ad Slot (collapses to 0 height when unfilled) */}
         <AdUnit

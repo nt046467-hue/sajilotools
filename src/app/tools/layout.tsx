@@ -7,9 +7,9 @@ export default function ToolsLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-[#F7F5F0] dark:bg-[#0C0F1E]">
+    <div className="min-h-screen print:min-h-0 bg-[#F7F5F0] dark:bg-[#0C0F1E] print:bg-white">
       <SiteHeader />
-      <main>{children}</main>
+      <main className="print:m-0 print:p-0">{children}</main>
       <SiteFooter />
     </div>
   );

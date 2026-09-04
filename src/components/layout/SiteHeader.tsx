@@ -269,7 +269,7 @@ export default function SiteHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full bg-white/80 dark:bg-[#080B16]/80 backdrop-blur-xl border-b border-[#E4E0D8] dark:border-[#1E2338] transition-colors">
+      <header className="print:hidden sticky top-0 z-40 w-full bg-white/80 dark:bg-[#080B16]/80 backdrop-blur-xl border-b border-[#E4E0D8] dark:border-[#1E2338] transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 gap-6">
 

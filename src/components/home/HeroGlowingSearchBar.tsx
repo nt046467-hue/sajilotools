@@ -52,6 +52,7 @@ import { getToolAccentStyle } from "@/lib/theme-utils";
 import { trackSearch } from "@/lib/analytics";
 import { ToolDef } from "@/lib/tools-registry";
 import DeveloperSuiteIcon from "@/components/shared/DeveloperSuiteIcon";
+import { triggerProgressBar } from "@/components/RouteProgressBar";
 
 const ICON_MAP: Record<string, React.ElementType> = {
   Braces: DeveloperSuiteIcon,
@@ -197,6 +198,7 @@ export default function HeroGlowingSearchBar({
     (tool: ToolDef) => {
       setIsFocused(false);
       trackSearch(query.trim() || tool.name);
+      triggerProgressBar();
       router.push(`/tools/${tool.categorySlug}/${tool.slug}`);
     },
     [router, query]
@@ -215,11 +217,13 @@ export default function HeroGlowingSearchBar({
           const selected = searchResults[selectedIndex] || searchResults[0];
           handleSelectTool(selected.tool);
         } else {
+          triggerProgressBar();
           router.push(`/tools?q=${encodeURIComponent(trimmed)}`);
           setIsFocused(false);
         }
       } else {
         const activeTool = POPULAR_TOOLS[toolIndex];
+        triggerProgressBar();
         if (activeTool) {
           router.push(`/tools/${activeTool.categorySlug}/${activeTool.slug}`);
         } else {
@@ -262,28 +266,33 @@ export default function HeroGlowingSearchBar({
 
   // Helper to highlight matching characters
   const highlightMatch = (text: string, q: string) => {
-    if (!q.trim()) return text;
-    const words = q.trim().split(" ").filter(Boolean);
+    if (!text || typeof text !== "string") return "";
+    if (!q || !q.trim()) return text;
+    const words = q.trim().split(" ").filter((w): w is string => typeof w === "string" && w.trim().length > 0);
     const regexStr = words.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|");
     if (!regexStr) return text;
 
-    const parts = text.split(new RegExp(`(${regexStr})`, "gi"));
-    return (
-      <>
-        {parts.map((part, idx) =>
-          words.some((w) => w.toLowerCase() === part.toLowerCase()) ? (
-            <mark
-              key={idx}
-              className="bg-[#F5A623]/30 dark:bg-[#F5A623]/35 text-inherit font-bold rounded-sm px-0.5"
-            >
-              {part}
-            </mark>
-          ) : (
-            part
-          )
-        )}
-      </>
-    );
+    try {
+      const parts = text.split(new RegExp(`(${regexStr})`, "gi"));
+      return (
+        <>
+          {parts.map((part, idx) =>
+            part && words.some((w) => w && part && w.toLowerCase() === part.toLowerCase()) ? (
+              <mark
+                key={idx}
+                className="bg-[#F5A623]/30 dark:bg-[#F5A623]/35 text-inherit font-bold rounded-sm px-0.5"
+              >
+                {part}
+              </mark>
+            ) : (
+              part || null
+            )
+          )}
+        </>
+      );
+    } catch {
+      return text;
+    }
   };
 
   const showDropdown = isFocused && query.trim().length > 0;
@@ -428,13 +437,10 @@ export default function HeroGlowingSearchBar({
                   const isSelected = idx === selectedIndex;
 
                   return (
-                    <button
+                    <Link
                       key={tool.slug}
-                      type="button"
-                      onMouseDown={(e) => {
-                        e.preventDefault(); // prevent blur
-                        handleSelectTool(tool);
-                      }}
+                      href={`/tools/${tool.categorySlug}/${tool.slug}`}
+                      onClick={() => handleSelectTool(tool)}
                       onMouseEnter={() => setSelectedIndex(idx)}
                       className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-left transition-all cursor-pointer ${isSelected
                         ? "bg-[#1F2544] dark:bg-[#181432] text-white dark:text-white border border-black/5 dark:border-white/10 shadow-sm font-medium"
@@ -497,7 +503,7 @@ export default function HeroGlowingSearchBar({
                           <ArrowRight size={14} className="shrink-0 text-zinc-400" />
                         )}
                       </div>
-                    </button>
+                    </Link>
                   );
                 })
               ) : (
@@ -520,10 +526,9 @@ export default function HeroGlowingSearchBar({
                   <div className="pt-2">
                     <Link
                       href={`/tools?q=${encodeURIComponent(query)}`}
-                      onMouseDown={(e) => {
-                        e.preventDefault();
+                      onClick={() => {
                         setIsFocused(false);
-                        router.push(`/tools?q=${encodeURIComponent(query)}`);
+                        triggerProgressBar();
                       }}
                       className="inline-flex items-center gap-1 text-xs font-semibold text-[#F5A623] hover:underline"
                     >
@@ -538,10 +543,9 @@ export default function HeroGlowingSearchBar({
             <div className="px-4 py-2 border-t flex items-center justify-between text-[11px] bg-[#FAFAF8] dark:bg-white/5 border-[#E4E0D8] dark:border-white/10 text-zinc-500 dark:text-zinc-400">
               <Link
                 href={`/tools?q=${encodeURIComponent(query)}`}
-                onMouseDown={(e) => {
-                  e.preventDefault();
+                onClick={() => {
                   setIsFocused(false);
-                  router.push(`/tools?q=${encodeURIComponent(query)}`);
+                  triggerProgressBar();
                 }}
                 className="font-semibold text-[#F5A623] hover:underline flex items-center gap-1"
               >

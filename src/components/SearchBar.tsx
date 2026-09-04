@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { triggerProgressBar } from "@/components/RouteProgressBar";
+
 import {
   Search,
   SearchX,
@@ -141,7 +142,7 @@ export default function SearchBar({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const listContainerRef = useRef<HTMLDivElement>(null);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const router = useRouter();
+
 
   // Detect OS for shortcut badge (⌘ vs Ctrl)
   useEffect(() => {
@@ -203,12 +204,13 @@ export default function SearchBar({
   }, [selectedIndex, isOpen]);
 
   const handleSelectTool = useCallback(
-    (tool: ToolDef) => {
+    (_tool: ToolDef) => {
+      // Trigger progress bar immediately on click
+      triggerProgressBar();
       setIsOpen(false);
-      router.push(`/tools/${tool.categorySlug}/${tool.slug}`);
       if (onSelect) onSelect();
     },
-    [router, onSelect]
+    [onSelect]
   );
 
   // Global Keyboard Navigation (Cmd+K / Ctrl+K / '/' / Arrow keys / Enter / Esc)
@@ -247,10 +249,20 @@ export default function SearchBar({
         e.preventDefault();
         if (query.trim() && searchResults.length > 0) {
           const selected = searchResults[selectedIndex];
-          if (selected) handleSelectTool(selected.tool);
+          if (selected) {
+            triggerProgressBar();
+            window.location.href = `/tools/${selected.tool.categorySlug}/${selected.tool.slug}`;
+            setIsOpen(false);
+            if (onSelect) onSelect();
+          }
         } else if (!query.trim() && popularTools.length > 0) {
           const selected = popularTools[selectedIndex];
-          if (selected) handleSelectTool(selected);
+          if (selected) {
+            triggerProgressBar();
+            window.location.href = `/tools/${selected.categorySlug}/${selected.slug}`;
+            setIsOpen(false);
+            if (onSelect) onSelect();
+          }
         }
       } else if (e.key === "Escape") {
         setIsOpen(false);
@@ -281,28 +293,33 @@ export default function SearchBar({
 
   // Highlight matched substrings in text
   const highlightMatch = (text: string, q: string) => {
-    if (!q.trim()) return text;
-    const words = q.trim().split(" ").filter(Boolean);
+    if (!text || typeof text !== "string") return "";
+    if (!q || !q.trim()) return text;
+    const words = q.trim().split(" ").filter((w): w is string => typeof w === "string" && w.trim().length > 0);
     const regexStr = words.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|");
     if (!regexStr) return text;
 
-    const parts = text.split(new RegExp(`(${regexStr})`, "gi"));
-    return (
-      <>
-        {parts.map((part, idx) =>
-          words.some((w) => w.toLowerCase() === part.toLowerCase()) ? (
-            <mark
-              key={idx}
-              className="bg-[#F5A623]/30 text-[#18181B] dark:text-[#F4F4F5] font-bold rounded-xs px-0.5"
-            >
-              {part}
-            </mark>
-          ) : (
-            part
-          )
-        )}
-      </>
-    );
+    try {
+      const parts = text.split(new RegExp(`(${regexStr})`, "gi"));
+      return (
+        <>
+          {parts.map((part, idx) =>
+            part && words.some((w) => w && part && w.toLowerCase() === part.toLowerCase()) ? (
+              <mark
+                key={idx}
+                className="bg-[#F5A623]/30 text-[#18181B] dark:text-[#F4F4F5] font-bold rounded-xs px-0.5"
+              >
+                {part}
+              </mark>
+            ) : (
+              part || null
+            )
+          )}
+        </>
+      );
+    } catch {
+      return text;
+    }
   };
 
   const defaultHeroPlaceholder = "What do you want to do? e.g. compress PDF, calculate VAT, convert image...";

@@ -13,6 +13,10 @@ export interface PanchangData {
   isEkadashi: boolean;
   isPurnima: boolean;
   isAunsi: boolean;
+  sunrise: string;       // e.g. "6:12 AM"
+  sunset: string;        // e.g. "6:43 PM"
+  rituNp: string;        // Nepali season, e.g. "ग्रीष्म ऋतु"
+  chandraRashiNp: string; // Lunar zodiac sign, e.g. "वृषभ"
   lunarBadge?: {
     label: string;
     labelNp: string;
@@ -168,6 +172,65 @@ export function getPanchangForDate(date: Date): PanchangData {
     };
   }
 
+  // 5. Sunrise / Sunset for Kathmandu (27.7°N, 85.3°E, UTC+5:45)
+  // Uses simplified NOAA algorithm for civil sunrise/sunset
+  const LAT = 27.7;
+  const LON = 85.3;
+  const UTC_OFFSET = 5.75; // +5:45
+
+  function calcSunTime(rising: boolean): string {
+    const dayOfYear = Math.floor(
+      (date.getTime() - new Date(date.getFullYear(), 0, 0).getTime()) / 86400000
+    );
+    const B = (360 / 365) * (dayOfYear - 81);
+    const eqOfTime = 9.87 * Math.sin(rad(2 * B)) - 7.53 * Math.cos(rad(B)) - 1.5 * Math.sin(rad(B));
+    const decl = 23.45 * Math.sin(rad(B));
+    const hourAngle = Math.acos(
+      Math.cos(rad(90.833)) / (Math.cos(rad(LAT)) * Math.cos(rad(decl))) -
+      Math.tan(rad(LAT)) * Math.tan(rad(decl))
+    );
+    const hourAngleDeg = hourAngle * (180 / Math.PI);
+    const solarNoon = 720 - 4 * LON - eqOfTime + UTC_OFFSET * 60; // minutes
+    const sunTimeMin = rising
+      ? solarNoon - hourAngleDeg * 4
+      : solarNoon + hourAngleDeg * 4;
+    const h = Math.floor(sunTimeMin / 60) % 24;
+    const m = Math.round(sunTimeMin % 60);
+    const amPm = h >= 12 ? "PM" : "AM";
+    const hh = h > 12 ? h - 12 : h === 0 ? 12 : h;
+    return `${hh}:${String(m).padStart(2, "0")} ${amPm}`;
+  }
+
+  let sunrise = "6:00 AM";
+  let sunset = "6:00 PM";
+  try {
+    sunrise = calcSunTime(true);
+    sunset = calcSunTime(false);
+  } catch {
+    // fallback to default if calculation fails (e.g. polar day/night edge case)
+  }
+
+  // 6. Ritu (Nepali season) — 6 seasons, each 2 months. Based on Gregorian month.
+  const gregMonth = date.getMonth() + 1; // 1-12
+  const RITU_NP: Record<number, string> = {
+    1: "शिशिर ऋतु", 2: "शिशिर ऋतु",
+    3: "वसन्त ऋतु", 4: "वसन्त ऋतु",
+    5: "ग्रीष्म ऋतु", 6: "ग्रीष्म ऋतु",
+    7: "वर्षा ऋतु", 8: "वर्षा ऋतु",
+    9: "शरद् ऋतु", 10: "शरद् ऋतु",
+    11: "हेमन्त ऋतु", 12: "हेमन्त ऋतु",
+  };
+  const rituNp = RITU_NP[gregMonth] ?? "वसन्त ऋतु";
+
+  // 7. Chandra Rashi — lunar zodiac (12 signs, each 30°)
+  const CHANDRA_RASHI_NP = [
+    "मेष", "वृषभ", "मिथुन", "कर्कट",
+    "सिंह", "कन्या", "तुला", "वृश्चिक",
+    "धनु", "मकर", "कुम्भ", "मीन",
+  ];
+  const rashiIdx = Math.floor(moonLong / 30) % 12;
+  const chandraRashiNp = CHANDRA_RASHI_NP[rashiIdx];
+
   return {
     tithiNumber,
     tithiNameNp: TITHI_NAMES_NP[tithiNumber - 1],
@@ -179,6 +242,10 @@ export function getPanchangForDate(date: Date): PanchangData {
     isEkadashi,
     isPurnima,
     isAunsi,
+    sunrise,
+    sunset,
+    rituNp,
+    chandraRashiNp,
     lunarBadge,
   };
 }

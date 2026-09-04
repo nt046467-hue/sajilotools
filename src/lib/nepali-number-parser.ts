@@ -72,16 +72,18 @@ const ALTERNATE_SPELLINGS: Record<string, number> = {
   "एकाउन्न": 51,
   "सत्ताउन्न": 57,
   "अन्ठान्न": 58,
-  "उनन्साठी": 59,
-  "साठी": 60,
-  "एकसाठी": 61,
-  "बासठ्ठी": 62, "बासाठी": 62,
-  "त्रिसाठी": 63,
-  "चौंसठी": 64,
-  "पैंसठी": 65,
-  "छ्यासाठी": 66,
-  "सतसाठी": 67,
-  "अठसाठी": 68, "अठसठी": 68, "अडसठ्ठी": 68, "अड्सठ्ठी": 68, "अडसाठी": 68, "अड्सठी": 68, "अडसठी": 68, "अरसठ्ठी": 68, "अरसाठी": 68,
+  "उनन्साठी": 59, "उनन्साठि": 59, "उनन्साट्ठी": 59, "उनन्सठ्ठी": 59,
+  "साठी": 60, "साठि": 60, "साट्ठी": 60, "सात्ति": 60,
+  "एकसाठी": 61, "एकसाठि": 61, "एकसठ्ठी": 61, "एकसट्ठी": 61, "एकसठी": 61,
+  "बासठ्ठी": 62, "बासाठी": 62, "बासाठि": 62, "बासट्ठी": 62, "बासठी": 62, "बायसट्ठी": 62, "बायसठी": 62,
+  "त्रिसाठी": 63, "त्रिसाठि": 63, "त्रिसठ्ठी": 63, "त्रिसट्ठी": 63, "त्रिसठी": 63, "तिरसठ्ठी": 63, "तिरसट्ठी": 63,
+  "चौंसठी": 64, "चौसाठि": 64, "चौंसठ्ठी": 64, "चौंसट्ठी": 64, "चौसठ्ठी": 64, "चौसट्ठी": 64, "चौसठी": 64,
+  // 65 (पैंसठ्ठी / पैंसट्ठी / पैसठ्ठी / पैसट्ठी / पैंसठी / पैसठी / paisathi)
+  "पैंसठ्ठी": 65, "पैंसट्ठी": 65, "पैसठ्ठी": 65, "पैसट्ठी": 65, "पैंसठी": 65, "पैसठी": 65, "पैंसठि": 65, "पैसठि": 65, "पैँसठ्ठी": 65, "पैँसट्ठी": 65, "पैँसठी": 65, "पैंसत्ति": 65, "पैसत्ति": 65,
+  "छ्यासाठी": 66, "छ्यासाठि": 66, "छ्यासठ्ठी": 66, "छ्यासट्ठी": 66, "छ्यासठी": 66, "छासठ्ठी": 66, "छासट्ठी": 66,
+  "सतसाठी": 67, "सतसाठि": 67, "सतसठ्ठी": 67, "सतसट्ठी": 67, "सतसठी": 67, "सातसठ्ठी": 67,
+  "अठसाठी": 68, "अठसाठि": 68, "अठसठी": 68, "अठसठ्ठी": 68, "अठसट्ठी": 68, "अडसठ्ठी": 68, "अड्सठ्ठी": 68, "अडसाठी": 68, "अड्सठी": 68, "अडसठी": 68, "अरसठ्ठी": 68, "अरसाठी": 68, "अरसट्ठी": 68, "अड्सट्ठी": 68,
+  "उनन्सत्तरी": 69, "उनन्सत्तरि": 69, "उननसत्तरी": 69, "उननसत्तर": 69, "उनन्सत्तर": 69, "उनन्चासत्तरी": 69, "उनसत्तरी": 69,
   "अस्सी": 80,
   "त्रियासी": 83,
   "उनान्ब्बे": 89,
@@ -141,7 +143,7 @@ const ROMANIZED_AND_ENGLISH_SPELLINGS: Record<string, number> = {
   "thirty-two": 32, "thirtytwo": 32, "battis": 32, "battees": 32, "battish": 32, "batis": 32,
   "thirty-three": 33, "thirtythree": 33, "tettis": 33, "tettees": 33, "taitise": 33, "tettish": 33, "tetis": 33,
   "thirty-four": 34, "thirtyfour": 34, "chautis": 34, "chautees": 34, "chautish": 34, "chotis": 34,
-  "thirty-five": 35, "thirtyfive": 35, "paintis": 35, "paintees": 35, "pyantis": 35, "paintish": 35,
+  "thirty-five": 35, "thirtyfive": 35, "paintis": 35, "paintees": 35, "pyantis": 35, "paintish": 35, "paitis": 35, "paitees": 35,
   "thirty-six": 36, "thirtysix": 36, "chhattis": 36, "chhattees": 36, "chattis": 36, "chattees": 36, "chhattish": 36, "chattish": 36, "chhatis": 36,
   "thirty-seven": 37, "thirtyseven": 37, "saintis": 37, "saintees": 37, "syantis": 37, "saintish": 37, "saitis": 37,
   "thirty-eight": 38, "thirtyeight": 38, "adtis": 38, "adtees": 38, "ahtis": 38, "athtis": 38, "adtish": 38, "athis": 38,
@@ -153,40 +155,41 @@ const ROMANIZED_AND_ENGLISH_SPELLINGS: Record<string, number> = {
   "forty-three": 43, "fortythree": 43, "trichalis": 43, "trichaalis": 43, "trichalish": 43, "trichhalis": 43,
   "forty-four": 44, "fortyfour": 44, "chawalis": 44, "chawaalis": 44, "chaubalis": 44, "chawalish": 44,
   // 45 - Supports exact query "paitalis" and phonetic variations
-  "forty-five": 45, "fortyfive": 45, "paitalis": 45, "paitalees": 45, "paitaalis": 45, "paitalish": 45, "pyatalis": 45, "paintaalis": 45, "paintalish": 45,
+  "forty-five": 45, "fortyfive": 45, "paitalis": 45, "paitalees": 45, "paitaalis": 45, "paitalish": 45, "pyatalis": 45, "paintaalis": 45, "paintalish": 45, "paintalis": 45, "paintalees": 45,
   "forty-six": 46, "fortysix": 46, "chhayalis": 46, "chhayaalis": 46, "chayalis": 46, "chayaalis": 46, "chhayalish": 46, "chayalish": 46,
   "forty-seven": 47, "fortyseven": 47, "satchalis": 47, "satchaalis": 47, "sattaalis": 47, "satchalish": 47, "satchhalis": 47,
   "forty-eight": 48, "fortyeight": 48, "athchalis": 48, "athchaalis": 48, "athchalish": 48, "aathchalis": 48,
   "forty-nine": 49, "fortynine": 49, "unanchas": 49, "unanchaas": 49, "unanchash": 49, "unachas": 49,
   // 50-59
   "fifty": 50, "pachas": 50, "pachaas": 50, "pachash": 50,
-  "fifty-one": 51, "fiftyone": 51, "ekaunna": 51, "ekauna": 51, "ekawanna": 51, "ekawan": 51,
+  "fifty-one": 51, "fiftyone": 51, "ekaunna": 51, "ekauna": 51, "ekawanna": 51, "ekawan": 51, "ekawana": 51,
   "fifty-two": 52, "fiftytwo": 52, "baunna": 52, "bauna": 52, "bawanna": 52, "bawan": 52,
   "fifty-three": 53, "fiftythree": 53, "tripanna": 53, "tripana": 53, "tirepan": 53, "tirpanna": 53,
   "fifty-four": 54, "fiftyfour": 54, "chaunna": 54, "chauna": 54, "chaupan": 54, "chaupanna": 54,
-  "fifty-five": 55, "fiftyfive": 55, "pachpanna": 55, "pachpana": 55, "pachpan": 55,
+  "fifty-five": 55, "fiftyfive": 55, "pachpanna": 55, "pachpana": 55, "pachpan": 55, "panchapanna": 55, "panchapana": 55,
   "fifty-six": 56, "fiftysix": 56, "chhappanna": 56, "chhapanna": 56, "chappanna": 56, "chapanna": 56, "chhappan": 56, "chappan": 56,
   "fifty-seven": 57, "fiftyseven": 57, "sattaunna": 57, "santaunna": 57, "sattaun": 57, "santaun": 57, "sataunna": 57,
   "fifty-eight": 58, "fiftyeight": 58, "anthaunna": 58, "anthanuna": 58, "anthaun": 58, "anthawanna": 58, "anthawan": 58, "adhtaunna": 58, "adhawanna": 58, "athawan": 58, "athawanna": 58,
   "fifty-nine": 59, "fiftynine": 59, "unansathi": 59, "unansatthi": 59, "unansatti": 59, "unasathi": 59,
   // 60-69
-  "sixty": 60, "sathi": 60, "saathi": 60, "sathee": 60, "satthi": 60,
-  "sixty-one": 61, "sixtyone": 61, "eksathi": 61, "eksaathi": 61, "eksatthi": 61,
-  "sixty-two": 62, "sixtytwo": 62, "bayasathi": 62, "baysatthi": 62, "bayasatthi": 62, "basathi": 62, "basatthi": 62,
-  "sixty-three": 63, "sixtythree": 63, "trisathi": 63, "trisatthi": 63, "tresathi": 63, "tresatthi": 63,
-  "sixty-four": 64, "sixtyfour": 64, "chaunsathi": 64, "chaunsatthi": 64, "chausathi": 64, "chausatthi": 64,
-  "sixty-five": 65, "sixtyfive": 65, "painsathi": 65, "painsatthi": 65, "payansathi": 65, "pansathi": 65,
-  "sixty-six": 66, "sixtysix": 66, "chhyasathi": 66, "chhyasatthi": 66, "chyasathi": 66, "chyasatthi": 66, "chhasathi": 66,
-  "sixty-seven": 67, "sixtyseven": 67, "satsathi": 67, "satshatthi": 67, "satsath": 67, "satsatthi": 67, "satasathi": 67,
+  "sixty": 60, "sathi": 60, "saathi": 60, "sathee": 60, "satthi": 60, "sathhi": 60, "satti": 60,
+  "sixty-one": 61, "sixtyone": 61, "eksathi": 61, "eksaathi": 61, "eksatthi": 61, "eksathhi": 61, "eksatti": 61,
+  "sixty-two": 62, "sixtytwo": 62, "bayasathi": 62, "baysatthi": 62, "bayasatthi": 62, "basathi": 62, "basatthi": 62, "baasathi": 62, "baisathi": 62, "baisatthi": 62,
+  "sixty-three": 63, "sixtythree": 63, "trisathi": 63, "trisatthi": 63, "tresathi": 63, "tresatthi": 63, "tirsathi": 63, "tirsatthi": 63,
+  "sixty-four": 64, "sixtyfour": 64, "chaunsathi": 64, "chaunsatthi": 64, "chausathi": 64, "chausatthi": 64, "chawasathi": 64, "chosathi": 64, "chosatthi": 64,
+  // 65: Paisathi (user primary query) + all phonetic & Devanagari romanizations
+  "sixty-five": 65, "sixtyfive": 65, "paisathi": 65, "paisatthi": 65, "paisathhi": 65, "paisatti": 65, "paisathee": 65, "painsathi": 65, "painsatthi": 65, "painsathhi": 65, "painsatti": 65, "payansathi": 65, "payasathi": 65, "pansathi": 65, "pansatthi": 65, "paensathi": 65, "paensatthi": 65, "paesathi": 65, "paesatthi": 65,
+  "sixty-six": 66, "sixtysix": 66, "chhyasathi": 66, "chhyasatthi": 66, "chyasathi": 66, "chyasatthi": 66, "chhasathi": 66, "chhasatthi": 66, "chasathi": 66, "chasatthi": 66,
+  "sixty-seven": 67, "sixtyseven": 67, "satsathi": 67, "satshatthi": 67, "satsath": 67, "satsatthi": 67, "satasathi": 67, "satasatthi": 67, "saatsathi": 67,
   "sixty-eight": 68, "sixtyeight": 68, "arsathi": 68, "arsath": 68, "arsathee": 68, "arsatthi": 68, "arsatti": 68, "arasathi": 68, "athsathi": 68, "athsatthi": 68, "aathsathi": 68, "aathsatthi": 68, "athsath": 68, "athasathi": 68, "athasatthi": 68, "adsathi": 68, "adsath": 68, "adsatthi": 68, "adsathee": 68, "ardsathi": 68, "ardasathi": 68, "aadhsathi": 68,
-  "sixty-nine": 69, "sixtynine": 69, "unansattari": 69, "unansattaree": 69, "unansattar": 69, "unansatar": 69, "unanchattari": 69, "unanshattar": 69,
+  "sixty-nine": 69, "sixtynine": 69, "unansattari": 69, "unansattaree": 69, "unansattar": 69, "unansatar": 69, "unanchattari": 69, "unanshattar": 69, "unansatari": 69, "unasattari": 69, "unasattar": 69,
   // 70-79
   "seventy": 70, "sattari": 70, "sattaree": 70, "sattar": 70,
   "seventy-one": 71, "seventyone": 71, "ekhattari": 71, "ekhattar": 71, "ekattari": 71, "ekattar": 71,
   "seventy-two": 72, "seventytwo": 72, "bahattari": 72, "bahattar": 72,
   "seventy-three": 73, "seventythree": 73, "trihattari": 73, "trihattar": 73, "tihattari": 73, "tihattar": 73,
   "seventy-four": 74, "seventyfour": 74, "chauhattari": 74, "chauhattar": 74, "chahattari": 74, "chahattar": 74,
-  "seventy-five": 75, "seventyfive": 75, "pachhattari": 75, "pachhattar": 75, "pachattari": 75, "pachattar": 75,
+  "seventy-five": 75, "seventyfive": 75, "pachhattari": 75, "pachhattar": 75, "pachattari": 75, "pachattar": 75, "pachahatari": 75, "pachahatar": 75,
   "seventy-six": 76, "seventysix": 76, "chhyahattari": 76, "chhyahattar": 76, "chyahattari": 76, "chyahattar": 76, "chhahattari": 76, "chhahattar": 76,
   "seventy-seven": 77, "seventyseven": 77, "sathattari": 77, "sathattar": 77, "satahattar": 77, "satattari": 77, "satattar": 77,
   "seventy-eight": 78, "seventyeight": 78, "athahattari": 78, "athahattar": 78, "athhattar": 78, "athattar": 78, "athattari": 78, "arahattar": 78, "arhattar": 78, "arhattari": 78, "adhattari": 78, "adhattar": 78,
@@ -197,7 +200,7 @@ const ROMANIZED_AND_ENGLISH_SPELLINGS: Record<string, number> = {
   "eighty-two": 82, "eightytwo": 82, "bayasi": 82, "bayaasee": 82, "bayaasi": 82, "bayassi": 82,
   "eighty-three": 83, "eightythree": 83, "triyasi": 83, "triyaasee": 83, "trirasi": 83, "tirasi": 83, "tiryasi": 83,
   "eighty-four": 84, "eightyfour": 84, "chaurasi": 84, "chauraasee": 84, "chauraasi": 84,
-  "eighty-five": 85, "eightyfive": 85, "pachasi": 85, "pachaasee": 85, "pachaasi": 85,
+  "eighty-five": 85, "eightyfive": 85, "pachasi": 85, "pachaasee": 85, "pachaasi": 85, "pachasee": 85, "panchasi": 85, "panchaasi": 85,
   "eighty-six": 86, "eightysix": 86, "chhyasi": 86, "chhyaasee": 86, "chyasi": 86, "chyaasee": 86, "chhaasi": 86, "chhasi": 86,
   "eighty-seven": 87, "eightyseven": 87, "satasi": 87, "sataasee": 87, "sataasi": 87, "satasee": 87,
   "eighty-eight": 88, "eightyeight": 88, "athasi": 88, "athaasee": 88, "athaasi": 88, "athasee": 88, "aathasi": 88, "adhasi": 88, "arasi": 88, "atthasi": 88,
@@ -208,7 +211,7 @@ const ROMANIZED_AND_ENGLISH_SPELLINGS: Record<string, number> = {
   "ninety-two": 92, "ninetytwo": 92, "bayanabbe": 92, "bayanabbey": 92, "bayanabbai": 92,
   "ninety-three": 93, "ninetythree": 93, "triyanabbe": 93, "triyanabbey": 93, "triyanabbai": 93, "tiyanabbe": 93,
   "ninety-four": 94, "ninetyfour": 94, "chauranabbe": 94, "chauranabbey": 94, "chauranabbai": 94,
-  "ninety-five": 95, "ninetyfive": 95, "panchanabbe": 95, "panchanabbey": 95, "pancanabbey": 95, "pachyanabbe": 95,
+  "ninety-five": 95, "ninetyfive": 95, "panchanabbe": 95, "panchanabbey": 95, "pancanabbey": 95, "pachyanabbe": 95, "pachanabbe": 95, "pachanabbey": 95,
   "ninety-six": 96, "ninetysix": 96, "chhyanabbe": 96, "chhyanabbey": 96, "chyanabbe": 96, "chyanabbey": 96, "chhanabbe": 96,
   "ninety-seven": 97, "ninetyseven": 97, "santanabbe": 97, "santanabbey": 97, "santanabbai": 97,
   "ninety-eight": 98, "ninetyeight": 98, "anthanabbe": 98, "anthanabbey": 98, "anthanabbai": 98,
@@ -535,6 +538,7 @@ export interface NepaliWordsToNumberResult {
  * - Strips punctuation
  */
 function cleanNepaliText(text: string): string {
+  if (!text || typeof text !== "string") return "";
   return text
     .toLowerCase()
     .replace(/[।,\.\?;:!\(\)\[\]"'`\-_/\\|]/g, " ")
@@ -546,11 +550,12 @@ function cleanNepaliText(text: string): string {
  * Parses a sequence of Nepali or Romanized/English number words into a BigInt value.
  * Supports:
  * - Devanagari: "पैंतालीस हजार छ सय अठहत्तर"
- * - Romanized: "paitalis hajar chha saya athahattar", "paitalis"
+ * - Romanized: "paitalis hajar chha saya athahattar", "paitalis", "paisathi"
  * - English: "forty five thousand six hundred seventy eight"
  * - Mixed: "45 hajar", "1.5 lakh"
  */
-function parseNepaliIntegerTokens(tokens: string[]): { success: boolean; value?: bigint; error?: string } {
+function parseNepaliIntegerTokens(rawTokens: string[]): { success: boolean; value?: bigint; error?: string } {
+  const tokens = (rawTokens || []).filter((t): t is string => typeof t === "string" && t.trim().length > 0);
   if (tokens.length === 0) {
     return { success: false, error: "शब्दहरू खाली छन्।" };
   }
@@ -629,7 +634,9 @@ function parseNepaliIntegerTokens(tokens: string[]): { success: boolean; value?:
   };
 
   for (let i = 0; i < tokens.length; i++) {
-    const token = tokens[i].toLowerCase();
+    const rawT = tokens[i];
+    if (!rawT || typeof rawT !== "string") continue;
+    const token = rawT.toLowerCase();
 
     // Skip filler words
     if (CURRENCY_FILLER_WORDS.has(token)) {
@@ -724,6 +731,7 @@ const TYPO_VOCABULARY: string[] = Array.from(
  * Returns the corrected word or null if no close match is found.
  */
 function findBestTokenMatch(token: string): string | null {
+  if (!token || typeof token !== "string") return null;
   const t = token.toLowerCase();
   if (/^\d+$/.test(t)) return token;
   if (NEPALI_WORD_TO_VAL_MAP[t] !== undefined) return t;
@@ -753,7 +761,9 @@ function findBestTokenMatch(token: string): string | null {
 /**
  * Builds a smart "Did you mean?" suggestion for a multi-token phrase with typos.
  */
-function findSmartPhraseCorrection(tokens: string[]): string | null {
+function findSmartPhraseCorrection(rawTokens: string[]): string | null {
+  if (!rawTokens || !Array.isArray(rawTokens) || rawTokens.length === 0) return null;
+  const tokens = rawTokens.filter((t): t is string => typeof t === "string" && t.trim().length > 0);
   if (tokens.length === 0) return null;
 
   let hadCorrection = false;
@@ -782,7 +792,7 @@ export function nepaliWordsToNumber(
   input: string,
   options: { currency?: boolean } = {}
 ): NepaliWordsToNumberResult {
-  if (!input || !input.trim()) {
+  if (!input || typeof input !== "string" || !input.trim()) {
     return {
       success: false,
       error: "कुनै शब्द फेला परेन (No input provided)",
@@ -792,7 +802,7 @@ export function nepaliWordsToNumber(
   }
 
   const cleaned = cleanNepaliText(input);
-  const rawTokens = cleaned.split(" ").filter(Boolean);
+  const rawTokens = cleaned.split(" ").filter((t): t is string => typeof t === "string" && t.trim().length > 0);
 
   if (rawTokens.length === 0) {
     return {
@@ -833,14 +843,14 @@ export function nepaliWordsToNumber(
     }
 
     if (rupeesEndIdx !== -1) {
-      rupeeTokens = rawTokens.slice(0, rupeesEndIdx).filter((t) => !CURRENCY_FILLER_WORDS.has(t));
-      paisaTokens = rawTokens.slice(rupeesEndIdx + 1, paisaIndex).filter((t) => !CURRENCY_FILLER_WORDS.has(t));
+      rupeeTokens = rawTokens.slice(0, rupeesEndIdx).filter((t) => typeof t === "string" && !CURRENCY_FILLER_WORDS.has(t));
+      paisaTokens = rawTokens.slice(rupeesEndIdx + 1, paisaIndex).filter((t) => typeof t === "string" && !CURRENCY_FILLER_WORDS.has(t));
     } else {
-      rupeeTokens = rawTokens.slice(0, paisaIndex - 1).filter((t) => !CURRENCY_FILLER_WORDS.has(t));
-      paisaTokens = [rawTokens[paisaIndex - 1]].filter((t) => !CURRENCY_FILLER_WORDS.has(t));
+      rupeeTokens = (paisaIndex > 1 ? rawTokens.slice(0, paisaIndex - 1) : []).filter((t) => typeof t === "string" && !CURRENCY_FILLER_WORDS.has(t));
+      paisaTokens = (paisaIndex > 0 ? [rawTokens[paisaIndex - 1]] : rawTokens.slice(paisaIndex + 1)).filter((t) => typeof t === "string" && !CURRENCY_FILLER_WORDS.has(t));
     }
   } else {
-    rupeeTokens = rawTokens.filter((t) => !CURRENCY_FILLER_WORDS.has(t));
+    rupeeTokens = rawTokens.filter((t) => typeof t === "string" && !CURRENCY_FILLER_WORDS.has(t));
   }
 
   // Parse rupees

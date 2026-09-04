@@ -173,9 +173,9 @@ export default function ToolPageClient({
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div className="space-y-4 sm:space-y-6 print:space-y-0 print:p-0 print:m-0">
       {/* Favorite Action Bar */}
-      <div className="flex items-center justify-end">
+      <div className="print:hidden flex items-center justify-end">
         <button
           onClick={toggleFavorite}
           className={`px-3 py-1.5 rounded-xl border transition-all flex items-center gap-1.5 text-xs font-bold ${
@@ -194,7 +194,9 @@ export default function ToolPageClient({
       <ToolComponent />
 
       {/* Feedback Widget */}
-      <ToolFeedbackWidget toolSlug={tool.slug} />
+      <div className="print:hidden">
+        <ToolFeedbackWidget toolSlug={tool.slug} />
+      </div>
     </div>
   );
 }

@@ -259,7 +259,7 @@ export default function ToolPage({
   };
 
   return (
-    <div className="min-h-screen bg-[#F7F5F0] dark:bg-[#0C0F1E] transition-colors duration-300">
+    <div className="min-h-screen print:min-h-0 bg-[#F7F5F0] dark:bg-[#0C0F1E] print:bg-white print:p-0 print:m-0 transition-colors duration-300">
       {/* JSON-LD Rich Snippet */}
       <script
         type="application/ld+json"
@@ -267,7 +267,7 @@ export default function ToolPage({
       />
 
       {/* Breadcrumb */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-8">
+      <div className="print:hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-8">
         <nav className="flex items-center gap-1.5 text-sm text-[#A1A1AA]">
           <Link
             href="/tools"
@@ -290,7 +290,7 @@ export default function ToolPage({
       </div>
 
       {/* Header */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-4 sm:pb-6">
+      <div className="print:hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 sm:pt-6 pb-4 sm:pb-6">
         <div className="flex items-center gap-4">
           <div
             className="w-14 h-14 rounded-2xl flex items-center justify-center tool-accent-bg tool-accent-text"
@@ -330,14 +330,14 @@ export default function ToolPage({
       </div>
 
       {/* Main Tool Container (Interactive Workstation) */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6">
-        <div className="bg-white dark:bg-[#141829] rounded-2xl border border-[#E4E0D8] dark:border-[#1E2338] p-4 sm:p-8 shadow-[0_1px_4px_rgba(0,0,0,0.05)] dark:shadow-none">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6 print:p-0 print:m-0 print:max-w-none">
+        <div className="bg-white dark:bg-[#141829] rounded-2xl border border-[#E4E0D8] dark:border-[#1E2338] p-4 sm:p-8 shadow-[0_1px_4px_rgba(0,0,0,0.05)] dark:shadow-none print:border-none print:p-0 print:shadow-none">
           <ToolPageClient tool={tool} category={category} />
         </div>
       </div>
 
       {/* Safe Ad Placement Below Main Tool (collapses to 0 height when unfilled) */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="print:hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <AdUnit
           slot={process.env.NEXT_PUBLIC_ADSENSE_ARTICLE_SLOT || "auto"}
           placement="article-bottom"
@@ -345,7 +345,7 @@ export default function ToolPage({
       </div>
 
       {/* SEO On-Page Guide & FAQs */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 sm:pb-16">
+      <div className="print:hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 sm:pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
           {/* Detailed Unique Content Card */}
           <div className="lg:col-span-2 bg-white dark:bg-[#141829] rounded-2xl border border-[#E4E0D8] dark:border-[#1E2338] p-6 sm:p-8 space-y-6">
