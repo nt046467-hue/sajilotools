@@ -145,19 +145,20 @@ export const CATEGORIES: CategoryDef[] = [
     color: "#DC2626",
     darkColor: "#F87171",
     bgClass: "bg-[#FFF1F2] dark:bg-[#450A0A]/60",
-    desc: "Tools built specifically for Nepal — land conversion, date converters and more.",
-    intro: "SajiloTools Nepal Tools brings together practical utilities designed around everyday tasks in Nepal. It includes Bikram Sambat (BS) and Gregorian (AD) date conversion, traditional land measurement conversion across Ropani and Bigha systems, bidirectional Nepali number and Devanagari words conversion, Nepal-specific financial calculators (including vehicle bluebook tax and salary TDS), and local administrative ward lookup. Built to simplify official paperwork, citizenship/passport applications, banking, real estate, and academic requirements.",
+    desc: "Tools built specifically for Nepal — land conversion, Nepali date, panchang, vehicle tax and more.",
+    intro: "SajiloTools Nepal Tools brings together practical utilities designed around everyday tasks in Nepal. It includes Bikram Sambat (BS) ↔ Gregorian (AD) date conversion, traditional land measurement conversion across Pahad (Ropani-Aana-Paisa-Daam), Terai (Bigha-Kattha-Dhur) and Sudurpashchim (Kanal-Marla) systems using official नापी विभाग factors, an authentic Nepali panchang calendar with verified festival and public holiday dates, a 7-province vehicle & bike tax calculator with EV discount support, bidirectional Nepali Unicode typing & Preeti conversion, Nepal ward & municipality lookup across all 753 local government units, and Nepali ↔ English translation. Built to simplify official paperwork, citizenship/passport applications, banking, real estate, and academic requirements.",
     popularTasks: [
-      "Convert Ropani, Aana, Paisa, Daam ↔ Bigha, Kattha, Dhur",
-      "Convert Bikram Sambat (BS) ↔ Gregorian (AD) dates",
-      "Convert numbers to Nepali Devanagari words for cheques & invoices",
-      "Calculate Bagmati province vehicle bluebook renewal tax",
-      "Type in Romanized English and convert to Nepali Unicode",
-      "Lookup Nepal local government wards across 753 municipalities"
+      "Convert Ropani-Aana-Paisa-Daam ↔ Bigha-Kattha-Dhur ↔ sq ft & hectare",
+      "Convert Bikram Sambat (BS) ↔ Gregorian (AD) dates accurately",
+      "Check 2081–2083 BS panchang — tithi, nakshatra & verified festival dates",
+      "Calculate 7-province vehicle & bike annual Blue Book renewal tax",
+      "Type Romanized English and convert instantly to Nepali Unicode Devanagari",
+      "Lookup Nepal wards across all 753 local government units (पालिका)"
     ],
     designedFor: "Citizens filling government forms, real estate agents, accountants, bank staff writing cheques, students applying for passports/citizenship, and businesses in Nepal.",
-    highlights: ["100% In-Browser Privacy", "Authentic Bikram Sambat Engine", "Updated to Nepal Tax Slabs"]
+    highlights: ["100% In-Browser Privacy", "Authentic Bikram Sambat Engine with Panchang", "Survey Dept. (नापी विभाग) Official Land Factors", "7-Province Vehicle Tax Comparison", "753 Municipality Ward Lookup"]
   },
+
   {
     slug: "everyday",
     name: "Everyday",

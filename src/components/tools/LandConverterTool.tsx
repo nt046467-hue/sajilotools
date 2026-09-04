@@ -33,7 +33,24 @@ const SQFT_PER_SQM = 10.7639104;
 const SQFT_PER_HECTARE = 107639.104;
 const SQFT_PER_ACRE = 43560;
 
+const SQFT_PER_KANAL = 5445;
+const SQFT_PER_MARLA = 272.25;
+
 type RateUnit = "aana" | "ropani" | "kattha" | "bigha" | "sqft";
+
+interface PresetItem {
+  label: string;
+  labelNp: string;
+  sqft: number;
+}
+
+const LAND_PRESETS: PresetItem[] = [
+  { label: "1 Ropani", labelNp: "१ रोपनी", sqft: SQFT_PER_ROPANI },
+  { label: "4 Aana", labelNp: "४ आना (घडेरी)", sqft: SQFT_PER_AANA * 4 },
+  { label: "1 Bigha", labelNp: "१ बिघा", sqft: SQFT_PER_BIGHA },
+  { label: "1 Kattha", labelNp: "१ कठ्ठा", sqft: SQFT_PER_KATTHA },
+  { label: "1 Kanal", labelNp: "१ कनाल", sqft: SQFT_PER_KANAL },
+];
 
 export default function LandConverterTool() {
   // Canonical unrounded state stored in single totalSqFt variable to prevent progressive rounding drift
@@ -67,6 +84,15 @@ export default function LandConverterTool() {
     rem %= SQFT_PER_KATTHA;
     const dh = Math.round((rem / SQFT_PER_DHUR) * 100) / 100;
     return { b, k, dh };
+  }, [totalSqFt]);
+
+  // Derived Sudurpashchim breakdown (Kanal & Marla)
+  const sudurpashchim = useMemo(() => {
+    let rem = Math.max(0, totalSqFt);
+    const kanal = Math.floor(rem / SQFT_PER_KANAL);
+    rem %= SQFT_PER_KANAL;
+    const marla = Math.round((rem / SQFT_PER_MARLA) * 100) / 100;
+    return { kanal, marla };
   }, [totalSqFt]);
 
   // Derived Standard Units
@@ -108,8 +134,16 @@ export default function LandConverterTool() {
     setTotalSqFt(computedSqFt);
   };
 
+  // Handler for Sudurpashchim system inputs
+  const handleSudurpashchimInput = (kanal: number, marla: number) => {
+    const computedSqFt =
+      (Math.max(0, kanal) * SQFT_PER_KANAL) +
+      (Math.max(0, marla) * SQFT_PER_MARLA);
+    setTotalSqFt(computedSqFt);
+  };
+
   const copySummary = () => {
-    const text = `Nepal Land Conversion Summary:\n- Pahad System: ${pahad.r} Ropani, ${pahad.a} Aana, ${pahad.p} Paisa, ${pahad.d} Daam\n- Terai System: ${terai.b} Bigha, ${terai.k} Kattha, ${terai.dh} Dhur\n- Square Feet: ${sqftVal} sq ft\n- Square Meters: ${sqmVal} m²\n- Hectares: ${hectareVal} ha\n- Acres: ${acreVal} acre\nTotal Estimated Price: Rs. ${totalPrice.toLocaleString("en-IN")}`;
+    const text = `Nepal Land Conversion Summary:\n- Pahad System: ${pahad.r} Ropani, ${pahad.a} Aana, ${pahad.p} Paisa, ${pahad.d} Daam\n- Terai System: ${terai.b} Bigha, ${terai.k} Kattha, ${terai.dh} Dhur\n- Sudurpashchim System: ${sudurpashchim.kanal} Kanal, ${sudurpashchim.marla} Marla\n- Square Feet: ${sqftVal} sq ft\n- Square Meters: ${sqmVal} m²\n- Hectares: ${hectareVal} ha\n- Acres: ${acreVal} acre\nTotal Estimated Price: Rs. ${totalPrice.toLocaleString("en-IN")}\nSource: Government of Nepal Survey Department (नापी विभाग) standard conversion factors.`;
     navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
@@ -118,23 +152,54 @@ export default function LandConverterTool() {
   return (
     <div className="space-y-6">
       {/* Top Header & Copy Action */}
-      <div className="flex items-center justify-between p-4 rounded-2xl bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338]">
         <div>
           <h3 className="text-base font-bold text-[#18181B] dark:text-[#F4F4F5] flex items-center gap-2">
             <Ruler size={18} className="text-[#DC2626]" />
             Nepal Land Area Unit Converter
           </h3>
           <p className="text-xs text-[#71717A] mt-0.5">
-            Convert seamlessly between Ropani-Aana-Paisa-Daam, Bigha-Kattha-Dhur, Sq Ft, Sq M, Hectare & Acre.
+            Convert seamlessly between Ropani-Aana-Paisa-Daam, Bigha-Kattha-Dhur, Kanal-Marla, Sq Ft & Metric.
           </p>
         </div>
 
         <button
           onClick={copySummary}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] text-xs font-bold text-[#18181B] dark:text-[#F4F4F5] hover:border-[#DC2626] transition-colors"
+          className="self-start sm:self-auto flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] text-xs font-bold text-[#18181B] dark:text-[#F4F4F5] hover:border-[#DC2626] transition-colors"
         >
           {copied ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
           {copied ? "Copied All!" : "Copy Results"}
+        </button>
+      </div>
+
+      {/* Quick Presets Bar */}
+      <div className="p-3.5 rounded-2xl bg-[#FAFAF8] dark:bg-[#1A1F36] border border-[#E4E0D8] dark:border-[#2A2F48] flex items-center flex-wrap gap-2">
+        <span className="text-xs font-bold text-[#71717A] dark:text-[#A1A1AA] mr-1 flex items-center gap-1">
+          <RefreshCw size={13} /> Quick Presets:
+        </span>
+        {LAND_PRESETS.map((preset) => {
+          const isActive = Math.abs(totalSqFt - preset.sqft) < 0.1;
+          return (
+            <button
+              key={preset.label}
+              type="button"
+              onClick={() => setTotalSqFt(preset.sqft)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                isActive
+                  ? "bg-[#DC2626] text-white shadow-sm"
+                  : "bg-white dark:bg-[#141829] text-[#18181B] dark:text-[#F4F4F5] border border-[#E4E0D8] dark:border-[#1E2338] hover:border-[#DC2626]"
+              }`}
+            >
+              {preset.label} <span className="text-[10px] opacity-80">({preset.labelNp})</span>
+            </button>
+          );
+        })}
+        <button
+          type="button"
+          onClick={() => setTotalSqFt(0)}
+          className="ml-auto text-xs font-medium text-[#71717A] hover:text-[#DC2626] px-2 py-1"
+        >
+          Clear
         </button>
       </div>
 
@@ -224,6 +289,43 @@ export default function LandConverterTool() {
             />
           </div>
         </div>
+      </div>
+
+      {/* Sudurpashchim System Card (Kanal & Marla) */}
+      <div className="p-6 bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] rounded-2xl space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2 text-[#DC2626] font-bold text-xs uppercase tracking-wider">
+            <Ruler size={16} /> Sudurpashchim System (कनाल - मर्ला)
+          </div>
+          <span className="text-[10px] text-[#71717A] bg-[#FAFAF8] dark:bg-[#1E2338] px-2 py-0.5 rounded-full border border-[#E4E0D8] dark:border-[#2A2F48]">
+            सुदूरपश्चिम / Karnali
+          </span>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label className="block text-xs font-semibold text-[#71717A] mb-1">Kanal (कनाल)</label>
+            <input
+              type="number"
+              min={0}
+              value={sudurpashchim.kanal}
+              onChange={(e) => handleSudurpashchimInput(Number(e.target.value), sudurpashchim.marla)}
+              className="w-full px-3 py-2 rounded-xl border border-[#E4E0D8] dark:border-[#1E2338] bg-[#FAFAF8] dark:bg-[#1E2338] text-[#18181B] dark:text-[#F4F4F5] font-bold text-sm"
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-[#71717A] mb-1">Marla (मर्ला)</label>
+            <input
+              type="number"
+              min={0}
+              value={sudurpashchim.marla}
+              onChange={(e) => handleSudurpashchimInput(sudurpashchim.kanal, Number(e.target.value))}
+              className="w-full px-3 py-2 rounded-xl border border-[#E4E0D8] dark:border-[#1E2338] bg-[#FAFAF8] dark:bg-[#1E2338] text-[#18181B] dark:text-[#F4F4F5] font-bold text-sm"
+            />
+          </div>
+        </div>
+        <p className="text-[10px] text-[#71717A]">
+          1 Kanal = 5,445 sq ft &nbsp;·&nbsp; 20 Marla = 1 Kanal &nbsp;·&nbsp; 1 Marla = 272.25 sq ft
+        </p>
       </div>
 
       {/* Metric & Imperial Standard Units Card */}
@@ -328,11 +430,23 @@ export default function LandConverterTool() {
         </div>
       </div>
 
+      {/* Official Source Citation */}
+      <div className="p-4 rounded-2xl bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] space-y-2">
+        <div className="text-[10px] font-bold text-[#71717A] uppercase tracking-wider">Official Source — आधिकारिक स्रोत</div>
+        <div className="text-xs text-[#52525B] dark:text-[#A1A1AA] space-y-1">
+          <p>📋 <strong>नापी विभाग</strong> (Survey Department, GoN) — standard conversion factors for all Nepal land units.</p>
+          <p>📋 <strong>भूमि व्यवस्था तथा अभिलेख विभाग</strong> (Department of Land Management &amp; Archive) — Ministry of Land Management, Cooperatives and Poverty Alleviation.</p>
+          <p className="text-[10px] text-[#71717A] pt-0.5">
+            Conversion rates: 1 Ropani = 5,476 sq ft &nbsp;·&nbsp; 1 Bigha = 72,900 sq ft (20 Kattha) &nbsp;·&nbsp; 1 Kattha = 20 Dhur &nbsp;·&nbsp; 1 Aana = 4 Paisa = 16 Daam &nbsp;·&nbsp; 1 Kanal = 5,445 sq ft = 20 Marla
+          </p>
+        </div>
+      </div>
+
       {/* Regional Disclaimer */}
       <div className="p-3.5 rounded-xl bg-[#FFFBEB] dark:bg-[#451A03]/30 border border-[#FDE68A] dark:border-[#78350F] text-xs text-[#B45309] dark:text-[#FCD34D] flex items-start gap-2">
         <Info size={16} className="shrink-0 mt-0.5" />
         <span>
-          <strong>Disclaimer:</strong> Standard official Nepal land factors are used (1 Ropani = 5,476 sq ft, 1 Bigha = 72,900 sq ft). For official land purchase or legal registration, always verify measurements against Lalpurja (जग्गाधनी प्रमाणपुर्जा) or official Survey Department maps.
+          <strong>Disclaimer:</strong> Standard official factors per नापी विभाग (Survey Department, Government of Nepal) are used. Regional variants may exist. Always verify against Lalpurja (जग्गाधनी प्रमाणपुर्जा) or official Survey Department field maps before any legal transaction.
         </span>
       </div>
     </div>

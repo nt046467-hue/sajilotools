@@ -49,103 +49,173 @@ const DAYS_HEADER_NP = ["आइत", "सोम", "मंगल", "बुध", "
 // ── Only Fixed National / Civil Holidays ──────────────────────────────────────
 // Lunar festivals (Dashain, Tihar, Teej, Janai Purnima, Shivaratri, Holi, etc.)
 // are computed DYNAMICALLY from the Panchang engine — not hand-typed here.
+// ── Fixed National / Civil Holidays Across Supported Years ───────────────────
 const FIXED_HOLIDAYS_DATA: HolidayEntry[] = [
-  // BS 2081
+  // ── BS 2081 ──
   { name: "New Year (नयाँ वर्ष)", bsDate: "2081-01-01", adDate: "2024-04-13", type: "National" },
   { name: "Labor Day (मजदुर दिवस)", bsDate: "2081-01-19", adDate: "2024-05-01", type: "National" },
   { name: "Republic Day (गणतन्त्र दिवस)", bsDate: "2081-02-15", adDate: "2024-05-28", type: "National" },
+  { name: "Bhanu Jayanti (भानु जयन्ती)", bsDate: "2081-03-29", adDate: "2024-07-13", type: "National" },
+  { name: "Civil Service Day (निजामती सेवा दिवस)", bsDate: "2081-05-22", adDate: "2024-09-07", type: "National" },
+  { name: "National Children's Day (राष्ट्रिय बाल दिवस)", bsDate: "2081-05-29", adDate: "2024-09-14", type: "National" },
   { name: "Constitution Day (संविधान दिवस)", bsDate: "2081-06-03", adDate: "2024-09-19", type: "National" },
-  { name: "Prithvi Jayanti (पृथ्वी जयन्ती)", bsDate: "2081-10-27", adDate: "2025-02-09", type: "National" },
-  { name: "Martyrs' Day (शहीद दिवस)", bsDate: "2081-10-16", adDate: "2025-01-30", type: "National" },
-  { name: "Democracy Day (प्रजातन्त्र दिवस)", bsDate: "2081-11-06", adDate: "2025-02-19", type: "National" },
+  { name: "Martyrs' Day (शहीद दिवस)", bsDate: "2081-10-16", adDate: "2025-01-29", type: "National" },
+  { name: "Prithvi Jayanti (पृथ्वी जयन्ती / राष्ट्रिय एकता दिवस)", bsDate: "2081-10-27", adDate: "2025-02-09", type: "National" },
+  { name: "Democracy Day (प्रजातन्त्र दिवस)", bsDate: "2081-11-07", adDate: "2025-02-19", type: "National" },
+  { name: "International Women's Day (महिला दिवस)", bsDate: "2081-11-24", adDate: "2025-03-08", type: "National" },
 
-  // BS 2082
+  // ── BS 2082 ──
   { name: "New Year (नयाँ वर्ष)", bsDate: "2082-01-01", adDate: "2025-04-14", type: "National" },
   { name: "Labor Day (मजदुर दिवस)", bsDate: "2082-01-18", adDate: "2025-05-01", type: "National" },
   { name: "Republic Day (गणतन्त्र दिवस)", bsDate: "2082-02-15", adDate: "2025-05-28", type: "National" },
+  { name: "Bhanu Jayanti (भानु जयन्ती)", bsDate: "2082-03-29", adDate: "2025-07-13", type: "National" },
+  { name: "Civil Service Day (निजामती सेवा दिवस)", bsDate: "2082-05-22", adDate: "2025-09-07", type: "National" },
+  { name: "National Children's Day (राष्ट्रिय बाल दिवस)", bsDate: "2082-05-29", adDate: "2025-09-14", type: "National" },
   { name: "Constitution Day (संविधान दिवस)", bsDate: "2082-06-03", adDate: "2025-09-19", type: "National" },
+  { name: "Martyrs' Day (शहीद दिवस)", bsDate: "2082-10-16", adDate: "2026-01-30", type: "National" },
+  { name: "Prithvi Jayanti (पृथ्वी जयन्ती)", bsDate: "2082-10-27", adDate: "2026-02-10", type: "National" },
+  { name: "Democracy Day (प्रजातन्त्र दिवस)", bsDate: "2082-11-07", adDate: "2026-02-19", type: "National" },
+  { name: "International Women's Day (महिला दिवस)", bsDate: "2082-11-24", adDate: "2026-03-08", type: "National" },
 
-  // BS 2083
+  // ── BS 2083 ──
   { name: "New Year (नयाँ वर्ष)", bsDate: "2083-01-01", adDate: "2026-04-14", type: "National" },
   { name: "Labor Day (मजदुर दिवस)", bsDate: "2083-01-18", adDate: "2026-05-01", type: "National" },
-  { name: "Republic Day (गणतन्त्र दिवस)", bsDate: "2083-02-14", adDate: "2026-05-28", type: "National" },
+  { name: "Republic Day (गणतन्त्र दिवस)", bsDate: "2083-02-15", adDate: "2026-05-28", type: "National" },
+  { name: "Bhanu Jayanti (भानु जयन्ती)", bsDate: "2083-03-29", adDate: "2026-07-13", type: "National" },
+  { name: "Civil Service Day (निजामती सेवा दिवस)", bsDate: "2083-05-22", adDate: "2026-09-07", type: "National" },
+  { name: "National Children's Day (राष्ट्रिय बाल दिवस)", bsDate: "2083-05-29", adDate: "2026-09-14", type: "National" },
   { name: "Constitution Day (संविधान दिवस)", bsDate: "2083-06-03", adDate: "2026-09-19", type: "National" },
-  { name: "Prithvi Jayanti (पृथ्वी जयन्ती)", bsDate: "2083-10-27", adDate: "2027-02-09", type: "National" },
+  { name: "Martyrs' Day (शहीद दिवस)", bsDate: "2083-10-16", adDate: "2027-01-30", type: "National" },
+  { name: "Prithvi Jayanti (पृथ्वी जयन्ती)", bsDate: "2083-10-27", adDate: "2027-02-10", type: "National" },
+  { name: "Democracy Day (प्रजातन्त्र दिवस)", bsDate: "2083-11-07", adDate: "2027-02-19", type: "National" },
+  { name: "International Women's Day (महिला दिवस)", bsDate: "2083-11-24", adDate: "2027-03-08", type: "National" },
 
-  // BS 2084
+  // ── BS 2084 ──
   { name: "New Year (नयाँ वर्ष)", bsDate: "2084-01-01", adDate: "2027-04-14", type: "National" },
   { name: "Labor Day (मजदुर दिवस)", bsDate: "2084-01-18", adDate: "2027-05-01", type: "National" },
   { name: "Republic Day (गणतन्त्र दिवस)", bsDate: "2084-02-15", adDate: "2027-05-28", type: "National" },
+  { name: "Civil Service Day (निजामती सेवा दिवस)", bsDate: "2084-05-22", adDate: "2027-09-07", type: "National" },
+  { name: "National Children's Day (राष्ट्रिय बाल दिवस)", bsDate: "2084-05-29", adDate: "2027-09-14", type: "National" },
   { name: "Constitution Day (संविधान दिवस)", bsDate: "2084-06-03", adDate: "2027-09-19", type: "National" },
+  { name: "Prithvi Jayanti (पृथ्वी जयन्ती)", bsDate: "2084-10-27", adDate: "2028-02-10", type: "National" },
+  { name: "Democracy Day (प्रजातन्त्र दिवस)", bsDate: "2084-11-07", adDate: "2028-02-19", type: "National" },
+  { name: "International Women's Day (महिला दिवस)", bsDate: "2084-11-24", adDate: "2028-03-08", type: "National" },
 ];
 
-// ── Dynamic Lunar Festival Detector ───────────────────────────────────────────
-// Uses Panchang tithi + BS month to identify real festivals.
-// This makes festivals accurate for ANY year automatically.
-//
-// Key: Dashain falls in Ashwin (5), Tihar in Kartik (6), Teej in Bhadra (4),
-//      Janai Purnima in Shrawan (3), Shivaratri in Falgun/Magh, Holi in Falgun/Chaitra.
-//
-// tithiNumber: 1-15 = Shukla Paksha, 16-30 = Krishna Paksha
-//   1=Pratipada, 2=Dwitiya, ... 10=Dashami, 11=Ekadashi, ... 15=Purnima
-//   16=Pratipada(K), ... 23=Ashtami(K), ... 29=Chaturdashi(K), 30=Aunsi
+// ── Verified Lunar Festival Dates (Nepal Panchang Nirnayak Samiti Patro) ─────
+const VERIFIED_FESTIVALS: Record<string, LunarFestival> = {
+  // BS 2081
+  "2081-05-03": { name: "Janai Purnima", nameNp: "जनै पूर्णिमा / रक्षाबन्धन", emoji: "🧵", colorClass: "bg-amber-500/15 text-amber-700 dark:text-amber-300" },
+  "2081-05-04": { name: "Gai Jatra", nameNp: "गाइजात्रा", emoji: "🐄", colorClass: "bg-teal-500/15 text-teal-700 dark:text-teal-300" },
+  "2081-05-10": { name: "Krishna Janmashtami", nameNp: "कृष्ण जन्माष्टमी", emoji: "🦚", colorClass: "bg-blue-500/15 text-blue-700 dark:text-blue-300" },
+  "2081-05-21": { name: "Haritalika Teej", nameNp: "हरितालिका तीज", emoji: "🔴", colorClass: "bg-red-500/15 text-red-700 dark:text-red-300" },
+  "2081-05-23": { name: "Rishi Panchami", nameNp: "ऋषि पञ्चमी", emoji: "🙏", colorClass: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
+  "2081-05-31": { name: "Indra Jatra", nameNp: "इन्द्रजात्रा", emoji: "🎭", colorClass: "bg-violet-500/15 text-violet-700 dark:text-violet-300" },
+  "2081-06-17": { name: "Ghatasthapana", nameNp: "घटस्थापना", emoji: "🏺", colorClass: "bg-green-500/15 text-green-700 dark:text-green-300" },
+  "2081-06-24": { name: "Fulpati", nameNp: "फुलपाती", emoji: "💐", colorClass: "bg-pink-500/15 text-pink-700 dark:text-pink-300" },
+  "2081-06-25": { name: "Maha Ashtami / Nawami", nameNp: "महाअष्टमी / महानवमी", emoji: "⚔️", colorClass: "bg-red-600/15 text-red-700 dark:text-red-300" },
+  "2081-06-26": { name: "Vijaya Dashami", nameNp: "विजया दशमी (दशैं टीका)", emoji: "🎯", colorClass: "bg-rose-500/15 text-rose-700 dark:text-rose-300" },
+  "2081-07-13": { name: "Kaag Tihar", nameNp: "काग तिहार", emoji: "🐦‍⬛", colorClass: "bg-gray-500/15 text-gray-700 dark:text-gray-300" },
+  "2081-07-14": { name: "Kukur Tihar", nameNp: "कुकुर तिहार", emoji: "🐕", colorClass: "bg-amber-500/15 text-amber-700 dark:text-amber-300" },
+  "2081-07-15": { name: "Laxmi Puja / Deepawali", nameNp: "लक्ष्मी पूजा / दीपावली", emoji: "🪔", colorClass: "bg-yellow-500/15 text-yellow-700 dark:text-yellow-300" },
+  "2081-07-17": { name: "Govardhan Puja", nameNp: "गोवर्धन पूजा", emoji: "🐄", colorClass: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
+  "2081-07-18": { name: "Bhai Tika", nameNp: "भाइ टीका", emoji: "🎨", colorClass: "bg-pink-500/15 text-pink-700 dark:text-pink-300" },
+  "2081-07-22": { name: "Chhath Parva", nameNp: "छठ पर्व", emoji: "🌅", colorClass: "bg-orange-500/15 text-orange-700 dark:text-orange-300" },
+  "2081-10-01": { name: "Maghe Sankranti", nameNp: "माघे संक्रान्ति", emoji: "🌅", colorClass: "bg-orange-500/15 text-orange-700 dark:text-orange-300" },
+  "2081-11-14": { name: "Maha Shivaratri", nameNp: "महाशिवरात्रि", emoji: "🔱", colorClass: "bg-indigo-500/15 text-indigo-700 dark:text-indigo-300" },
+  "2081-11-29": { name: "Fagu Purnima / Holi", nameNp: "फागु पूर्णिमा / होली", emoji: "🎨", colorClass: "bg-pink-500/15 text-pink-700 dark:text-pink-300" },
+  "2081-12-24": { name: "Chaite Dashain", nameNp: "चैते दशैं", emoji: "🎋", colorClass: "bg-green-500/15 text-green-700 dark:text-green-300" },
+  "2081-12-25": { name: "Ram Nawami", nameNp: "रामनवमी", emoji: "🏹", colorClass: "bg-orange-500/15 text-orange-700 dark:text-orange-300" },
+
+  // BS 2082
+  "2082-01-29": { name: "Buddha Jayanti", nameNp: "बुद्ध जयन्ती / उभौली", emoji: "🪷", colorClass: "bg-yellow-500/15 text-yellow-700 dark:text-yellow-300" },
+  "2082-04-24": { name: "Janai Purnima", nameNp: "जनै पूर्णिमा / रक्षाबन्धन", emoji: "🧵", colorClass: "bg-amber-500/15 text-amber-700 dark:text-amber-300" },
+  "2082-04-25": { name: "Gai Jatra", nameNp: "गाइजात्रा", emoji: "🐄", colorClass: "bg-teal-500/15 text-teal-700 dark:text-teal-300" },
+  "2082-05-02": { name: "Krishna Janmashtami", nameNp: "कृष्ण जन्माष्टमी", emoji: "🦚", colorClass: "bg-blue-500/15 text-blue-700 dark:text-blue-300" },
+  "2082-05-10": { name: "Haritalika Teej", nameNp: "तीज", emoji: "🔴", colorClass: "bg-red-500/15 text-red-700 dark:text-red-300" },
+  "2082-05-12": { name: "Rishi Panchami", nameNp: "ऋषि पञ्चमी", emoji: "🙏", colorClass: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
+  "2082-05-20": { name: "Indra Jatra", nameNp: "इन्द्रजात्रा", emoji: "🎭", colorClass: "bg-violet-500/15 text-violet-700 dark:text-violet-300" },
+  "2082-06-06": { name: "Ghatasthapana", nameNp: "घटस्थापना", emoji: "🏺", colorClass: "bg-green-500/15 text-green-700 dark:text-green-300" },
+  "2082-06-12": { name: "Fulpati", nameNp: "फुलपाती", emoji: "💐", colorClass: "bg-pink-500/15 text-pink-700 dark:text-pink-300" },
+  "2082-06-13": { name: "Maha Ashtami", nameNp: "महाअष्टमी", emoji: "⚔️", colorClass: "bg-red-600/15 text-red-700 dark:text-red-300" },
+  "2082-06-14": { name: "Maha Nawami", nameNp: "महानवमी", emoji: "🗡️", colorClass: "bg-red-600/15 text-red-700 dark:text-red-300" },
+  "2082-06-15": { name: "Vijaya Dashami", nameNp: "विजया दशमी (दशैं)", emoji: "🎯", colorClass: "bg-rose-500/15 text-rose-700 dark:text-rose-300" },
+  "2082-07-02": { name: "Kaag Tihar", nameNp: "काग तिहार", emoji: "🐦‍⬛", colorClass: "bg-gray-500/15 text-gray-700 dark:text-gray-300" },
+  "2082-07-03": { name: "Kukur Tihar", nameNp: "कुकुर तिहार", emoji: "🐕", colorClass: "bg-amber-500/15 text-amber-700 dark:text-amber-300" },
+  "2082-07-04": { name: "Laxmi Puja / Deepawali", nameNp: "लक्ष्मी पूजा", emoji: "🪔", colorClass: "bg-yellow-500/15 text-yellow-700 dark:text-yellow-300" },
+  "2082-07-05": { name: "Govardhan Puja", nameNp: "गोवर्धन पूजा", emoji: "🐄", colorClass: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
+  "2082-07-06": { name: "Bhai Tika", nameNp: "भाइ टीका", emoji: "🎨", colorClass: "bg-pink-500/15 text-pink-700 dark:text-pink-300" },
+  "2082-07-11": { name: "Chhath Parva", nameNp: "छठ पर्व", emoji: "🌅", colorClass: "bg-orange-500/15 text-orange-700 dark:text-orange-300" },
+  "2082-10-01": { name: "Maghe Sankranti", nameNp: "माघे संक्रान्ति", emoji: "🌅", colorClass: "bg-orange-500/15 text-orange-700 dark:text-orange-300" },
+  "2082-11-04": { name: "Maha Shivaratri", nameNp: "महाशिवरात्रि", emoji: "🔱", colorClass: "bg-indigo-500/15 text-indigo-700 dark:text-indigo-300" },
+  "2082-11-19": { name: "Fagu Purnima / Holi", nameNp: "फागु पूर्णिमा / होली", emoji: "🎨", colorClass: "bg-pink-500/15 text-pink-700 dark:text-pink-300" },
+
+  // BS 2083
+  "2083-01-18": { name: "Buddha Jayanti", nameNp: "बुद्ध जयन्ती", emoji: "🪷", colorClass: "bg-yellow-500/15 text-yellow-700 dark:text-yellow-300" },
+  "2083-05-12": { name: "Janai Purnima", nameNp: "जनै पूर्णिमा", emoji: "🧵", colorClass: "bg-amber-500/15 text-amber-700 dark:text-amber-300" },
+  "2083-05-13": { name: "Gai Jatra", nameNp: "गाइजात्रा", emoji: "🐄", colorClass: "bg-teal-500/15 text-teal-700 dark:text-teal-300" },
+  "2083-05-19": { name: "Krishna Janmashtami", nameNp: "कृष्ण जन्माष्टमी", emoji: "🦚", colorClass: "bg-blue-500/15 text-blue-700 dark:text-blue-300" },
+  "2083-05-28": { name: "Haritalika Teej", nameNp: "तीज", emoji: "🔴", colorClass: "bg-red-500/15 text-red-700 dark:text-red-300" },
+  "2083-05-30": { name: "Rishi Panchami", nameNp: "ऋषि पञ्चमी", emoji: "🙏", colorClass: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
+  "2083-06-25": { name: "Ghatasthapana", nameNp: "घटस्थापना", emoji: "🏺", colorClass: "bg-green-500/15 text-green-700 dark:text-green-300" },
+  "2083-07-01": { name: "Fulpati", nameNp: "फुलपाती", emoji: "💐", colorClass: "bg-pink-500/15 text-pink-700 dark:text-pink-300" },
+  "2083-07-02": { name: "Maha Ashtami", nameNp: "महाअष्टमी", emoji: "⚔️", colorClass: "bg-red-600/15 text-red-700 dark:text-red-300" },
+  "2083-07-03": { name: "Maha Nawami", nameNp: "महानवमी", emoji: "🗡️", colorClass: "bg-red-600/15 text-red-700 dark:text-red-300" },
+  "2083-07-04": { name: "Vijaya Dashami", nameNp: "विजया दशमी (दशैं)", emoji: "🎯", colorClass: "bg-rose-500/15 text-rose-700 dark:text-rose-300" },
+  "2083-07-22": { name: "Kaag Tihar", nameNp: "काग तिहार", emoji: "🐦‍⬛", colorClass: "bg-gray-500/15 text-gray-700 dark:text-gray-300" },
+  "2083-07-23": { name: "Kukur Tihar", nameNp: "कुकुर तिहार", emoji: "🐕", colorClass: "bg-amber-500/15 text-amber-700 dark:text-amber-300" },
+  "2083-07-24": { name: "Laxmi Puja / Deepawali", nameNp: "लक्ष्मी पूजा", emoji: "🪔", colorClass: "bg-yellow-500/15 text-yellow-700 dark:text-yellow-300" },
+  "2083-07-25": { name: "Govardhan Puja", nameNp: "गोवर्धन पूजा", emoji: "🐄", colorClass: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" },
+  "2083-07-26": { name: "Bhai Tika", nameNp: "भाइ टीका", emoji: "🎨", colorClass: "bg-pink-500/15 text-pink-700 dark:text-pink-300" },
+  "2083-08-01": { name: "Chhath Parva", nameNp: "छठ पर्व", emoji: "🌅", colorClass: "bg-orange-500/15 text-orange-700 dark:text-orange-300" },
+  "2083-10-01": { name: "Maghe Sankranti", nameNp: "माघे संक्रान्ति", emoji: "🌅", colorClass: "bg-orange-500/15 text-orange-700 dark:text-orange-300" },
+};
 
 function detectLunarFestival(
+  year: number,
   bsMonth: number, // 0-indexed: 0=Baisakh .. 11=Chaitra
   panchang: PanchangData,
   dayInMonth: number,
   totalDays: number
 ): LunarFestival | null {
+  // 1. Check verified official panchang festival registry first
+  const dateKey = `${year}-${String(bsMonth + 1).padStart(2, "0")}-${String(dayInMonth).padStart(2, "0")}`;
+  if (VERIFIED_FESTIVALS[dateKey]) {
+    return VERIFIED_FESTIVALS[dateKey];
+  }
+
+  // 2. Dynamic astronomical festival detection for all other years
   const t = panchang.tithiNumber;
 
   switch (bsMonth) {
-    // ── Baisakh (0) ──────────────────────────────────
     case 0:
       if (t === 9 && dayInMonth > 2) return { name: "Ram Nawami", nameNp: "रामनवमी", emoji: "🏹", colorClass: "bg-orange-500/15 text-orange-700 dark:text-orange-300" };
       if (t === 15) return { name: "Buddha Jayanti", nameNp: "बुद्ध जयन्ती", emoji: "🪷", colorClass: "bg-yellow-500/15 text-yellow-700 dark:text-yellow-300" };
       break;
 
-    // ── Jestha (1) ──────────────────────────────────
     case 1:
-      // Buddha Jayanti can sometimes fall in Jestha instead of Baisakh
       if (t === 15 && dayInMonth <= 5) return { name: "Buddha Jayanti", nameNp: "बुद्ध जयन्ती", emoji: "🪷", colorClass: "bg-yellow-500/15 text-yellow-700 dark:text-yellow-300" };
       break;
 
-    // ── Ashadh (2) ──────────────────────────────────
     case 2:
-      // Rath Yatra — Ashadh Shukla Dwitiya
       if (t === 2 && dayInMonth <= 10) return { name: "Rath Yatra", nameNp: "रथ यात्रा", emoji: "🛕", colorClass: "bg-orange-500/15 text-orange-700 dark:text-orange-300" };
-      // Guru Purnima — Ashadh Purnima (when it falls in BS Ashadh)
       if (t === 15) return { name: "Guru Purnima", nameNp: "गुरु पूर्णिमा", emoji: "🙏", colorClass: "bg-violet-500/15 text-violet-700 dark:text-violet-300" };
       break;
 
-    // ── Shrawan (3) ─────────────────────────────────
     case 3:
-      // Guru Purnima — when Ashadh Purnima spills into early Shrawan (day ≤ 16)
       if (t === 15 && dayInMonth <= 16) return { name: "Guru Purnima", nameNp: "गुरु पूर्णिमा", emoji: "🙏", colorClass: "bg-violet-500/15 text-violet-700 dark:text-violet-300" };
-      // Janai Purnima — the real Shrawan Purnima (later in the month)
       if (t === 15 && dayInMonth > 16) return { name: "Janai Purnima", nameNp: "जनै पूर्णिमा", emoji: "🧵", colorClass: "bg-amber-500/15 text-amber-700 dark:text-amber-300" };
       break;
 
-    // ── Bhadra (4) ──────────────────────────────────
     case 4:
-      // Gai Jatra — day after Shrawan Purnima, typically Bhadra Pratipada
-      // or early Bhadra. We detect Shukla Pratipada (t=1) at very start of Bhadra.
       if (t === 16 && dayInMonth <= 3) return { name: "Gai Jatra", nameNp: "गाइजात्रा", emoji: "🐄", colorClass: "bg-teal-500/15 text-teal-700 dark:text-teal-300" };
-      // Krishna Janmashtami — Bhadra Krishna Ashtami (t=23)
       if (t === 23) return { name: "Krishna Janmashtami", nameNp: "कृष्ण जन्माष्टमी", emoji: "🦚", colorClass: "bg-blue-500/15 text-blue-700 dark:text-blue-300" };
-      // Teej — Bhadra Shukla Tritiya (t=3)
       if (t === 3 && dayInMonth > 5) return { name: "Haritalika Teej", nameNp: "तीज", emoji: "🔴", colorClass: "bg-red-500/15 text-red-700 dark:text-red-300" };
-      // Rishi Panchami — Bhadra Shukla Panchami (t=5)
       if (t === 5 && dayInMonth > 5) return { name: "Rishi Panchami", nameNp: "ऋषि पञ्चमी", emoji: "🙏", colorClass: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" };
-      // Indra Jatra — Bhadra Shukla Dwadashi (t=12) area
       if (t === 12 && dayInMonth > 15) return { name: "Indra Jatra", nameNp: "इन्द्रजात्रा", emoji: "🎭", colorClass: "bg-violet-500/15 text-violet-700 dark:text-violet-300" };
       break;
 
-    // ── Ashwin (5) — DASHAIN ────────────────────────
     case 5:
-      // Dashain is Ashwin Shukla Paksha. We look for tithis in the 2nd half of the month
-      // to avoid matching the initial Shukla tithis if the month starts mid-Shukla.
       if (t === 1 && dayInMonth > 8) return { name: "Ghatasthapana", nameNp: "घटस्थापना", emoji: "🏺", colorClass: "bg-green-500/15 text-green-700 dark:text-green-300" };
       if (t === 7 && dayInMonth > 10) return { name: "Fulpati", nameNp: "फुलपाती", emoji: "💐", colorClass: "bg-pink-500/15 text-pink-700 dark:text-pink-300" };
       if (t === 8 && dayInMonth > 10) return { name: "Maha Ashtami", nameNp: "महाअष्टमी", emoji: "⚔️", colorClass: "bg-red-600/15 text-red-700 dark:text-red-300" };
@@ -153,44 +223,28 @@ function detectLunarFestival(
       if (t === 10 && dayInMonth > 10) return { name: "Vijaya Dashami", nameNp: "विजया दशमी", emoji: "🎯", colorClass: "bg-rose-500/15 text-rose-700 dark:text-rose-300" };
       break;
 
-    // ── Kartik (6) — TIHAR ─────────────────────────
     case 6:
-      // Tihar cluster: Kaag Tihar → Kukur Tihar → Laxmi Puja (Aunsi) → Govardhan → Bhai Tika
       if (t === 28) return { name: "Kaag Tihar", nameNp: "काग तिहार", emoji: "🐦‍⬛", colorClass: "bg-gray-500/15 text-gray-700 dark:text-gray-300" };
       if (t === 29) return { name: "Kukur Tihar", nameNp: "कुकुर तिहार", emoji: "🐕", colorClass: "bg-amber-500/15 text-amber-700 dark:text-amber-300" };
       if (t === 30) return { name: "Laxmi Puja / Deepawali", nameNp: "लक्ष्मी पूजा / दीपावली", emoji: "🪔", colorClass: "bg-yellow-500/15 text-yellow-700 dark:text-yellow-300" };
-      // After Aunsi: Shukla Pratipada = Govardhan, Dwitiya = Bhai Tika
-      // These are tithis 1 and 2 that occur AFTER the Aunsi in the same month (second half)
       if (t === 1 && dayInMonth > 12) return { name: "Govardhan Puja", nameNp: "गोवर्धन पूजा", emoji: "🐄", colorClass: "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" };
       if (t === 2 && dayInMonth > 12) return { name: "Bhai Tika", nameNp: "भाइ टीका", emoji: "🎨", colorClass: "bg-pink-500/15 text-pink-700 dark:text-pink-300" };
-      // Chhath — Kartik Shukla Shashti (t=6) after Tihar
       if (t === 6 && dayInMonth > 15) return { name: "Chhath Parva", nameNp: "छठ पर्व", emoji: "🌅", colorClass: "bg-orange-500/15 text-orange-700 dark:text-orange-300" };
       break;
 
-    // ── Magh (9) ────────────────────────────────────
     case 9:
-      // Maghe Sankranti — Magh 1 is the real Sankranti (Sun enters Makara Rashi)
       if (dayInMonth === 1) return { name: "Maghe Sankranti", nameNp: "माघे संक्रान्ति", emoji: "🌅", colorClass: "bg-orange-500/15 text-orange-700 dark:text-orange-300" };
-      // Maha Shivaratri — Krishna Chaturdashi (t=29) in Magh or Falgun
       if (t === 29 && dayInMonth > 15) return { name: "Maha Shivaratri", nameNp: "महाशिवरात्रि", emoji: "🔱", colorClass: "bg-indigo-500/15 text-indigo-700 dark:text-indigo-300" };
       break;
 
-    // ── Falgun (10) ─────────────────────────────────
     case 10:
-      // Maha Shivaratri can also fall in early Falgun
       if (t === 29 && dayInMonth <= 10) return { name: "Maha Shivaratri", nameNp: "महाशिवरात्रि", emoji: "🔱", colorClass: "bg-indigo-500/15 text-indigo-700 dark:text-indigo-300" };
-      // Fagu Purnima / Holi — Falgun Purnima
       if (t === 15) return { name: "Fagu Purnima / Holi", nameNp: "फागु पूर्णिमा / होली", emoji: "🎨", colorClass: "bg-pink-500/15 text-pink-700 dark:text-pink-300" };
       break;
 
-    // ── Chaitra (11) ────────────────────────────────
     case 11:
-      // Holi can sometimes spill into Chaitra
       if (t === 15 && dayInMonth <= 3) return { name: "Fagu Purnima / Holi", nameNp: "फागु पूर्णिमा / होली", emoji: "🎨", colorClass: "bg-pink-500/15 text-pink-700 dark:text-pink-300" };
-      // Ram Nawami — Chaitra Shukla Navami
       if (t === 9 && dayInMonth > 5) return { name: "Ram Nawami", nameNp: "रामनवमी", emoji: "🏹", colorClass: "bg-orange-500/15 text-orange-700 dark:text-orange-300" };
-      // Ghode Jatra — Chaitra Krishna Aunsi area (no exact tithi, cultural event)
-      // Chaitra Dashain — Chaitra Shukla Dashami
       if (t === 10 && dayInMonth > 5) return { name: "Chaite Dashain", nameNp: "चैते दशैं", emoji: "🎋", colorClass: "bg-green-500/15 text-green-700 dark:text-green-300" };
       break;
   }
@@ -260,14 +314,14 @@ export default function NepaliCalendarTool() {
     for (let d = 1; d <= monthDaysCount; d++) {
       const panchang = monthPanchangMap.get(d);
       if (panchang) {
-        const festival = detectLunarFestival(selectedMonth, panchang, d, monthDaysCount);
+        const festival = detectLunarFestival(selectedYear, selectedMonth, panchang, d, monthDaysCount);
         if (festival) {
           map.set(d, festival);
         }
       }
     }
     return map;
-  }, [selectedMonth, monthDaysCount, monthPanchangMap]);
+  }, [selectedYear, selectedMonth, monthDaysCount, monthPanchangMap]);
 
   // Navigate months
   const handlePrevMonth = () => {

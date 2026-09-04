@@ -765,72 +765,76 @@ export default function WardMunicipalityLookupTool() {
         {/* Ward Number Selector Grid */}
         {(() => {
           const wardAreas = WARD_AREAS[activeUnit.id];
-          const hasAreas = !!wardAreas;
           return (
-            <div className="p-6 rounded-2xl bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] space-y-4 shadow-xs">
+            <div className="p-4 sm:p-6 rounded-2xl bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] space-y-4 shadow-xs">
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <h4 className="text-sm font-bold text-[#18181B] dark:text-[#F4F4F5] flex items-center gap-1.5">
                   <Hash size={16} className="text-[#F5A623]" /> Select Ward Number (1 to {activeUnit.totalWards})
                 </h4>
-                <span className="text-xs font-semibold text-[#F5A623]">
-                  Selected: Ward {selectedWard}{selectedWardArea ? ` — ${selectedWardArea}` : ""}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-[#71717A] dark:text-[#A1A1AA] font-medium">Jump to:</span>
+                  <input
+                    type="number"
+                    min={1}
+                    max={activeUnit.totalWards}
+                    placeholder="#"
+                    value={selectedWard}
+                    onChange={(e) => {
+                      const val = parseInt(e.target.value, 10);
+                      if (!isNaN(val) && val >= 1 && val <= activeUnit.totalWards) {
+                        setSelectedWard(val);
+                      }
+                    }}
+                    className="w-14 px-2 py-1 text-center rounded-lg border border-[#E4E0D8] dark:border-[#2A2F48] bg-[#FAFAF8] dark:bg-[#1E2338] text-xs font-bold text-[#18181B] dark:text-[#F4F4F5] focus:outline-none focus:border-[#F5A623]"
+                    aria-label="Jump to ward number"
+                  />
+                </div>
               </div>
 
-              {hasAreas && (
-                <p className="text-[11px] text-[#71717A] dark:text-[#A1A1AA] -mt-1">
-                  📍 Notable area names shown below each ward number for quick identification.
-                </p>
-              )}
+              {/* Dense Numeric Grid on Mobile; comfortable on desktop */}
+              <div className={`overflow-y-auto pr-1 ${activeUnit.totalWards > 20 ? "max-h-60 sm:max-h-80" : ""}`}>
+                <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 gap-1.5 sm:gap-2">
+                  {Array.from({ length: activeUnit.totalWards }).map((_, idx) => {
+                    const w = idx + 1;
+                    const isWSelected = selectedWard === w;
+                    const areaName = wardAreas?.[w];
 
-              <div className={hasAreas
-                ? "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5"
-                : "grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-2"
-              }>
-                {Array.from({ length: activeUnit.totalWards }).map((_, idx) => {
-                  const w = idx + 1;
-                  const isWSelected = selectedWard === w;
-                  const areaName = wardAreas?.[w];
-
-                  if (hasAreas) {
                     return (
                       <button
                         key={w}
+                        type="button"
                         onClick={() => setSelectedWard(w)}
-                        className={`rounded-xl px-2 py-2.5 transition-all flex flex-col items-center justify-center gap-0.5 min-h-[60px] ${
+                        title={areaName ? `Ward ${w}: ${areaName}` : `Ward ${w}`}
+                        className={`h-10 rounded-xl text-xs font-black transition-all flex flex-col items-center justify-center cursor-pointer ${
                           isWSelected
-                            ? "bg-[#1F2544] dark:bg-[#F5A623] text-white dark:text-[#0C0F1E] shadow-md scale-[1.03] ring-2 ring-[#F5A623]/40"
-                            : "bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] text-[#18181B] dark:text-[#F4F4F5] hover:border-[#F5A623] hover:shadow-sm"
+                            ? "bg-[#1F2544] dark:bg-[#F5A623] text-white dark:text-[#0C0F1E] shadow-sm scale-105 ring-2 ring-[#F5A623]/40"
+                            : "bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] text-[#18181B] dark:text-[#F4F4F5] hover:border-[#F5A623]"
                         }`}
                       >
-                        <span className="text-sm font-black leading-none">{w}</span>
-                        {areaName && (
-                          <span className={`text-[9px] sm:text-[10px] leading-tight text-center font-semibold truncate w-full ${
-                            isWSelected
-                              ? "text-white/80 dark:text-[#0C0F1E]/70"
-                              : "text-[#71717A] dark:text-[#A1A1AA]"
-                          }`}>
-                            {areaName}
-                          </span>
-                        )}
+                        <span>{w}</span>
                       </button>
                     );
-                  }
+                  })}
+                </div>
+              </div>
 
-                  return (
-                    <button
-                      key={w}
-                      onClick={() => setSelectedWard(w)}
-                      className={`h-10 rounded-xl text-xs font-extrabold transition-all flex items-center justify-center ${
-                        isWSelected
-                          ? "bg-[#1F2544] dark:bg-[#F5A623] text-white dark:text-[#0C0F1E] shadow-sm scale-105"
-                          : "bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] text-[#18181B] dark:text-[#F4F4F5] hover:border-[#F5A623]"
-                      }`}
-                    >
-                      {w}
-                    </button>
-                  );
-                })}
+              {/* Prominent Single Area & Ward Callout Below Grid */}
+              <div className="p-3 rounded-xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] flex items-center justify-between flex-wrap gap-2 text-xs">
+                <div className="flex items-center gap-2 font-bold text-[#18181B] dark:text-[#F4F4F5]">
+                  <span className="px-2 py-0.5 rounded-lg bg-[#1F2544] dark:bg-[#F5A623] text-white dark:text-[#0C0F1E] text-xs font-black">
+                    Ward {selectedWard}
+                  </span>
+                  <span>of {activeUnit.nameEn} ({activeUnit.nameNp})</span>
+                </div>
+                {selectedWardArea ? (
+                  <span className="font-bold text-[#F5A623] bg-[#F5A623]/10 px-2.5 py-1 rounded-lg flex items-center gap-1">
+                    📍 Notable Area: {selectedWardArea}
+                  </span>
+                ) : (
+                  <span className="text-[11px] text-[#71717A] dark:text-[#A1A1AA]">
+                    Ward level jurisdiction (वडा कार्यालय)
+                  </span>
+                )}
               </div>
             </div>
           );

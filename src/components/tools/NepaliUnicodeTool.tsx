@@ -11,7 +11,7 @@ const ROMAN_DICTIONARY: Record<string, string> = {
   ke: "के",
   ko: "को",
   ka: "का",
-  ki: "की",
+  ki: "कि",
   le: "ले",
   lai: "लाई",
   ma: "म",
@@ -23,11 +23,20 @@ const ROMAN_DICTIONARY: Record<string, string> = {
   xeu: "छौ",
   xau: "छौ",
   chhau: "छौ",
+  xu: "छु",
+  chhu: "छु",
   xai: "छै",
   chhai: "छै",
   xaw: "छौँ",
   xain: "छैन",
   chhain: "छैन",
+  yo: "यो",
+  tyo: "त्यो",
+  kina: "किन",
+  kasari: "कसरी",
+  kahile: "कहिले",
+  kati: "कति",
+  sabai: "सबै",
   gardai: "गर्दै",
   garya: "गरेको",
   gareko: "गरेको",
@@ -491,12 +500,30 @@ export default function NepaliUnicodeTool() {
         </div>
       </div>
 
-      {/* Help Banner */}
-      <div className="p-3.5 rounded-xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] text-xs text-[#71717A] flex items-start gap-2">
-        <Info size={16} className="text-[#F5A623] shrink-0 mt-0.5" />
-        <span>
-          <strong>How it works:</strong> Type in Romanized Nepali letters (e.g. <code>sajilo tools nepal ma swagat chha</code>) and get instant Nepali Devanagari Unicode output (<code>सजिलो तूल्स नेपाल म स्वगत छ</code>) ready to copy and use in Word, Facebook, or Nepalese government forms. Supports Preeti font ↔ Unicode conversions seamlessly!
-        </span>
+      {/* How It Works & Tips Card — Responsive & Zero Overlap */}
+      <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] text-xs text-[#71717A] dark:text-[#A1A1AA] space-y-2.5 shadow-xs">
+        <div className="flex items-center gap-2 text-sm font-bold text-[#18181B] dark:text-[#F4F4F5]">
+          <Info size={16} className="text-[#F5A623] shrink-0" />
+          <span>How It Works &amp; Quick Guide</span>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+          <div className="p-3 rounded-xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] space-y-1">
+            <span className="font-bold text-[#18181B] dark:text-[#F4F4F5] block">
+              1. Phonetic Romanized Typing (रोमन युनिकोड)
+            </span>
+            <p className="leading-relaxed">
+              Type naturally in English alphabet (e.g. <code className="px-1.5 py-0.5 rounded bg-black/5 dark:bg-white/10 text-[11px] font-mono text-[#18181B] dark:text-[#F4F4F5]">sajilo tools nepal ma swagat chha</code>) and receive clean Devanagari output (<span className="font-semibold text-emerald-600 dark:text-emerald-400">सजिलो तूल्स नेपाल म स्वगत छ</span>).
+            </p>
+          </div>
+          <div className="p-3 rounded-xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] space-y-1">
+            <span className="font-bold text-[#18181B] dark:text-[#F4F4F5] block">
+              2. Preeti ↔ Unicode Conversion (प्रिती रूपान्तरण)
+            </span>
+            <p className="leading-relaxed">
+              Switch tabs to convert legacy Preeti font text (<code className="px-1.5 py-0.5 rounded bg-black/5 dark:bg-white/10 text-[11px] font-mono text-[#18181B] dark:text-[#F4F4F5]">sD: g]kfn</code>) into Unicode (<span className="font-semibold text-emerald-600 dark:text-emerald-400">नेपाल</span>) or backwards for official government Word and PDF forms.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );

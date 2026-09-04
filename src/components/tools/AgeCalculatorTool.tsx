@@ -23,6 +23,7 @@ import {
   type CalendarType,
   type AgeCalculationResult,
 } from "@/lib/age-calculator";
+import BsDatePicker from "@/components/tools/shared/BsDatePicker";
 import {
   BS_YEARS_OPTIONS,
   NEPALI_MONTHS_EN,
@@ -308,59 +309,15 @@ export default function AgeCalculatorTool() {
             {/* DOB Controls */}
             {dobCalendar === "BS" ? (
               <div className="space-y-2.5">
-                {/* 12-col grid: Year=4, Month=5, Day=3 — gives month enough room for full Nepali names */}
-                <div className="grid grid-cols-12 gap-1.5 sm:gap-3">
-                  {/* BS Year */}
-                  <div className="col-span-4">
-                    <label className="block text-[10px] sm:text-[11px] font-bold text-[#71717A] uppercase tracking-wider mb-1">
-                      YEAR (साल)
-                    </label>
-                    <CustomSelect
-                      value={dobBsYear}
-                      onChange={(e) => setDobBsYear(Number(e.target.value))}
-                    >
-                      {BS_YEARS_OPTIONS.map((y) => (
-                        <option key={y} value={y}>
-                          {y}
-                        </option>
-                      ))}
-                    </CustomSelect>
-                  </div>
-
-                  {/* BS Month */}
-                  <div className="col-span-5">
-                    <label className="block text-[10px] sm:text-[11px] font-bold text-[#71717A] uppercase tracking-wider mb-1">
-                      MONTH (महिना)
-                    </label>
-                    <CustomSelect
-                      value={dobBsMonth}
-                      onChange={(e) => setDobBsMonth(Number(e.target.value))}
-                    >
-                      {NEPALI_MONTHS_EN.map((m, idx) => (
-                        <option key={m} value={idx + 1}>
-                          {idx + 1}. {NEPALI_MONTHS_NP[idx]}
-                        </option>
-                      ))}
-                    </CustomSelect>
-                  </div>
-
-                  {/* BS Day (Dynamically bounded) */}
-                  <div className="col-span-3">
-                    <label className="block text-[10px] sm:text-[11px] font-bold text-[#71717A] uppercase tracking-wider mb-1">
-                      DAY (गते)
-                    </label>
-                    <CustomSelect
-                      value={dobBsDay}
-                      onChange={(e) => setDobBsDay(Number(e.target.value))}
-                    >
-                      {Array.from({ length: dobMaxDays }, (_, i) => i + 1).map((d) => (
-                        <option key={d} value={d}>
-                          {d}
-                        </option>
-                      ))}
-                    </CustomSelect>
-                  </div>
-                </div>
+                <BsDatePicker
+                  value={{ year: dobBsYear, month: dobBsMonth, day: dobBsDay }}
+                  onChange={({ year, month, day }) => {
+                    setDobBsYear(year);
+                    setDobBsMonth(month);
+                    setDobBsDay(day);
+                  }}
+                  showQuickActions={false}
+                />
 
                 {/* Real-time DOB Cross-Reference Card */}
                 {dobEquivalent && (
@@ -452,53 +409,15 @@ export default function AgeCalculatorTool() {
 
             {targetCalendar === "BS" ? (
               <div className="space-y-2.5">
-                <div className="grid grid-cols-12 gap-1.5 sm:gap-3">
-                  <div className="col-span-4">
-                    <label className="block text-[10px] sm:text-[11px] font-bold text-[#71717A] uppercase tracking-wider mb-1">
-                      YEAR (साल)
-                    </label>
-                    <CustomSelect
-                      value={targetBsYear}
-                      onChange={(e) => setTargetBsYear(Number(e.target.value))}
-                    >
-                      {BS_YEARS_OPTIONS.map((y) => (
-                        <option key={y} value={y}>
-                          {y}
-                        </option>
-                      ))}
-                    </CustomSelect>
-                  </div>
-                  <div className="col-span-5">
-                    <label className="block text-[10px] sm:text-[11px] font-bold text-[#71717A] uppercase tracking-wider mb-1">
-                      MONTH (महिना)
-                    </label>
-                    <CustomSelect
-                      value={targetBsMonth}
-                      onChange={(e) => setTargetBsMonth(Number(e.target.value))}
-                    >
-                      {NEPALI_MONTHS_EN.map((m, idx) => (
-                        <option key={m} value={idx + 1}>
-                          {idx + 1}. {NEPALI_MONTHS_NP[idx]}
-                        </option>
-                      ))}
-                    </CustomSelect>
-                  </div>
-                  <div className="col-span-3">
-                    <label className="block text-[10px] sm:text-[11px] font-bold text-[#71717A] uppercase tracking-wider mb-1">
-                      DAY (गते)
-                    </label>
-                    <CustomSelect
-                      value={targetBsDay}
-                      onChange={(e) => setTargetBsDay(Number(e.target.value))}
-                    >
-                      {Array.from({ length: targetMaxDays }, (_, i) => i + 1).map((d) => (
-                        <option key={d} value={d}>
-                          {d}
-                        </option>
-                      ))}
-                    </CustomSelect>
-                  </div>
-                </div>
+                <BsDatePicker
+                  value={{ year: targetBsYear, month: targetBsMonth, day: targetBsDay }}
+                  onChange={({ year, month, day }) => {
+                    setTargetBsYear(year);
+                    setTargetBsMonth(month);
+                    setTargetBsDay(day);
+                  }}
+                  showQuickActions={false}
+                />
 
                 {/* Real-time Target Cross-Reference Card */}
                 {targetEquivalent && (

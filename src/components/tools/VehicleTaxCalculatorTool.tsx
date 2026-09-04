@@ -204,6 +204,63 @@ export default function VehicleTaxCalculatorTool() {
     };
   }, [category, provinceKey, ccSlab, carCcSlab, evKwSlab, commercialSlab, isOverdue, overdueDelay]);
 
+  const [showProvinceTable, setShowProvinceTable] = useState(false);
+
+  // 7-Province Comparison for currently selected CC / power slab
+  const provinceComparison = useMemo(() => {
+    let baseTaxRaw = 0;
+    if (category === "two_wheeler") {
+      switch (ccSlab) {
+        case "up_to_125": baseTaxRaw = 3000; break;
+        case "126_150": baseTaxRaw = 5000; break;
+        case "151_225": baseTaxRaw = 6500; break;
+        case "226_400": baseTaxRaw = 11000; break;
+        case "401_above": baseTaxRaw = 20000; break;
+        default: baseTaxRaw = 5000;
+      }
+    } else if (category === "four_wheeler") {
+      switch (carCcSlab) {
+        case "up_to_1000": baseTaxRaw = 21000; break;
+        case "1001_1500": baseTaxRaw = 23500; break;
+        case "1501_2000": baseTaxRaw = 27500; break;
+        case "2001_2500": baseTaxRaw = 36500; break;
+        case "2501_3000": baseTaxRaw = 44000; break;
+        case "3001_above": baseTaxRaw = 60000; break;
+        default: baseTaxRaw = 23500;
+      }
+    } else if (category === "ev") {
+      switch (evKwSlab) {
+        case "up_to_50": baseTaxRaw = 10000; break;
+        case "51_100": baseTaxRaw = 15000; break;
+        case "101_150": baseTaxRaw = 20000; break;
+        case "151_200": baseTaxRaw = 30000; break;
+        case "201_above": baseTaxRaw = 45000; break;
+        default: baseTaxRaw = 15000;
+      }
+    } else {
+      switch (commercialSlab) {
+        case "micro": baseTaxRaw = 12000; break;
+        case "minibus": baseTaxRaw = 16000; break;
+        case "bus": baseTaxRaw = 20000; break;
+        case "truck": baseTaxRaw = 24000; break;
+        default: baseTaxRaw = 16000;
+      }
+    }
+
+    return PROVINCES.map((prov) => {
+      const tax = Math.round(baseTaxRaw * prov.adjustmentMultiplier);
+      const total = tax + 500;
+      return {
+        key: prov.key,
+        nameEn: prov.nameEn,
+        nameNp: prov.nameNp,
+        tax,
+        total,
+        isSelected: prov.key === provinceKey,
+      };
+    });
+  }, [category, ccSlab, carCcSlab, evKwSlab, commercialSlab, provinceKey]);
+
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
       {/* Restored State Banner */}
@@ -263,21 +320,39 @@ export default function VehicleTaxCalculatorTool() {
 
         {/* Inputs */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {/* Vehicle Category */}
-          <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#71717A] uppercase tracking-wider">
-              Vehicle Category
+          {/* Vehicle Category Segmented Pill Controls */}
+          <div className="space-y-2 col-span-1 md:col-span-2">
+            <label className="block text-xs font-bold text-[#71717A] dark:text-[#A1A1AA] uppercase tracking-wider">
+              Vehicle Category (सवारी साधन प्रकार)
             </label>
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value as VehicleCategory)}
-              className="w-full px-3.5 py-3 rounded-xl border border-[#E4E0D8] dark:border-[#2A2F48] bg-[#FAFAF8] dark:bg-[#1E2338] text-[#18181B] dark:text-[#F4F4F5] text-xs font-bold focus:outline-none focus:ring-2 focus:ring-[#DC2626]/40"
-            >
-              <option value="two_wheeler">🛵 Motorcycle / Scooter (Two-Wheeler)</option>
-              <option value="four_wheeler">🚗 Car / Jeep / Van (Four-Wheeler)</option>
-              <option value="ev">⚡ Electric Vehicle (EV Car / Bike)</option>
-              <option value="commercial">🚌 Bus / Minibus / Truck (Commercial)</option>
-            </select>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 p-1.5 rounded-2xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48]">
+              {[
+                { id: "two_wheeler" as VehicleCategory, label: "Two-Wheeler", sub: "Bike / Scooter", icon: "🛵" },
+                { id: "four_wheeler" as VehicleCategory, label: "Four-Wheeler", sub: "Car / Jeep / Van", icon: "🚗" },
+                { id: "ev" as VehicleCategory, label: "Electric (EV)", sub: "EV Car / Bike", icon: "⚡" },
+                { id: "commercial" as VehicleCategory, label: "Commercial", sub: "Bus / Truck", icon: "🚌" },
+              ].map((cat) => {
+                const active = category === cat.id;
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => setCategory(cat.id)}
+                    className={`p-2.5 rounded-xl text-left transition-all cursor-pointer ${
+                      active
+                        ? "bg-white dark:bg-[#141829] text-[#18181B] dark:text-[#F4F4F5] shadow-xs border border-[#DC2626] font-bold"
+                        : "text-[#71717A] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-[#F4F4F5] border border-transparent"
+                    }`}
+                  >
+                    <div className="flex items-center gap-1.5 text-xs font-extrabold">
+                      <span>{cat.icon}</span>
+                      <span>{cat.label}</span>
+                    </div>
+                    <span className="text-[10px] opacity-70 block mt-0.5">{cat.sub}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Province Selector */}
@@ -437,6 +512,66 @@ export default function VehicleTaxCalculatorTool() {
               </div>
             )}
           </div>
+        </div>
+
+        {/* 7-Province Rate Comparison Collapsible Table */}
+        <div className="p-4 sm:p-5 rounded-2xl bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] space-y-3 shadow-xs">
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div>
+              <h4 className="font-extrabold text-xs sm:text-sm text-[#18181B] dark:text-[#F4F4F5] flex items-center gap-2">
+                <Calculator size={16} className="text-[#DC2626]" />
+                <span>All 7 Provinces Rate Comparison (सबै प्रदेशको कर तुलना)</span>
+              </h4>
+              <p className="text-[11px] text-[#71717A] dark:text-[#A1A1AA] mt-0.5">
+                Compare annual road tax for your selected vehicle bracket across Nepal. Tap any row to switch.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowProvinceTable(!showProvinceTable)}
+              className="px-3 py-1.5 rounded-xl border border-[#E4E0D8] dark:border-[#2A2F48] bg-white dark:bg-[#141829] text-xs font-bold text-[#18181B] dark:text-[#F4F4F5] hover:border-[#DC2626] transition-colors flex items-center gap-1.5 cursor-pointer"
+            >
+              {showProvinceTable ? "Hide Comparison" : "Compare All 7 Provinces"}
+            </button>
+          </div>
+
+          {showProvinceTable && (
+            <div className="overflow-x-auto pt-2 border-t border-[#E4E0D8] dark:border-[#2A2F48]">
+              <table className="w-full text-xs text-left min-w-[320px]">
+                <thead>
+                  <tr className="border-b border-[#E4E0D8] dark:border-[#2A2F48] text-[#71717A] uppercase text-[10px]">
+                    <th className="pb-2 font-bold">Province (प्रदेश)</th>
+                    <th className="pb-2 font-bold text-right">Annual Tax</th>
+                    <th className="pb-2 font-bold text-right">Fee</th>
+                    <th className="pb-2 font-bold text-right">Base Total</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#E4E0D8]/60 dark:divide-[#2A2F48]/60 font-medium">
+                  {provinceComparison.map((p) => (
+                    <tr
+                      key={p.key}
+                      onClick={() => setProvinceKey(p.key)}
+                      className={`cursor-pointer transition-colors ${
+                        p.isSelected
+                          ? "bg-[#DC2626]/10 font-bold text-[#DC2626]"
+                          : "hover:bg-zinc-100 dark:hover:bg-white/5 text-[#18181B] dark:text-[#F4F4F5]"
+                      }`}
+                    >
+                      <td className="py-2.5 flex items-center gap-1.5">
+                        <span>{p.nameEn}</span>
+                        {p.isSelected && (
+                          <span className="text-[9px] px-1.5 py-0.5 rounded bg-[#DC2626] text-white font-bold">Selected</span>
+                        )}
+                      </td>
+                      <td className="py-2.5 text-right font-mono">रू {p.tax.toLocaleString("en-IN")}</td>
+                      <td className="py-2.5 text-right font-mono text-[#71717A]">रू 500</td>
+                      <td className="py-2.5 text-right font-mono font-bold">रू {p.total.toLocaleString("en-IN")}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
 
         {/* Official Disclaimer Box */}

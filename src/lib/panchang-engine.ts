@@ -84,33 +84,52 @@ function normDeg(deg: number): number {
 }
 
 export function getPanchangForDate(date: Date): PanchangData {
-  const jd = toJulianDay(date);
+  // Normalize time to Nepal sunrise (06:00 NPT = 00:15 UTC) to evaluate true Udaya Tithi
+  const evalDate = new Date(date.getTime());
+  if (evalDate.getUTCHours() === 0 && evalDate.getUTCMinutes() === 0) {
+    evalDate.setUTCHours(0, 15, 0, 0);
+  }
+
+  const jd = toJulianDay(evalDate);
   const T = (jd - 2451545.0) / 36525.0;
 
-  // 1. Sun Ecliptic Longitude
-  const L0 = normDeg(280.46646 + 36000.76983 * T);
-  const M = normDeg(357.52911 + 35999.05029 * T);
+  // 1. Sun Ecliptic Longitude (Meeus accurate model)
+  const L0 = normDeg(280.46646 + 36000.76983 * T + 0.0003032 * T * T);
+  const M = normDeg(357.52911 + 35999.05029 * T - 0.0001537 * T * T);
   const C =
-    (1.914602 - 0.004817 * T) * Math.sin(rad(M)) +
+    (1.914602 - 0.004817 * T - 0.000014 * T * T) * Math.sin(rad(M)) +
     (0.019993 - 0.000101 * T) * Math.sin(rad(2 * M)) +
     0.000289 * Math.sin(rad(3 * M));
   const sunLong = normDeg(L0 + C);
 
-  // 2. Moon Ecliptic Longitude
-  const LM = normDeg(218.3165 + 481267.8813 * T);
-  const MM = normDeg(134.9634 + 477198.8676 * T);
-  const F = normDeg(93.2721 + 483202.0175 * T);
-  const D = normDeg(297.8502 + 445267.1115 * T);
+  // 2. Moon Ecliptic Longitude (Meeus Ch. 47 perturbation series)
+  const Lp = normDeg(218.3164477 + 481267.88123421 * T - 0.0015786 * T * T);
+  const D = normDeg(297.8501921 + 445267.1114034 * T - 0.0018819 * T * T);
+  const MM = normDeg(134.9633964 + 477198.8675055 * T + 0.0087414 * T * T);
+  const Msun = M;
+  const F = normDeg(93.272095 + 483202.0175233 * T - 0.0036539 * T * T);
 
   const deltaLong =
-    6.2886 * Math.sin(rad(MM)) +
-    1.274 * Math.sin(rad(2 * D - MM)) +
-    0.6583 * Math.sin(rad(2 * D)) +
-    0.2136 * Math.sin(rad(2 * MM)) -
-    0.1851 * Math.sin(rad(M)) -
-    0.1143 * Math.sin(rad(2 * F));
+    6.288774 * Math.sin(rad(MM)) +
+    1.274027 * Math.sin(rad(2 * D - MM)) +
+    0.658314 * Math.sin(rad(2 * D)) +
+    0.213618 * Math.sin(rad(2 * MM)) -
+    0.185116 * Math.sin(rad(Msun)) -
+    0.114332 * Math.sin(rad(2 * F)) +
+    0.058793 * Math.sin(rad(2 * D - 2 * MM)) +
+    0.057066 * Math.sin(rad(2 * D - Msun - MM)) +
+    0.053322 * Math.sin(rad(2 * D + MM)) +
+    0.0461 * Math.sin(rad(2 * D - Msun)) +
+    0.041 * Math.sin(rad(Msun - MM)) -
+    0.0347 * Math.sin(rad(D)) -
+    0.0305 * Math.sin(rad(Msun + MM)) +
+    0.0153 * Math.sin(rad(2 * D - 2 * F)) -
+    0.0125 * Math.sin(rad(2 * F + MM)) -
+    0.0109 * Math.sin(rad(2 * F - MM)) +
+    0.0107 * Math.sin(rad(4 * D - MM)) +
+    0.0075 * Math.sin(rad(4 * D - 2 * MM));
 
-  const moonLong = normDeg(LM + deltaLong);
+  const moonLong = normDeg(Lp + deltaLong);
 
   // 3. Elongation & Tithi (1 to 30)
   const elongation = normDeg(moonLong - sunLong);

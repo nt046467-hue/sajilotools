@@ -2232,6 +2232,10 @@ export const TOOL_CONTENT_MAP: Record<string, ToolContent> = {
       {
         question: "How do I convert Lalpurja square meters into Ropani or Bigha?",
         answer: "Enter your land area in Square Meters in the calculator; it will automatically convert into both Ropani-Aana-Paisa-Daam and Bigha-Kattha-Dhur equivalents."
+      },
+      {
+        question: "What is Kanal-Marla land measurement in Sudurpashchim Nepal?",
+        answer: "In Sudurpashchim Province (districts like Kanchanpur and Kailali), Kanal and Marla are also widely used alongside Bigha-Kattha. 1 Kanal = 20 Marla = 5,445 sq ft (505.86 sq meters). 1 Marla = 272.25 sq ft."
       }
     ]
   },

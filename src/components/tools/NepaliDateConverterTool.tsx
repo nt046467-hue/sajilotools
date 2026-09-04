@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect } from "react";
 import NepaliDate from "nepali-date-converter";
 import { Calendar, ArrowLeftRight, Copy, Check, Info, Clock, CalendarDays } from "lucide-react";
 import CalculatorCrossLink from "@/components/tools/shared/CalculatorCrossLink";
+import BsDatePicker from "@/components/tools/shared/BsDatePicker";
 
 const NEPALI_MONTHS_EN = [
   "Baisakh", "Jestha", "Ashadh", "Shrawan", "Bhadra", "Ashwin",
@@ -184,86 +185,16 @@ export default function NepaliDateConverterTool() {
           </div>
 
           {mode === "bs-to-ad" ? (
-            /* BS Date Selectors */
+            /* BS Date Picker via Shared Component */
             <div className="space-y-4">
-              <div className="grid grid-cols-3 gap-2 sm:gap-3">
-                <div>
-                  <label className="block text-xs font-semibold text-[#71717A] mb-1.5">
-                    Year (साल)
-                  </label>
-                  <select
-                    value={bsYear}
-                    onChange={(e) => setBsYear(Number(e.target.value))}
-                    className="w-full px-3 py-2.5 rounded-xl border border-[#E4E0D8] dark:border-[#1E2338] bg-[#FAFAF8] dark:bg-[#1E2338] text-[#18181B] dark:text-[#F4F4F5] font-bold text-sm outline-none focus:border-[#DC2626]"
-                  >
-                    {yearsOptions.map((y) => (
-                      <option key={y} value={y}>
-                        {y} BS
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-[#71717A] mb-1.5">
-                    Month (महिना)
-                  </label>
-                  <select
-                    value={bsMonth}
-                    onChange={(e) => setBsMonth(Number(e.target.value))}
-                    className="w-full px-3 py-2.5 rounded-xl border border-[#E4E0D8] dark:border-[#1E2338] bg-[#FAFAF8] dark:bg-[#1E2338] text-[#18181B] dark:text-[#F4F4F5] font-bold text-sm outline-none focus:border-[#DC2626]"
-                  >
-                    {NEPALI_MONTHS_EN.map((m, idx) => (
-                      <option key={m} value={idx + 1}>
-                        {idx + 1}. {NEPALI_MONTHS_NP[idx]} ({m})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-[#71717A] mb-1.5">
-                    Day (गते)
-                  </label>
-                  <select
-                    value={bsDay}
-                    onChange={(e) => setBsDay(Number(e.target.value))}
-                    className="w-full px-3 py-2.5 rounded-xl border border-[#E4E0D8] dark:border-[#1E2338] bg-[#FAFAF8] dark:bg-[#1E2338] text-[#18181B] dark:text-[#F4F4F5] font-bold text-sm outline-none focus:border-[#DC2626]"
-                  >
-                    {Array.from({ length: 32 }, (_, i) => i + 1).map((d) => (
-                      <option key={d} value={d}>
-                        {d} गते
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              {/* Quick Jump Buttons */}
-              <div className="pt-2 flex flex-wrap gap-1.5">
-                <button
-                  type="button"
-                  onClick={() => setBsDay((prev) => Math.max(1, prev - 1))}
-                  className="px-2.5 py-1 rounded-lg text-[11px] font-medium bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/10"
-                >
-                  -1 Day
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setBsDay((prev) => Math.min(32, prev + 1))}
-                  className="px-2.5 py-1 rounded-lg text-[11px] font-medium bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-white/10"
-                >
-                  +1 Day
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setBsMonth(1);
-                    setBsDay(1);
-                  }}
-                  className="px-2.5 py-1 rounded-lg text-[11px] font-medium bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] text-[#DC2626] hover:bg-[#DC2626]/10"
-                >
-                  Baisakh 1 (New Year)
-                </button>
-              </div>
+              <BsDatePicker
+                value={{ year: bsYear, month: bsMonth, day: bsDay }}
+                onChange={({ year, month, day }) => {
+                  setBsYear(year);
+                  setBsMonth(month);
+                  setBsDay(day);
+                }}
+              />
             </div>
           ) : (
             /* AD Date Picker */
