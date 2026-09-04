@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Building2, Search, MapPin, Copy, Check, ShieldCheck, Info, CheckCircle2, Globe, Hash, Share2 } from "lucide-react";
+import { Building2, Search, MapPin, Copy, Check, ShieldCheck, Info, CheckCircle2, Globe, Hash } from "lucide-react";
 
 export interface LocalUnit {
   id: string;

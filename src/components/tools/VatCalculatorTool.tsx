@@ -7,7 +7,7 @@ type VatMode = "exclusive" | "inclusive"; // exclusive = Add 13% VAT; inclusive 
 
 import { useEffect } from "react";
 import { usePersistedFormState } from "@/hooks/usePersistedFormState";
-import { Share2, RotateCcw } from "lucide-react";
+import { RotateCcw } from "lucide-react";
 
 export default function VatCalculatorTool() {
   const [formState, setFormState, { wasRestored, clearSaved }] = usePersistedFormState(
@@ -20,7 +20,6 @@ export default function VatCalculatorTool() {
   );
 
   const [copied, setCopied] = useState<boolean>(false);
-  const [copiedLink, setCopiedLink] = useState<boolean>(false);
 
   // Read URL query parameters on mount
   useEffect(() => {
@@ -47,17 +46,6 @@ export default function VatCalculatorTool() {
   const setAmount = (val: number) => setFormState((prev) => ({ ...prev, amount: val }));
   const setMode = (val: VatMode) => setFormState((prev) => ({ ...prev, mode: val }));
   const setVatRate = (val: number) => setFormState((prev) => ({ ...prev, vatRate: val }));
-
-  const handleShareLink = () => {
-    if (typeof window === "undefined") return;
-    const url = new URL(window.location.href);
-    url.searchParams.set("amount", amount.toString());
-    url.searchParams.set("mode", mode);
-    url.searchParams.set("rate", vatRate.toString());
-    navigator.clipboard.writeText(url.toString());
-    setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 2000);
-  };
 
   const vatCalculation = useMemo(() => {
     const val = amount;
@@ -127,20 +115,6 @@ export default function VatCalculatorTool() {
             <h4 className="text-xs font-bold text-[#71717A] uppercase tracking-wider flex items-center gap-1.5">
               <Receipt size={14} className="text-[#22C55E]" /> Nepal VAT Calculation Mode
             </h4>
-            <button
-              onClick={handleShareLink}
-              className="px-2.5 py-1 rounded-lg border border-[#E4E0D8] dark:border-[#2A2F48] text-[11px] font-bold text-[#18181B] dark:text-[#F4F4F5] hover:border-[#22C55E] transition-all flex items-center gap-1"
-            >
-              {copiedLink ? (
-                <>
-                  <Check size={12} className="text-[#22C55E]" /> Copied!
-                </>
-              ) : (
-                <>
-                  <Share2 size={12} className="text-[#22C55E]" /> Share
-                </>
-              )}
-            </button>
           </div>
 
           {/* Mode Selector */}

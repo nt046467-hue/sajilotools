@@ -2,10 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
-import { Heart } from "lucide-react";
+import { Heart, Share2 } from "lucide-react";
 import type { ToolDef, CategoryDef } from "@/lib/tools-registry";
 import { trackToolUse } from "@/lib/analytics";
 import ToolFeedbackWidget from "@/components/tools/shared/ToolFeedbackWidget";
+import ShareModal from "@/components/shared/ShareModal";
 
 import { ToolWorkstationSkeleton } from "@/components/tools/shared/ToolPageSkeleton";
 
@@ -115,8 +116,9 @@ export default function ToolPageClient({
     } catch {}
   }, [tool, category]);
 
-  // ── Favorites ──
+  // ── Favorites & Share ──
   const [isFav, setIsFav] = useState(false);
+  const [showShare, setShowShare] = useState(false);
 
   useEffect(() => {
     const syncFav = () => {
@@ -174,21 +176,44 @@ export default function ToolPageClient({
 
   return (
     <div className="space-y-4 sm:space-y-6 print:space-y-0 print:p-0 print:m-0">
-      {/* Favorite Action Bar */}
-      <div className="print:hidden flex items-center justify-end">
+      {/* Favorite & Share Action Bar */}
+      <div className="print:hidden flex items-center justify-end gap-2">
         <button
+          type="button"
+          onClick={() => setShowShare(true)}
+          className="min-h-[34px] px-3 py-1.5 rounded-xl border transition-all flex items-center gap-1.5 text-xs font-bold bg-[#FAFAF8] dark:bg-[#1E2338] border-[#E4E0D8] dark:border-[#2A2F48] text-[#71717A] hover:text-[#18181B] dark:hover:text-[#F4F4F5] hover:border-[#F5A623] cursor-pointer shadow-2xs"
+          title={`Share ${tool.name}`}
+        >
+          <Share2 size={13} className="text-[#F5A623]" />
+          <span>Share</span>
+        </button>
+
+        <button
+          type="button"
           onClick={toggleFavorite}
-          className={`px-3 py-1.5 rounded-xl border transition-all flex items-center gap-1.5 text-xs font-bold ${
+          className={`min-h-[34px] px-3 py-1.5 rounded-xl border transition-all flex items-center gap-1.5 text-xs font-bold shadow-2xs cursor-pointer ${
             isFav
               ? "bg-rose-500/10 border-rose-500/30 text-rose-600 dark:text-rose-400"
               : "bg-[#FAFAF8] dark:bg-[#1E2338] border-[#E4E0D8] dark:border-[#2A2F48] text-[#71717A] hover:text-rose-600 hover:border-rose-500/30"
           }`}
           title={isFav ? "Remove from Favorites" : "Add to Favorites"}
         >
-          <Heart size={14} className={isFav ? "fill-rose-500 text-rose-500" : ""} />
+          <Heart size={13} className={isFav ? "fill-rose-500 text-rose-500" : ""} />
           <span>{isFav ? "Favorited" : "Favorite"}</span>
         </button>
       </div>
+
+      {/* Reusable Device-Friendly Share Modal */}
+      <ShareModal
+        isOpen={showShare}
+        onClose={() => setShowShare(false)}
+        title={tool.name}
+        description={tool.desc}
+        badge={tool.badge}
+        icon={tool.icon}
+        color={tool.color}
+        category={tool.category}
+      />
 
       {/* Active Tool */}
       <ToolComponent />

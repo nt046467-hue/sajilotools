@@ -14,7 +14,6 @@ import {
   List,
   AlignLeft,
   MessageSquare,
-  Share2,
 } from "lucide-react";
 
 /* ─────────────────────── WORD BANKS ─────────────────────── */
@@ -233,7 +232,6 @@ export default function LoremIpsumTool() {
   const [htmlWrap, setHtmlWrap] = useState(initialHtml);
   const [output, setOutput] = useState("");
   const [copied, setCopied] = useState(false);
-  const [linkCopied, setLinkCopied] = useState(false);
   const [seed, setSeed] = useState(0); // bump to re-roll
 
   // Clamp count to valid range when unit changes
@@ -279,19 +277,6 @@ export default function LoremIpsumTool() {
     a.click();
     URL.revokeObjectURL(url);
   }, [output, flavor, unit, clampedCount]);
-
-  const handleShareLink = useCallback(() => {
-    const params = new URLSearchParams();
-    params.set("unit", unit);
-    params.set("count", String(clampedCount));
-    params.set("flavor", flavor);
-    if (!classicStart) params.set("classic", "0");
-    if (htmlWrap) params.set("html", "1");
-    const url = `${window.location.origin}${pathname}?${params.toString()}`;
-    navigator.clipboard.writeText(url);
-    setLinkCopied(true);
-    setTimeout(() => setLinkCopied(false), 2000);
-  }, [unit, clampedCount, flavor, classicStart, htmlWrap, pathname]);
 
   // Stats
   const stats = useMemo(() => {
@@ -470,17 +455,6 @@ export default function LoremIpsumTool() {
             className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold disabled:opacity-40 ${btnSecondary}`}
           >
             <Download size={13} /> Download .txt
-          </button>
-          <button
-            onClick={handleShareLink}
-            disabled={!output}
-            className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all disabled:opacity-40 ${
-              linkCopied
-                ? "bg-blue-100 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400"
-                : btnSecondary
-            }`}
-          >
-            <Share2 size={13} /> {linkCopied ? "Link Copied!" : "Share Config"}
           </button>
         </div>
 

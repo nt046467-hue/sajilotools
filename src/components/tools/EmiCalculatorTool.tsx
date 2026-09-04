@@ -18,6 +18,7 @@ import {
   GraduationCap,
   User,
   CheckCircle2,
+  RotateCcw,
 } from "lucide-react";
 import {
   ResponsiveContainer,
@@ -59,7 +60,6 @@ const PRESETS = [
 ];
 
 import { usePersistedFormState } from "@/hooks/usePersistedFormState";
-import { Share2, Check, RotateCcw } from "lucide-react";
 
 export default function EmiCalculatorTool() {
   const [formState, setFormState, { wasRestored, clearSaved }] = usePersistedFormState(
@@ -73,8 +73,6 @@ export default function EmiCalculatorTool() {
       lumpSumMonth: 12,
     }
   );
-
-  const [copiedLink, setCopiedLink] = useState(false);
 
   // Read URL query parameters on mount
   useEffect(() => {
@@ -110,17 +108,6 @@ export default function EmiCalculatorTool() {
 
   const [scheduleView, setScheduleView] = useState<"yearly" | "monthly">("yearly");
   const [showSchedule, setShowSchedule] = useState<boolean>(false);
-
-  const handleShareLink = () => {
-    if (typeof window === "undefined") return;
-    const url = new URL(window.location.href);
-    url.searchParams.set("amount", amount.toString());
-    url.searchParams.set("rate", interest.toString());
-    url.searchParams.set("years", tenureYears.toString());
-    navigator.clipboard.writeText(url.toString());
-    setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 2500);
-  };
 
   const baseEmi = useMemo(() => {
     const p = amount;
@@ -300,20 +287,6 @@ export default function EmiCalculatorTool() {
           <span className="text-xs font-bold text-[#71717A] uppercase tracking-wider flex items-center gap-1.5">
             <Calculator size={14} className="text-[#22C55E]" /> Quick Loan Presets:
           </span>
-          <button
-            onClick={handleShareLink}
-            className="px-3 py-1.5 rounded-xl border border-[#E4E0D8] dark:border-[#2A2F48] bg-[#FAFAF8] dark:bg-[#1E2338] text-xs font-bold text-[#18181B] dark:text-[#F4F4F5] hover:border-[#22C55E] transition-all flex items-center gap-1.5"
-          >
-            {copiedLink ? (
-              <>
-                <Check size={14} className="text-[#22C55E]" /> Copied Share Link!
-              </>
-            ) : (
-              <>
-                <Share2 size={14} className="text-[#22C55E]" /> Copy Shareable Link
-              </>
-            )}
-          </button>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
           {PRESETS.map((p) => {

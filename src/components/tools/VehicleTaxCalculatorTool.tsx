@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Car, Calculator, Info, ShieldCheck, AlertTriangle, CheckCircle2, RefreshCw } from "lucide-react";
+import { Car, Calculator, Info, ShieldCheck, AlertTriangle, CheckCircle2, RefreshCw, RotateCcw } from "lucide-react";
 
 type VehicleCategory = "two_wheeler" | "four_wheeler" | "ev" | "commercial";
 
@@ -24,7 +24,6 @@ const PROVINCES: ProvinceDef[] = [
 
 import { useEffect } from "react";
 import { usePersistedFormState } from "@/hooks/usePersistedFormState";
-import { Share2, Check, RotateCcw } from "lucide-react";
 
 export default function VehicleTaxCalculatorTool() {
   const [formState, setFormState, { wasRestored, clearSaved }] = usePersistedFormState(
@@ -40,8 +39,6 @@ export default function VehicleTaxCalculatorTool() {
       overdueDelay: "up_to_30_days",
     }
   );
-
-  const [copiedLink, setCopiedLink] = useState(false);
 
   // Read URL query parameters on mount
   useEffect(() => {
@@ -83,17 +80,6 @@ export default function VehicleTaxCalculatorTool() {
   const setCommercialSlab = (val: string) => setFormState((prev) => ({ ...prev, commercialSlab: val }));
   const setIsOverdue = (val: boolean) => setFormState((prev) => ({ ...prev, isOverdue: val }));
   const setOverdueDelay = (val: string) => setFormState((prev) => ({ ...prev, overdueDelay: val }));
-
-  const handleShareLink = () => {
-    if (typeof window === "undefined") return;
-    const url = new URL(window.location.href);
-    url.searchParams.set("category", category);
-    url.searchParams.set("province", provinceKey);
-    url.searchParams.set("cc", category === "two_wheeler" ? ccSlab : carCcSlab);
-    navigator.clipboard.writeText(url.toString());
-    setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 2500);
-  };
 
   // ── Calculation ─────────────────────────────────────────────────────────────
   const taxCalculation = useMemo(() => {
@@ -279,27 +265,11 @@ export default function VehicleTaxCalculatorTool() {
       )}
 
       {/* Privacy & Legal Banner */}
-      <div className="p-4 rounded-2xl bg-[#DC2626]/10 border border-[#DC2626]/20 text-[#18181B] dark:text-[#F4F4F5] flex items-center justify-between gap-2.5 text-sm font-medium flex-wrap">
-        <div className="flex items-center gap-2.5">
-          <ShieldCheck className="text-[#DC2626] shrink-0" size={18} />
-          <span>
-            🇳🇵 <strong>Blue Book Vehicle Tax Estimator (FY 2081/82 - 2082/83):</strong> Estimate annual road tax across all 7 provinces in Nepal.
-          </span>
-        </div>
-        <button
-          onClick={handleShareLink}
-          className="px-3 py-1.5 rounded-xl border border-[#E4E0D8] dark:border-[#2A2F48] bg-white dark:bg-[#141829] text-xs font-bold text-[#18181B] dark:text-[#F4F4F5] hover:border-[#DC2626] transition-all flex items-center gap-1.5 shrink-0"
-        >
-          {copiedLink ? (
-            <>
-              <Check size={14} className="text-[#DC2626]" /> Copied Share Link!
-            </>
-          ) : (
-            <>
-              <Share2 size={14} className="text-[#DC2626]" /> Share Calculation
-            </>
-          )}
-        </button>
+      <div className="p-4 rounded-2xl bg-[#DC2626]/10 border border-[#DC2626]/20 text-[#18181B] dark:text-[#F4F4F5] flex items-center gap-2.5 text-sm font-medium">
+        <ShieldCheck className="text-[#DC2626] shrink-0" size={18} />
+        <span>
+          🇳🇵 <strong>Blue Book Vehicle Tax Estimator (FY 2081/82 - 2082/83):</strong> Estimate annual road tax across all 7 provinces in Nepal.
+        </span>
       </div>
 
       {/* Main Calculator Form */}

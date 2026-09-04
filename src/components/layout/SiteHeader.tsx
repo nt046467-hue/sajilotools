@@ -211,24 +211,33 @@ export default function SiteHeader() {
     }
   };
 
-  // Bulletproof body scroll lock when mobile drawer is open
+  // Bulletproof body & html scroll lock when mobile drawer, recently used tools, or settings is open
   useEffect(() => {
-    if (!mobileOpen) return;
+    const isModalOpen = mobileOpen || historyOpen || settingsOpen;
+    if (!isModalOpen) return;
 
     const scrollY = window.scrollY;
+    const originalPosition = document.body.style.position;
+    const originalTop = document.body.style.top;
+    const originalWidth = document.body.style.width;
+    const originalOverflow = document.body.style.overflow;
+    const originalHtmlOverflow = document.documentElement.style.overflow;
+
+    document.documentElement.style.overflow = "hidden";
     document.body.style.position = "fixed";
     document.body.style.top = `-${scrollY}px`;
     document.body.style.width = "100%";
     document.body.style.overflow = "hidden";
 
     return () => {
-      document.body.style.position = "";
-      document.body.style.top = "";
-      document.body.style.width = "";
-      document.body.style.overflow = "";
+      document.documentElement.style.overflow = originalHtmlOverflow;
+      document.body.style.position = originalPosition;
+      document.body.style.top = originalTop;
+      document.body.style.width = originalWidth;
+      document.body.style.overflow = originalOverflow;
       window.scrollTo(0, scrollY);
     };
-  }, [mobileOpen]);
+  }, [mobileOpen, historyOpen, settingsOpen]);
 
   // Load history from localStorage
   useEffect(() => {

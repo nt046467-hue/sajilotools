@@ -13,7 +13,6 @@ import {
   Copy,
   Check,
   Download,
-  Share2,
   Landmark,
 } from "lucide-react";
 import { PDFDocument } from "pdf-lib";
@@ -93,7 +92,6 @@ export default function TaxCalculatorTool() {
   const [viewMode, setViewMode] = useState<"monthly" | "annual">("annual");
   const [showDeductions, setShowDeductions] = useState<boolean>(true);
   const [copied, setCopied] = useState<boolean>(false);
-  const [shareCopied, setShareCopied] = useState<boolean>(false);
 
   // Debounced URL sync
   useEffect(() => {
@@ -280,26 +278,6 @@ Calculated via SajiloTools (${SITE_URL})`;
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   }, [fiscalYear, status, hasSsf, monthlyIncome, taxCalculation]);
-
-  const copyShareLink = useCallback(async () => {
-    if (typeof navigator !== "undefined" && navigator.share) {
-      try {
-        await navigator.share({
-          title: "Nepal Income Tax & Salary TDS Calculator — SajiloTools",
-          text: `Check out my Nepal Income Tax / Salary TDS calculation: Monthly Base Salary Rs. ${monthlyIncome.toLocaleString("en-IN")}, Annual Tax Rs. ${taxCalculation.totalTax.toLocaleString("en-IN")}`,
-          url: window.location.href,
-        });
-        return;
-      } catch (err) {
-        if ((err as Error)?.name === "AbortError") return;
-      }
-    }
-    if (typeof navigator !== "undefined" && navigator.clipboard) {
-      await navigator.clipboard.writeText(window.location.href);
-      setShareCopied(true);
-      setTimeout(() => setShareCopied(false), 2000);
-    }
-  }, [monthlyIncome, taxCalculation]);
 
   const downloadPdfReport = useCallback(async () => {
     const canvas = document.createElement("canvas");
@@ -792,17 +770,6 @@ Calculated via SajiloTools (${SITE_URL})`;
                   className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-bold bg-[#1F2544] dark:bg-[#22C55E] text-white dark:text-[#0C0F1E] hover:opacity-90 transition-all shadow-sm w-full sm:w-auto"
                 >
                   <Download size={14} /> Download PDF
-                </button>
-
-                <button
-                  onClick={copyShareLink}
-                  className={`flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-bold transition-all w-full sm:w-auto ${
-                    shareCopied
-                      ? "bg-blue-100 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400"
-                      : "bg-white dark:bg-[#141829] text-[#18181B] dark:text-[#F4F4F5] border border-[#E4E0D8] dark:border-[#2A2F48] hover:bg-[#F0EDE8] dark:hover:bg-[#252A42]"
-                  }`}
-                >
-                  <Share2 size={14} /> {shareCopied ? "Link Copied!" : "Share Link"}
                 </button>
               </div>
             )}
