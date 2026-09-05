@@ -38,44 +38,10 @@ import {
 import type { CategoryDef, ToolDef } from "@/lib/tools-registry";
 import { getToolAccentStyle } from "@/lib/theme-utils";
 
-import DeveloperSuiteIcon from "@/components/shared/DeveloperSuiteIcon";
-
-const ICON_MAP: Record<string, any> = {
-  Braces: DeveloperSuiteIcon,
-  Developer: DeveloperSuiteIcon,
-  AlignLeft,
-  FileText,
-  Image: ImageIcon,
-  Calculator,
-  MapPin,
-  Code2,
-  Link2,
-  Hash,
-  Palette,
-  ShieldCheck,
-  QrCode,
-  Search,
-  Ruler,
-  Languages,
-  Maximize2,
-  RefreshCw,
-  TrendingUp,
-  Vault,
-  Receipt,
-  Calendar,
-  Keyboard,
-  Boxes,
-  Wrench,
-  ArrowLeftRight,
-  Percent,
-  GraduationCap,
-  Activity,
-  Tag,
-};
+import { getToolIcon } from "@/components/home/home-constants";
 
 function getIcon(name: string) {
-  if (name === "Braces" || name === "Developer") return DeveloperSuiteIcon;
-  return ICON_MAP[name] ?? DeveloperSuiteIcon;
+  return getToolIcon(name);
 }
 
 import CategoryIntro from "@/components/tools/shared/CategoryIntro";

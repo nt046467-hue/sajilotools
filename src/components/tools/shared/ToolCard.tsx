@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Heart, ArrowRight, Loader2, ShieldCheck } from "lucide-react";
 import { getToolAccentStyle } from "@/lib/theme-utils";
-import { ICON_MAP, BADGE_CONFIG } from "@/components/home/home-constants";
+import { ICON_MAP, BADGE_CONFIG, getToolIcon } from "@/components/home/home-constants";
 import type { ToolDef } from "@/lib/tools-registry";
 
 interface ToolCardProps {
@@ -50,7 +50,7 @@ export default function ToolCard({
   const [favorited, setFavorited] = useState(false);
   const [isNavigatingThis, setIsNavigatingThis] = useState(false);
 
-  const Icon = ICON_MAP[tool.icon] || ShieldCheck;
+  const Icon = getToolIcon(tool.icon);
 
   // Reset when route changes or user navigates back/forward
   useEffect(() => {

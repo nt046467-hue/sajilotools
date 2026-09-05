@@ -11,7 +11,7 @@ import {
   Smartphone,
 } from "lucide-react";
 import Logo from "@/components/shared/Logo";
-import { ICON_MAP } from "@/components/home/home-constants";
+import { ICON_MAP, getToolIcon } from "@/components/home/home-constants";
 
 export interface ShareModalProps {
   isOpen: boolean;
@@ -41,7 +41,7 @@ export default function ShareModal({
   const [copied, setCopied] = useState(false);
   const [canNativeShare, setCanNativeShare] = useState(false);
 
-  const ToolIcon = (icon && ICON_MAP[icon]) ? ICON_MAP[icon] : null;
+  const ToolIcon = icon ? getToolIcon(icon) : null;
 
   // Determine current active URL (window or prop)
   const activeUrl = typeof window !== "undefined" ? (url || window.location.href) : (url || "https://sajilotools.com");

@@ -7,11 +7,18 @@ export default function PwaRegister() {
   const [isOffline, setIsOffline] = useState(false);
 
   useEffect(() => {
-    // Register service worker
+    // Register service worker after window load to protect initial render performance
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("/sw.js").catch(() => {
-        // SW registration failed — fail silently
-      });
+      const registerSW = () => {
+        navigator.serviceWorker.register("/sw.js").catch(() => {
+          // SW registration failed — fail silently
+        });
+      };
+      if (document.readyState === "complete") {
+        registerSW();
+      } else {
+        window.addEventListener("load", registerSW, { once: true });
+      }
     }
 
     // Offline detection

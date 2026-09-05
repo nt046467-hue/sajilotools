@@ -1,9 +1,8 @@
-"use client";
-
 import Link from "next/link";
 import Logo from "@/components/shared/Logo";
 import { Heart } from "lucide-react";
 import AdUnit from "@/components/AdUnit";
+import CookiePreferencesButton from "@/components/layout/CookiePreferencesButton";
 
 const NAV_LINKS = [
   { name: "PDF Tools", href: "/tools/pdf" },
@@ -112,17 +111,7 @@ export default function SiteFooter() {
                 </li>
               ))}
               <li>
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (typeof window !== "undefined") {
-                      window.dispatchEvent(new Event("sajilo_open_cookie_consent"));
-                    }
-                  }}
-                  className="text-sm text-muted-foreground hover:text-foreground transition-colors text-left"
-                >
-                  Cookie Preferences
-                </button>
+                <CookiePreferencesButton />
               </li>
             </ul>
           </div>

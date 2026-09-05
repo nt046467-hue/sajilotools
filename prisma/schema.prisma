@@ -21,15 +21,16 @@ model User {
 }
 
 model ShortLink {
-  id        String    @id @default(cuid())
-  slug      String    @unique
-  longUrl   String
-  clicks    Int       @default(0)
-  userId    String?
-  isActive  Boolean   @default(true)
-  expiresAt DateTime?
-  createdAt DateTime  @default(now())
-  user      User?     @relation(fields: [userId], references: [id])
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  longUrl     String
+  clicks      Int       @default(0)
+  userId      String?
+  isActive    Boolean   @default(true)
+  expiresAt   DateTime?
+  deleteToken String?
+  createdAt   DateTime  @default(now())
+  user        User?     @relation(fields: [userId], references: [id])
 }
 
 model Subscription {

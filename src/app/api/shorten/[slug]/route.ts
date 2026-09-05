@@ -19,11 +19,16 @@ export async function DELETE(
     const userId = (session?.user as any)?.id;
     const userRole = (session?.user as any)?.role;
 
-    if (!session || !userId) {
-      return NextResponse.json(
-        { error: "Authentication required to manage links." },
-        { status: 401 }
-      );
+    // Check for deleteToken from request body, query params, or headers
+    let deleteToken: string | null = null;
+    try {
+      const body = await req.json();
+      deleteToken = body?.deleteToken || null;
+    } catch {
+      // Body might be empty
+    }
+    if (!deleteToken) {
+      deleteToken = req.nextUrl.searchParams.get("token") || req.headers.get("x-delete-token");
     }
 
     const link = await prisma.shortLink.findUnique({
@@ -31,36 +36,39 @@ export async function DELETE(
     });
 
     if (!link) {
-      return NextResponse.json({ error: "Link not found." }, { status: 404 });
+      return NextResponse.json({ success: true, message: "Link already deleted or not found." });
     }
 
-    // Check ownership: must be the creator of the link or an admin
-    if (link.userId !== userId && userRole !== "admin") {
+    // Check authorization:
+    // 1. Admin can delete any link
+    // 2. Creator with session can delete their link
+    // 3. Creator with matching deleteToken can delete their link
+    // 4. Anonymous legacy link without userId and without deleteToken can be deleted
+    const isOwnerBySession = Boolean(userId && link.userId && link.userId === userId);
+    const isAdmin = userRole === "admin";
+    const isOwnerByToken = Boolean(deleteToken && link.deleteToken && deleteToken === link.deleteToken);
+    const isLegacyAnonymous = !link.userId && !link.deleteToken;
+
+    if (!isOwnerBySession && !isAdmin && !isOwnerByToken && !isLegacyAnonymous) {
       return NextResponse.json(
         { error: "Unauthorized: You do not have permission to delete this link." },
         { status: 403 }
       );
     }
 
-    // Soft delete link
-    const updated = await prisma.shortLink.update({
+    // Truly delete the link from the database
+    await prisma.shortLink.delete({
       where: { slug },
-      data: { isActive: false },
     });
 
     return NextResponse.json({
       success: true,
-      message: `Link /s/${slug} has been disabled.`,
-      link: {
-        id: updated.id,
-        slug: updated.slug,
-        isActive: updated.isActive,
-      },
+      message: `Link /s/${slug} has been permanently deleted.`,
     });
   } catch (err: any) {
     console.error("Error in DELETE /api/shorten/[slug]:", err);
     return NextResponse.json(
-      { error: err?.message || "Failed to disable link." },
+      { error: err?.message || "Failed to delete link." },
       { status: 500 }
     );
   }

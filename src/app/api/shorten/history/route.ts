@@ -44,6 +44,7 @@ export async function GET(req: NextRequest) {
       isActive: link.isActive,
       expiresAt: link.expiresAt,
       createdAt: link.createdAt,
+      deleteToken: link.deleteToken,
     }));
 
     return NextResponse.json({

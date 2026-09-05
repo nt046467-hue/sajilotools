@@ -138,12 +138,18 @@ export async function POST(req: NextRequest) {
     }
 
     // ── Create short link ──
+    const deleteToken =
+      typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+        ? crypto.randomUUID()
+        : Math.random().toString(36).substring(2) + Date.now().toString(36);
+
     const shortLink = await prisma.shortLink.create({
       data: {
         slug,
         longUrl: url,
         userId,
         expiresAt,
+        deleteToken,
         isActive: true,
       },
     });
@@ -162,6 +168,7 @@ export async function POST(req: NextRequest) {
       expiresAt: shortLink.expiresAt,
       createdAt: shortLink.createdAt,
       userId: shortLink.userId,
+      deleteToken: shortLink.deleteToken,
     });
   } catch (err: any) {
     console.error("Error in /api/shorten POST:", err);

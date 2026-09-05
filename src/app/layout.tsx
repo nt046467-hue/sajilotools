@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 
 import { Inter, Sora, Noto_Sans_Devanagari } from "next/font/google";
 import "@/styles/index.css";
@@ -184,16 +185,15 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${inter.variable} ${sora.variable} ${devanagari.variable}`}
     >
-      <head>
+      <body className={inter.className}>
         {adsenseClientId && (
-          <script
-            async
+          <Script
+            id="adsense-script"
+            strategy="afterInteractive"
             src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClientId}`}
             crossOrigin="anonymous"
           />
         )}
-      </head>
-      <body className={inter.className}>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

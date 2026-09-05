@@ -53,7 +53,7 @@ import AdUnit from "@/components/AdUnit";
 import ToolFaqAccordion from "@/components/ToolFaqAccordion";
 import ToolAboutCollapsible from "@/components/ToolAboutCollapsible";
 
-import DeveloperSuiteIcon from "@/components/shared/DeveloperSuiteIcon";
+import { getToolIcon } from "@/components/home/home-constants";
 
 export async function generateStaticParams() {
   return TOOLS.map((tool) => ({
@@ -62,46 +62,8 @@ export async function generateStaticParams() {
   }));
 }
 
-const ICON_MAP: Record<string, any> = {
-  Braces: DeveloperSuiteIcon,
-  Developer: DeveloperSuiteIcon,
-  AlignLeft,
-  FileText,
-  Image: ImageIcon,
-  Calculator,
-  MapPin,
-  Code2,
-  Link2,
-  Hash,
-  Palette,
-  ShieldCheck,
-  QrCode,
-  Search,
-  Ruler,
-  Languages,
-  Maximize2,
-  RefreshCw,
-  TrendingUp,
-  Vault,
-  Receipt,
-  Calendar,
-  Keyboard,
-  Clock,
-  Wand2,
-  Crop,
-  Boxes,
-  Wrench,
-  Percent,
-  Cake,
-  GraduationCap,
-  Activity,
-  Tag,
-  ArrowLeftRight,
-};
-
 function getIcon(name: string) {
-  if (name === "Braces" || name === "Developer") return DeveloperSuiteIcon;
-  return ICON_MAP[name] ?? DeveloperSuiteIcon;
+  return getToolIcon(name);
 }
 
 import { SITE_CONFIG, SITE_URL, getCanonicalUrl } from "@/lib/site-config";

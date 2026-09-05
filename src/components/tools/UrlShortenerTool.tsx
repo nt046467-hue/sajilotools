@@ -30,6 +30,7 @@ export type ShortLinkItem = {
   clicks?: number;
   isActive?: boolean;
   expiresAt?: string | null;
+  deleteToken?: string;
   createdAt: string;
 };
 
@@ -200,6 +201,7 @@ export default function UrlShortenerTool() {
         clicks: data.clicks ?? 0,
         isActive: data.isActive ?? true,
         expiresAt: data.expiresAt ?? null,
+        deleteToken: data.deleteToken,
         createdAt: data.createdAt || new Date().toISOString(),
       };
 
@@ -215,10 +217,30 @@ export default function UrlShortenerTool() {
     }
   }
 
-  // ── Remove from local history ──
-  function handleRemoveLink(slug: string) {
+  // ── Permanently delete short link from DB and local history ──
+  async function handleDeleteLink(slug: string, deleteToken?: string) {
     saveHistory(history.filter((l) => l.slug !== slug));
     if (createdResult?.slug === slug) setCreatedResult(null);
+
+    try {
+      const res = await fetch(`/api/shorten/${encodeURIComponent(slug)}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ deleteToken }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok && res.status !== 404) {
+        console.warn("Delete shortlink failed on server:", data.error);
+        setBannerAlert({
+          type: "warning",
+          title: "Delete Warning",
+          message: data.error || `Could not remove /s/${slug} from the server.`,
+        });
+      }
+    } catch (err) {
+      console.warn("Network error during link deletion:", err);
+    }
   }
 
   // ── Copy ──
@@ -446,6 +468,12 @@ export default function UrlShortenerTool() {
                   >
                     <QrCode size={14} />
                   </button>
+                  <AnimatedTrashButton
+                    onDelete={() => handleDeleteLink(createdResult.slug, createdResult.deleteToken)}
+                    className="p-2 rounded-lg border border-[#E4E0D8] dark:border-[#2A2F48] bg-white dark:bg-[#1E2338] text-[#71717A] dark:text-[#A1A1AA] hover:text-red-600 hover:border-red-300 dark:hover:border-red-900 transition-colors"
+                    title="Delete short link"
+                    iconSize={14}
+                  />
                 </div>
               </div>
 
@@ -588,9 +616,9 @@ export default function UrlShortenerTool() {
                         <QrCode size={14} />
                       </button>
                       <AnimatedTrashButton
-                        onDelete={() => handleRemoveLink(item.slug)}
+                        onDelete={() => handleDeleteLink(item.slug, item.deleteToken)}
                         className="p-2 rounded-xl border border-[#E4E0D8] dark:border-[#1E2338] bg-[#FAFAF8] dark:bg-[#1E2338] text-[#71717A] dark:text-[#A1A1AA] hover:text-red-600 hover:border-red-300 dark:hover:border-red-900 transition-colors"
-                        title="Remove from history"
+                        title="Delete short link"
                         iconSize={14}
                       />
                     </div>

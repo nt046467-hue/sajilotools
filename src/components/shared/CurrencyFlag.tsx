@@ -2,6 +2,7 @@
 
 import React from "react";
 import { getCurrencyMeta } from "@/lib/currency-meta";
+import "flag-icons/css/flag-icons.min.css";
 
 interface CurrencyFlagProps {
   /** ISO 4217 currency code (e.g. "USD", "AED", "INR") */

@@ -31,7 +31,6 @@ import {
   Check,
 } from "lucide-react";
 import SearchBar from "@/components/SearchBar";
-import { TOOLS as REGISTERED_TOOLS } from "@/lib/tools-registry";
 import { CategoryAnimatedIcon, CategoryAnimatedIconHandle } from "@/components/layout/CategoryAnimatedIcon";
 import DeveloperSuiteIcon from "@/components/shared/DeveloperSuiteIcon";
 import { AnimatedTrashButton } from "@/components/shared/AnimatedTrashIcon";
@@ -254,11 +253,8 @@ export default function SiteHeader() {
       }[];
       if (!Array.isArray(saved)) return;
       const valid = saved.slice(0, 10).flatMap((item) => {
-        const tool = REGISTERED_TOOLS.find(
-          (t) => t.slug === item?.slug && t.categorySlug === item?.categorySlug
-        );
-        return tool
-          ? [{ name: tool.name, slug: tool.slug, categorySlug: tool.categorySlug }]
+        return item?.name && item?.slug && item?.categorySlug
+          ? [{ name: String(item.name), slug: String(item.slug), categorySlug: String(item.categorySlug) }]
           : [];
       });
       setRecentTools(valid);
@@ -293,8 +289,8 @@ export default function SiteHeader() {
                 <Link
                   href="/"
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${pathname === "/"
-                      ? "text-[#18181B] dark:text-white bg-black/[0.05] dark:bg-white/[0.08] font-semibold"
-                      : "text-[#52525B] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
+                    ? "text-[#18181B] dark:text-white bg-black/[0.05] dark:bg-white/[0.08] font-semibold"
+                    : "text-[#52525B] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
                     }`}
                 >
                   Home
@@ -303,8 +299,8 @@ export default function SiteHeader() {
                 <Link
                   href="/tools"
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${pathname === "/tools"
-                      ? "text-[#18181B] dark:text-white bg-black/[0.05] dark:bg-white/[0.08] font-semibold"
-                      : "text-[#52525B] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
+                    ? "text-[#18181B] dark:text-white bg-black/[0.05] dark:bg-white/[0.08] font-semibold"
+                    : "text-[#52525B] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
                     }`}
                 >
                   Tools
@@ -313,8 +309,8 @@ export default function SiteHeader() {
                 <Link
                   href="/tools/nepal"
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${pathname.startsWith("/tools/nepal")
-                      ? "text-[#18181B] dark:text-white bg-black/[0.05] dark:bg-white/[0.08] font-semibold"
-                      : "text-[#52525B] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
+                    ? "text-[#18181B] dark:text-white bg-black/[0.05] dark:bg-white/[0.08] font-semibold"
+                    : "text-[#52525B] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
                     }`}
                 >
                   Nepali Tools
@@ -323,8 +319,8 @@ export default function SiteHeader() {
                 <Link
                   href="/tools/everyday"
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${pathname.startsWith("/tools/everyday")
-                      ? "text-[#18181B] dark:text-white bg-black/[0.05] dark:bg-white/[0.08] font-semibold"
-                      : "text-[#52525B] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
+                    ? "text-[#18181B] dark:text-white bg-black/[0.05] dark:bg-white/[0.08] font-semibold"
+                    : "text-[#52525B] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
                     }`}
                 >
                   Everyday
@@ -333,8 +329,8 @@ export default function SiteHeader() {
                 <Link
                   href="/blog"
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${pathname.startsWith("/blog")
-                      ? "text-[#18181B] dark:text-white bg-black/[0.05] dark:bg-white/[0.08] font-semibold"
-                      : "text-[#52525B] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
+                    ? "text-[#18181B] dark:text-white bg-black/[0.05] dark:bg-white/[0.08] font-semibold"
+                    : "text-[#52525B] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
                     }`}
                 >
                   Guides
@@ -346,8 +342,8 @@ export default function SiteHeader() {
                     type="button"
                     onClick={() => setToolsDropdownOpen((prev) => !prev)}
                     className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${toolsDropdownOpen || pathname.startsWith("/tools/")
-                        ? "text-[#18181B] dark:text-white bg-black/[0.05] dark:bg-white/[0.08]"
-                        : "text-[#52525B] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
+                      ? "text-[#18181B] dark:text-white bg-black/[0.05] dark:bg-white/[0.08]"
+                      : "text-[#52525B] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-white hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
                       }`}
                   >
                     <span>Categories</span>
@@ -523,8 +519,8 @@ export default function SiteHeader() {
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
                   className={`flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-colors ${isActive
-                      ? "bg-black/[0.05] dark:bg-white/[0.08] text-[#18181B] dark:text-white"
-                      : "text-[#52525B] dark:text-[#A1A1AA] hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
+                    ? "bg-black/[0.05] dark:bg-white/[0.08] text-[#18181B] dark:text-white"
+                    : "text-[#52525B] dark:text-[#A1A1AA] hover:bg-black/[0.03] dark:hover:bg-white/[0.04]"
                     }`}
                 >
                   <span className="flex items-center gap-2.5">
@@ -715,11 +711,10 @@ export default function SiteHeader() {
                     <button
                       type="button"
                       onClick={() => setTheme("light")}
-                      className={`group relative flex flex-col p-1.5 rounded-xl border-2 transition-all cursor-pointer ${
-                        theme === "light"
+                      className={`group relative flex flex-col p-1.5 rounded-xl border-2 transition-all cursor-pointer ${theme === "light"
                           ? "border-[#0D9488] dark:border-[#2DD4BF] bg-[#0D9488]/[0.04] dark:bg-[#2DD4BF]/[0.06] shadow-xs"
                           : "border-[#E4E0D8] dark:border-[#1E2338] bg-black/[0.02] dark:bg-white/[0.02] hover:border-[#A1A1AA] dark:hover:border-[#3A4066]"
-                      }`}
+                        }`}
                     >
                       {/* Top-Right Check Badge */}
                       {theme === "light" && (
@@ -757,11 +752,10 @@ export default function SiteHeader() {
                     <button
                       type="button"
                       onClick={() => setTheme("dark")}
-                      className={`group relative flex flex-col p-1.5 rounded-xl border-2 transition-all cursor-pointer ${
-                        theme === "dark"
+                      className={`group relative flex flex-col p-1.5 rounded-xl border-2 transition-all cursor-pointer ${theme === "dark"
                           ? "border-[#0D9488] dark:border-[#2DD4BF] bg-[#0D9488]/[0.04] dark:bg-[#2DD4BF]/[0.06] shadow-xs"
                           : "border-[#E4E0D8] dark:border-[#1E2338] bg-black/[0.02] dark:bg-white/[0.02] hover:border-[#A1A1AA] dark:hover:border-[#3A4066]"
-                      }`}
+                        }`}
                     >
                       {/* Top-Right Check Badge */}
                       {theme === "dark" && (
@@ -799,11 +793,10 @@ export default function SiteHeader() {
                     <button
                       type="button"
                       onClick={() => setTheme("system")}
-                      className={`group relative flex flex-col p-1.5 rounded-xl border-2 transition-all cursor-pointer ${
-                        theme === "system"
+                      className={`group relative flex flex-col p-1.5 rounded-xl border-2 transition-all cursor-pointer ${theme === "system"
                           ? "border-[#0D9488] dark:border-[#2DD4BF] bg-[#0D9488]/[0.04] dark:bg-[#2DD4BF]/[0.06] shadow-xs"
                           : "border-[#E4E0D8] dark:border-[#1E2338] bg-black/[0.02] dark:bg-white/[0.02] hover:border-[#A1A1AA] dark:hover:border-[#3A4066]"
-                      }`}
+                        }`}
                     >
                       {/* Top-Right Check Badge */}
                       {theme === "system" && (
@@ -862,8 +855,8 @@ export default function SiteHeader() {
                     <button
                       onClick={togglePwa}
                       className={`px-3.5 py-1.5 text-xs font-bold rounded-xl border transition-all cursor-pointer shrink-0 ${pwaActive
-                          ? "border-rose-200 dark:border-rose-900/50 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30"
-                          : "border-emerald-200 dark:border-emerald-900/50 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
+                        ? "border-rose-200 dark:border-rose-900/50 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30"
+                        : "border-emerald-200 dark:border-emerald-900/50 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/30"
                         }`}
                     >
                       {pwaActive ? "Turn Off" : "Enable"}

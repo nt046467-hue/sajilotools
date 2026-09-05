@@ -64,60 +64,7 @@ import { searchTools, getPopularSuggestions } from "@/lib/search-engine";
 import { TOOLS as ALL_TOOLS, ToolDef } from "@/lib/tools-registry";
 import { getToolAccentStyle } from "@/lib/theme-utils";
 import { trackSearch } from "@/lib/analytics";
-import DeveloperSuiteIcon from "@/components/shared/DeveloperSuiteIcon";
-
-const ICON_MAP: Record<string, React.ElementType> = {
-  Braces: DeveloperSuiteIcon,
-  Developer: DeveloperSuiteIcon,
-  AlignLeft,
-  FileText,
-  Image: ImageIcon,
-  Calculator,
-  Ruler,
-  Code2,
-  Link2,
-  Hash,
-  Search,
-  Palette,
-  ShieldCheck,
-  QrCode,
-  Clock,
-  Languages,
-  Maximize2,
-  Crop,
-  RefreshCw,
-  Wand2,
-  Keyboard,
-  Calendar,
-  Vault,
-  Receipt,
-  Boxes,
-  Wrench,
-  MapPin,
-  Stamp,
-  FileImage,
-  Minimize2,
-  Percent,
-  Landmark,
-  Gem,
-  Fingerprint,
-  KeySquare,
-  Clock4,
-  FileArchive,
-  Squircle,
-  FlipHorizontal,
-  CalendarDays,
-  Scale,
-  Car,
-  Building2,
-  ArrowLeftRight,
-  GraduationCap,
-  Activity,
-  Tag,
-  Flame,
-  HeartPulse,
-  Cake,
-};
+import { getToolIcon } from "@/components/home/home-constants";
 
 interface SearchBarProps {
   large?: boolean;
@@ -424,7 +371,7 @@ export default function SearchBar({
             {searchResults.length > 0 ? (
               searchResults.map((res, idx) => {
                 const tool = res.tool;
-                const IconComponent = ICON_MAP[tool.icon] || Braces;
+                const IconComponent = getToolIcon(tool.icon);
                 const isSelected = idx === selectedIndex;
 
                 return (

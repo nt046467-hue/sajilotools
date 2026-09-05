@@ -37,6 +37,7 @@ async function main() {
       "userId" TEXT,
       "isActive" BOOLEAN NOT NULL DEFAULT 1,
       "expiresAt" DATETIME,
+      "deleteToken" TEXT,
       "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
     );`,
 
@@ -109,7 +110,8 @@ async function main() {
   // Safe migrations for newly added columns on existing databases
   const alterMigrations = [
     `ALTER TABLE "ShortLink" ADD COLUMN "isActive" BOOLEAN NOT NULL DEFAULT 1;`,
-    `ALTER TABLE "ShortLink" ADD COLUMN "expiresAt" DATETIME;`
+    `ALTER TABLE "ShortLink" ADD COLUMN "expiresAt" DATETIME;`,
+    `ALTER TABLE "ShortLink" ADD COLUMN "deleteToken" TEXT;`
   ];
 
   for (const alterStmt of alterMigrations) {
