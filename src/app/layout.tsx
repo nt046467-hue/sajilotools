@@ -124,6 +124,7 @@ export const metadata: Metadata = {
   },
   other: {
     "google-adsense-account": "ca-pub-3896962422851508",
+    "mobile-web-app-capable": "yes",
   },
   verification: {
     google: process.env.NEXT_PUBLIC_GSC_VERIFICATION || "I67sUfONhkQebjAhygVXf7dg-WkTRcxxeNUAaIGFjH0",

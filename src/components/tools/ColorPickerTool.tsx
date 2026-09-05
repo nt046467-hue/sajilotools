@@ -1020,8 +1020,8 @@ export default function ColorPickerTool() {
     });
   };
 
-  // Mobile Touch Support: Touch & Drag to Sample Color
-  const handleCanvasTouch = (e: React.TouchEvent<HTMLCanvasElement>) => {
+  // Mobile Touch Support: Touch & Drag to Sample Color without page scrolling
+  const handleCanvasTouch = useCallback((e: React.TouchEvent<HTMLElement>) => {
     const touch = e.touches[0];
     if (!touch) return;
     const coords = getCanvasCoordinates(touch.clientX, touch.clientY);
@@ -1067,7 +1067,49 @@ export default function ColorPickerTool() {
     });
 
     drawLoupeMagnifier(coords.canvasX, coords.canvasY);
-  };
+  }, [commitColor, drawLoupeMagnifier, getCanvasCoordinates, sampleSize]);
+
+  const handleCanvasTouchEnd = useCallback(() => {
+    setIsDraggingPin(false);
+    setLoupe((l) => ({ ...l, visible: false }));
+    // Commit to picked history when user releases touch
+    setPin((currentPin) => {
+      if (currentPin.colorHex) {
+        setImagePickedColors((prev) => {
+          if (prev[0] === currentPin.colorHex) return prev;
+          return [currentPin.colorHex, ...prev.filter((c) => c !== currentPin.colorHex)].slice(0, 16);
+        });
+      }
+      return currentPin;
+    });
+  }, []);
+
+  // Prevent mobile gesture scrolling while touching/dragging inside image canvas viewport
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const viewport = viewportRef.current;
+    if (!canvas) return;
+
+    const preventTouchScroll = (e: TouchEvent) => {
+      if (e.cancelable) {
+        e.preventDefault();
+      }
+    };
+
+    canvas.addEventListener("touchstart", preventTouchScroll, { passive: false });
+    canvas.addEventListener("touchmove", preventTouchScroll, { passive: false });
+    if (viewport) {
+      viewport.addEventListener("touchmove", preventTouchScroll, { passive: false });
+    }
+
+    return () => {
+      canvas.removeEventListener("touchstart", preventTouchScroll);
+      canvas.removeEventListener("touchmove", preventTouchScroll);
+      if (viewport) {
+        viewport.removeEventListener("touchmove", preventTouchScroll);
+      }
+    };
+  }, [imageSrc]);
 
   // Zoom Controls
   const handleZoomIn = () => setZoom((z) => Math.min(3, Math.round((z + 0.25) * 100) / 100));
@@ -1233,60 +1275,66 @@ export default function ColorPickerTool() {
   return (
     <div className="space-y-6">
       {/* Top Main Navigation Bar: Workspace Switcher + Action Hub */}
-      <div className="flex flex-col gap-2 p-2.5 bg-[#FAFAF8] dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] rounded-2xl shadow-xs sm:flex-row sm:items-center sm:justify-between sm:gap-3">
-        {/* Workspace Mode Tabs — Mixer & Harmonies first */}
-        <div className="flex items-center gap-1.5 p-1 bg-white dark:bg-[#0C0F1E] border border-[#E4E0D8] dark:border-[#1E2338] rounded-xl overflow-x-auto no-scrollbar">
+      <div className="flex flex-col gap-2 p-2 sm:p-2.5 bg-[#FAFAF8] dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] rounded-2xl shadow-xs sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+        {/* Workspace Mode Tabs — 50/50 segmented on mobile, flex-auto on desktop */}
+        <div className="grid grid-cols-2 w-full sm:w-auto sm:flex sm:items-center gap-1.5 p-1 bg-white dark:bg-[#0C0F1E] border border-[#E4E0D8] dark:border-[#1E2338] rounded-xl">
           <button
             type="button"
             onClick={() => setWorkspaceMode("mixer")}
-            className={`min-h-[40px] flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap ${
+            className={`min-h-[40px] px-2.5 sm:px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer ${
               workspaceMode === "mixer"
                 ? "bg-[#1F2544] dark:bg-[#F5A623] text-white dark:text-[#0C0F1E] shadow-sm"
                 : "text-[#71717A] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-[#F4F4F5]"
             }`}
           >
-            <Sliders size={16} />
-            <span>Mixer &amp; Harmonies</span>
+            <Sliders size={15} className="shrink-0" />
+            <span className="truncate">
+              <span className="sm:hidden">Mixer</span>
+              <span className="hidden sm:inline">Mixer &amp; Harmonies</span>
+            </span>
           </button>
 
           <button
             type="button"
             onClick={() => setWorkspaceMode("image")}
-            className={`min-h-[40px] flex-1 sm:flex-none px-3 sm:px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer whitespace-nowrap ${
+            className={`min-h-[40px] px-2.5 sm:px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 sm:gap-2 cursor-pointer ${
               workspaceMode === "image"
                 ? "bg-[#1F2544] dark:bg-[#F5A623] text-white dark:text-[#0C0F1E] shadow-sm"
                 : "text-[#71717A] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-[#F4F4F5]"
             }`}
           >
-            <ImageIcon size={16} />
-            <span>Image Eyedropper</span>
-            <span className="px-1.5 rounded-full text-[10px] font-bold bg-[#F5A623] text-white dark:bg-[#1F2544] dark:text-[#F5A623]">
+            <ImageIcon size={15} className="shrink-0" />
+            <span className="truncate">
+              <span className="sm:hidden">From Image</span>
+              <span className="hidden sm:inline">Image Eyedropper</span>
+            </span>
+            <span className="px-1.5 py-0.5 rounded text-[9px] sm:text-[10px] font-bold bg-[#F5A623] text-white dark:bg-[#1F2544] dark:text-[#F5A623] shrink-0 leading-none">
               Pro
             </span>
           </button>
         </div>
 
-        {/* Quick Utility Tools */}
-        <div className="flex items-center gap-2 flex-wrap">
+        {/* Quick Utility Tools — balanced 50/50 on mobile, flex on desktop */}
+        <div className={`grid ${hasEyeDropper ? "grid-cols-2" : "grid-cols-1"} sm:flex sm:items-center gap-2 w-full sm:w-auto`}>
           {hasEyeDropper && (
             <button
               type="button"
               onClick={pickFromScreen}
-              className="min-h-[40px] flex-1 sm:flex-none px-3 py-2 rounded-xl bg-white dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] text-[#18181B] dark:text-[#F4F4F5] text-xs font-bold hover:border-[#F5A623] transition-all flex items-center justify-center gap-2 shadow-2xs cursor-pointer"
+              className="min-h-[40px] px-3 py-2 rounded-xl bg-white dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] text-[#18181B] dark:text-[#F4F4F5] text-xs font-bold hover:border-[#F5A623] transition-all flex items-center justify-center gap-2 shadow-2xs cursor-pointer"
               title="Pick any pixel color from anywhere on your display"
             >
-              <Pipette size={15} className="text-[#F5A623]" />
-              <span>Screen Pick</span>
+              <Pipette size={15} className="text-[#F5A623] shrink-0" />
+              <span className="truncate">Screen Pick</span>
             </button>
           )}
 
           {/* Active Color Preview Badge */}
-          <div className="flex items-center gap-2 px-3 py-2 rounded-xl bg-white dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] shadow-2xs min-h-[40px]">
+          <div className="flex items-center justify-center sm:justify-start gap-2 px-3 py-2 rounded-xl bg-white dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] shadow-2xs min-h-[40px]">
             <span
               className="w-4 h-4 rounded-full border border-black/20 shrink-0 shadow-2xs"
               style={{ backgroundColor: safeHex }}
             />
-            <span className="text-xs font-mono font-bold text-[#18181B] dark:text-[#F4F4F5]">
+            <span className="text-xs font-mono font-bold text-[#18181B] dark:text-[#F4F4F5] tracking-wide">
               {safeHex}
             </span>
           </div>
@@ -1487,12 +1535,14 @@ export default function ColorPickerTool() {
               {/* Live Image Viewport with Draggable Reticle Pin & Loupe */}
               <div
                 ref={viewportRef}
-                className="relative overflow-hidden rounded-2xl border border-[#E4E0D8] dark:border-[#1E2338] bg-[repeating-conic-gradient(#E4E0D8_0_90deg,#FAFAF8_0_180deg)_0_0/16px_16px] dark:bg-[repeating-conic-gradient(#1E2338_0_90deg,#141829_0_180deg)_0_0/16px_16px] min-h-[190px] sm:min-h-[380px] max-h-[620px] flex items-center justify-center p-2 sm:p-3 cursor-crosshair select-none"
+                className="relative overflow-hidden rounded-2xl border border-[#E4E0D8] dark:border-[#1E2338] bg-[repeating-conic-gradient(#E4E0D8_0_90deg,#FAFAF8_0_180deg)_0_0/16px_16px] dark:bg-[repeating-conic-gradient(#1E2338_0_90deg,#141829_0_180deg)_0_0/16px_16px] min-h-[190px] sm:min-h-[380px] max-h-[620px] flex items-center justify-center p-2 sm:p-3 cursor-crosshair select-none touch-none"
+                style={{ touchAction: "none" }}
               >
                 <div
-                  className="relative transition-transform duration-75 origin-center inline-block"
+                  className="relative transition-transform duration-75 origin-center inline-block touch-none"
                   style={{
                     transform: `scale(${zoom}) translate(${panOffset.x / zoom}px, ${panOffset.y / zoom}px)`,
+                    touchAction: "none",
                   }}
                 >
                   <canvas
@@ -1502,20 +1552,20 @@ export default function ColorPickerTool() {
                     onClick={handleCanvasClick}
                     onTouchStart={handleCanvasTouch}
                     onTouchMove={handleCanvasTouch}
-                    onTouchEnd={() => {
-                      setIsDraggingPin(false);
-                      setLoupe((l) => ({ ...l, visible: false }));
-                    }}
-                    className="max-w-full h-auto rounded-xl shadow-lg block"
+                    onTouchEnd={handleCanvasTouchEnd}
+                    onTouchCancel={handleCanvasTouchEnd}
+                    className="max-w-full h-auto rounded-xl shadow-lg block touch-none select-none"
+                    style={{ touchAction: "none" }}
                   />
 
                   {/* Interactive Pin Marker on Canvas Coordinates */}
                   {pin.visible && canvasRef.current && (
                     <div
-                      className="absolute pointer-events-auto transform -translate-x-1/2 -translate-y-1/2 z-30 cursor-grab active:cursor-grabbing group/pin"
+                      className="absolute pointer-events-auto transform -translate-x-1/2 -translate-y-1/2 z-30 cursor-grab active:cursor-grabbing group/pin touch-none select-none"
                       style={{
                         left: `${(pin.x / canvasRef.current.width) * 100}%`,
                         top: `${(pin.y / canvasRef.current.height) * 100}%`,
+                        touchAction: "none",
                       }}
                       onMouseDown={(e) => {
                         e.stopPropagation();
@@ -1526,14 +1576,10 @@ export default function ColorPickerTool() {
                         };
                         window.addEventListener("mouseup", handleGlobalMouseUp);
                       }}
-                      onTouchStart={(e) => {
-                        e.stopPropagation();
-                        setIsDraggingPin(true);
-                      }}
-                      onTouchEnd={() => {
-                        setIsDraggingPin(false);
-                        setLoupe((l) => ({ ...l, visible: false }));
-                      }}
+                      onTouchStart={handleCanvasTouch}
+                      onTouchMove={handleCanvasTouch}
+                      onTouchEnd={handleCanvasTouchEnd}
+                      onTouchCancel={handleCanvasTouchEnd}
                       title="Drag to inspect or move pin"
                     >
                       {/* Outer pulsing beacon ring */}

@@ -286,9 +286,11 @@ export default function ShareModal({
               <p className="text-[11px] sm:text-xs text-[#71717A] line-clamp-1 sm:line-clamp-2 mt-0.5 leading-relaxed">
                 {description}
               </p>
-              <div className="flex items-center gap-1.5 mt-1 text-[10px] text-[#71717A] font-medium">
+              <div className="flex items-center gap-1.5 mt-1.5 text-[10px] sm:text-[11px] font-medium">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0 inline-block" />
-                <span className="tracking-tight">sajilotools.com</span>
+                <span className="font-bold tracking-tight text-[#18181B] dark:text-[#F4F4F5]">
+                  Sajilo<span className="text-[#0D9488] dark:text-[#38BDF8]">Tools</span>
+                </span>
               </div>
             </div>
           </div>

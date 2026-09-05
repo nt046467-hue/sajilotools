@@ -10,7 +10,7 @@ import {
   MIN_BS_YEAR,
   MAX_BS_YEAR,
 } from "@/lib/bs-date-utils";
-import { ChevronLeft, ChevronRight, Calendar, Sparkles } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar, PartyPopper } from "lucide-react";
 
 export interface BsDateValue {
   year: number;
@@ -231,7 +231,7 @@ export default function BsDatePicker({
             onClick={handleSetBaisakh1}
             className="px-2.5 py-1 rounded-lg text-[11px] font-medium bg-[#FAFAF8] dark:bg-[#1E2338] border border-[#E4E0D8] dark:border-[#2A2F48] text-[#DC2626] hover:bg-[#DC2626]/10 transition-colors inline-flex items-center gap-1 active:scale-[0.97]"
           >
-            <Sparkles size={11} />
+            <PartyPopper size={11} />
             <span>Baisakh 1 (New Year)</span>
           </button>
           <span className="text-[10px] text-zinc-400 dark:text-zinc-500 ml-auto hidden sm:inline">

@@ -44,15 +44,17 @@ let cachedData: {
   fetchedAt: number;
 } | null = null;
 
-const CACHE_DURATION_MS = 30 * 60 * 1000; // 30 minutes cache
+const CACHE_DURATION_MS = 15 * 60 * 1000; // 15 minutes cache
 
-export async function GET() {
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const isForce = searchParams.get("force") === "true";
   const now = Date.now();
 
-  if (cachedData && now - cachedData.fetchedAt < CACHE_DURATION_MS) {
+  if (!isForce && cachedData && now - cachedData.fetchedAt < CACHE_DURATION_MS) {
     return NextResponse.json(cachedData, {
       headers: {
-        "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=86400",
+        "Cache-Control": "public, s-maxage=900, stale-while-revalidate=86400",
       },
     });
   }
