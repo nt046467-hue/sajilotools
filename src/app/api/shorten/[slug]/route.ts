@@ -3,6 +3,9 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function DELETE(
   req: NextRequest,
   { params }: { params: { slug: string } | Promise<{ slug: string }> }
@@ -19,16 +22,17 @@ export async function DELETE(
     const userId = (session?.user as any)?.id;
     const userRole = (session?.user as any)?.role;
 
-    // Check for deleteToken from request body, query params, or headers
-    let deleteToken: string | null = null;
-    try {
-      const body = await req.json();
-      deleteToken = body?.deleteToken || null;
-    } catch {
-      // Body might be empty
-    }
+    // Check for deleteToken from query params, headers, or body
+    let deleteToken: string | null =
+      req.nextUrl.searchParams.get("token") || req.headers.get("x-delete-token");
+
     if (!deleteToken) {
-      deleteToken = req.nextUrl.searchParams.get("token") || req.headers.get("x-delete-token");
+      try {
+        const body = await req.json();
+        deleteToken = body?.deleteToken || null;
+      } catch {
+        // Body might be empty or stripped
+      }
     }
 
     const link = await prisma.shortLink.findUnique({
@@ -39,24 +43,24 @@ export async function DELETE(
       return NextResponse.json({ success: true, message: "Link already deleted or not found." });
     }
 
-    // Check authorization:
-    // 1. Admin can delete any link
-    // 2. Creator with session can delete their link
-    // 3. Creator with matching deleteToken can delete their link
-    // 4. Anonymous legacy link without userId and without deleteToken can be deleted
-    const isOwnerBySession = Boolean(userId && link.userId && link.userId === userId);
-    const isAdmin = userRole === "admin";
-    const isOwnerByToken = Boolean(deleteToken && link.deleteToken && deleteToken === link.deleteToken);
-    const isLegacyAnonymous = !link.userId && !link.deleteToken;
+    // Authorization:
+    // 1. If link belongs to a registered user, strictly enforce ownership
+    if (link.userId) {
+      const isOwnerBySession = Boolean(userId && link.userId === userId);
+      const isAdmin = userRole === "admin";
+      const isOwnerByToken = Boolean(deleteToken && link.deleteToken && deleteToken === link.deleteToken);
 
-    if (!isOwnerBySession && !isAdmin && !isOwnerByToken && !isLegacyAnonymous) {
-      return NextResponse.json(
-        { error: "Unauthorized: You do not have permission to delete this link." },
-        { status: 403 }
-      );
+      if (!isOwnerBySession && !isAdmin && !isOwnerByToken) {
+        return NextResponse.json(
+          { error: "Unauthorized: This link belongs to a registered user. Please log in to delete it." },
+          { status: 403 }
+        );
+      }
     }
+    // 2. If link.userId is null, it is an anonymous/guest link.
+    // Allow deletion so guest users on any device can delete and reuse their alias.
 
-    // Truly delete the link from the database
+    // Permanently remove from the database
     await prisma.shortLink.delete({
       where: { slug },
     });

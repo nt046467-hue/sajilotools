@@ -5,6 +5,9 @@ import { prisma } from "@/lib/prisma";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { checkSafeUrl } from "@/lib/safe-browsing";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 // Valid URL schemes we'll accept
 const ALLOWED_SCHEMES = /^https?:\/\//i;
 
@@ -112,10 +115,17 @@ export async function POST(req: NextRequest) {
         where: { slug },
       });
       if (existing) {
-        return NextResponse.json(
-          { error: `Alias "${slug}" is already taken. Try another one.` },
-          { status: 409 }
-        );
+        // If the alias was previously deactivated or expired, safely clean it up so it can be re-claimed
+        if (!existing.isActive || (existing.expiresAt && new Date(existing.expiresAt) < new Date())) {
+          await prisma.shortLink.delete({
+            where: { slug },
+          });
+        } else {
+          return NextResponse.json(
+            { error: `Alias "${slug}" is already taken. Try another one.` },
+            { status: 409 }
+          );
+        }
       }
     } else {
       // Generate unique random slug

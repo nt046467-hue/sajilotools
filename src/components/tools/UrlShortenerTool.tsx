@@ -219,27 +219,50 @@ export default function UrlShortenerTool() {
 
   // ── Permanently delete short link from DB and local history ──
   async function handleDeleteLink(slug: string, deleteToken?: string) {
+    const previousHistory = [...history];
+    const previousCreated = createdResult;
+
+    // Optimistically update UI
     saveHistory(history.filter((l) => l.slug !== slug));
     if (createdResult?.slug === slug) setCreatedResult(null);
 
     try {
-      const res = await fetch(`/api/shorten/${encodeURIComponent(slug)}`, {
+      const queryParam = deleteToken ? `?token=${encodeURIComponent(deleteToken)}` : "";
+      const res = await fetch(`/api/shorten/${encodeURIComponent(slug)}${queryParam}`, {
         method: "DELETE",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(deleteToken ? { "X-Delete-Token": deleteToken } : {}),
+        },
         body: JSON.stringify({ deleteToken }),
       });
 
       const data = await res.json().catch(() => ({}));
       if (!res.ok && res.status !== 404) {
         console.warn("Delete shortlink failed on server:", data.error);
+        // Rollback on server error
+        saveHistory(previousHistory);
+        if (previousCreated?.slug === slug) setCreatedResult(previousCreated);
         setBannerAlert({
           type: "warning",
-          title: "Delete Warning",
-          message: data.error || `Could not remove /s/${slug} from the server.`,
+          title: "Delete Failed",
+          message: data.error || `Could not delete /s/${slug} from the server.`,
         });
+      } else {
+        setBannerAlert({
+          type: "warning",
+          title: "Link Deleted",
+          message: `Short link /s/${slug} was permanently deleted from the database.`,
+        });
+        setTimeout(() => {
+          setBannerAlert((curr) => (curr?.title === "Link Deleted" ? null : curr));
+        }, 3500);
       }
     } catch (err) {
       console.warn("Network error during link deletion:", err);
+      // Rollback on network failure
+      saveHistory(previousHistory);
+      if (previousCreated?.slug === slug) setCreatedResult(previousCreated);
     }
   }
 
@@ -437,11 +460,21 @@ export default function UrlShortenerTool() {
                     Link Created
                   </span>
                 </div>
-                {createdResult.expiresAt && (
-                  <span className="text-[11px] font-medium text-amber-600 dark:text-amber-400 flex items-center gap-1 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded-md">
-                    <Clock size={10} /> Expires {new Date(createdResult.expiresAt).toLocaleDateString()}
-                  </span>
-                )}
+                <div className="flex items-center gap-2">
+                  {createdResult.expiresAt && (
+                    <span className="text-[11px] font-medium text-amber-600 dark:text-amber-400 flex items-center gap-1 bg-amber-50 dark:bg-amber-950/40 px-2 py-0.5 rounded-md">
+                      <Clock size={10} /> Expires {new Date(createdResult.expiresAt).toLocaleDateString()}
+                    </span>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => setCreatedResult(null)}
+                    className="p-1 rounded-lg text-[#71717A] dark:text-[#A1A1AA] hover:text-[#18181B] dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+                    title="Dismiss"
+                  >
+                    <X size={15} />
+                  </button>
+                </div>
               </div>
 
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 bg-white dark:bg-[#141829] rounded-xl border border-[#E4E0D8] dark:border-[#1E2338]">
@@ -468,12 +501,6 @@ export default function UrlShortenerTool() {
                   >
                     <QrCode size={14} />
                   </button>
-                  <AnimatedTrashButton
-                    onDelete={() => handleDeleteLink(createdResult.slug, createdResult.deleteToken)}
-                    className="p-2 rounded-lg border border-[#E4E0D8] dark:border-[#2A2F48] bg-white dark:bg-[#1E2338] text-[#71717A] dark:text-[#A1A1AA] hover:text-red-600 hover:border-red-300 dark:hover:border-red-900 transition-colors"
-                    title="Delete short link"
-                    iconSize={14}
-                  />
                 </div>
               </div>
 
