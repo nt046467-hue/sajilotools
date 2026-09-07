@@ -32,8 +32,7 @@ function Badge({ label }: { label: string }) {
 }
 
 import ToolCard from "@/components/tools/shared/ToolCard";
-import { CategoryAnimatedIcon, CategoryAnimatedIconHandle } from "@/components/layout/CategoryAnimatedIcon";
-import { useRef } from "react";
+import { getToolIcon } from "@/components/home/home-constants";
 import type { CategoryDef } from "@/lib/tools-registry";
 
 export function ToolCardClient({ tool }: { tool: ToolDef }) {
@@ -47,19 +46,11 @@ export function HomeCategoryCard({
   cat: CategoryDef;
   toolCount: number;
 }) {
-  const iconRef = useRef<CategoryAnimatedIconHandle>(null);
+  const CatIcon = getToolIcon(cat.icon);
 
   return (
     <Link
       href={`/tools/${cat.slug}`}
-      onPointerEnter={(e) => {
-        if (e.pointerType === "mouse") {
-          iconRef.current?.trigger();
-        }
-      }}
-      onTouchStart={() => {
-        iconRef.current?.trigger();
-      }}
       className="group flex flex-col items-center gap-3 p-5 bg-white dark:bg-[#141829] rounded-2xl border border-[#E4E0D8] dark:border-[#1E2338] shadow-[0_1px_4px_rgba(0,0,0,0.04)] dark:shadow-none st-card-hover hover:shadow-[0_6px_20px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_6px_20px_rgba(0,0,0,0.3)] text-center block transition-all"
     >
       <div
@@ -69,7 +60,7 @@ export function HomeCategoryCard({
           className="tool-accent-text flex items-center justify-center"
           style={getToolAccentStyle(cat.color, cat.darkColor)}
         >
-          <CategoryAnimatedIcon ref={iconRef} categoryName={cat.name} size={24} />
+          <CatIcon size={24} strokeWidth={1.8} />
         </div>
       </div>
       <div>

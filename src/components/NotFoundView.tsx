@@ -1,14 +1,13 @@
 "use client";
 
-import { useRef } from "react";
 import Link from "next/link";
-import { Compass, ArrowRight } from "lucide-react";
+import { Compass, ArrowRight, FileText, Image as ImageIcon, Braces, TrendingUp, AlignLeft, Wrench } from "lucide-react";
 import { getToolAccentStyle } from "@/lib/theme-utils";
 import HeroGlowingSearchBar from "@/components/home/HeroGlowingSearchBar";
 import SiteHeader from "@/components/layout/SiteHeader";
 import SiteFooter from "@/components/layout/SiteFooter";
-import { CategoryAnimatedIcon, CategoryAnimatedIconHandle } from "@/components/layout/CategoryAnimatedIcon";
 import { HomeAnimatedIcon, HomeAnimatedIconHandle } from "@/components/shared/HomeAnimatedIcon";
+import { useRef } from "react";
 
 interface NotFoundViewProps {
   title?: string;
@@ -73,27 +72,28 @@ const POPULAR_TOOLS = [
   },
 ];
 
+const CATEGORY_ICON_MAP: Record<string, React.ElementType> = {
+  "Everyday Utilities": Wrench,
+  "Finance & Tax": TrendingUp,
+  "PDF Tools": FileText,
+  "Image Processing": ImageIcon,
+  "Developer Suite": Braces,
+  "Text": AlignLeft,
+};
+
 function NotFoundToolCard({ tool }: { tool: (typeof POPULAR_TOOLS)[0] }) {
-  const iconRef = useRef<CategoryAnimatedIconHandle>(null);
+  const Icon = CATEGORY_ICON_MAP[tool.category] ?? Wrench;
 
   return (
     <Link
       href={tool.href}
-      onPointerEnter={(e) => {
-        if (e.pointerType === "mouse") {
-          iconRef.current?.trigger();
-        }
-      }}
-      onTouchStart={() => {
-        iconRef.current?.trigger();
-      }}
       className="group p-4 rounded-2xl bg-white dark:bg-[#141829] border border-[#E4E0D8] dark:border-[#1E2338] hover:border-[#0D9488]/50 dark:hover:border-[#F5A623]/50 shadow-[0_1px_4px_rgba(0,0,0,0.04)] dark:shadow-none hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_8px_24px_rgba(0,0,0,0.35)] transition-all duration-200 hover:-translate-y-0.5 flex items-start gap-3.5"
     >
       <div
         className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 mt-0.5 tool-accent-bg tool-accent-text transition-transform duration-200 group-hover:scale-110"
         style={getToolAccentStyle(tool.color, tool.darkColor)}
       >
-        <CategoryAnimatedIcon ref={iconRef} categoryName={tool.category} size={20} />
+        <Icon size={20} strokeWidth={1.8} />
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between mb-0.5">
